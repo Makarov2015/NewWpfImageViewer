@@ -27,9 +27,6 @@ namespace NewWpfImageViewer
         /// </summary>
         System.Windows.Threading.DispatcherTimer _resizeTimer = new System.Windows.Threading.DispatcherTimer { Interval = new TimeSpan(0, 0, 0, 0, 500), IsEnabled = false };
 
-        /// <summary>
-        /// 
-        /// </summary>
         List<Classes.AutoStackImage> imagesPath = new List<Classes.AutoStackImage>();
 
         public MainWindow()
@@ -62,16 +59,58 @@ namespace NewWpfImageViewer
             ReloadSizes();
         }
 
+        // BUG При ресайзе из размера, при котором слайдбар не был виден в размер, при котором слайдбар появится - мы не учитываем слайдбар и все едет
+        // При ресайзе от большого к маленькому - слайдбар есть и мы его тоже не учитываем - получается отступ
         public void ReloadSizes()
         {
             MainWrapPanel.Children.Clear();
 
-            foreach (var item in Classes.AutoStackImage.DynamicRowFormatter(imagesPath, MainWrapPanel.ActualWidth))
+            // TODO нужна считалка для imagesPath - проверять влазиет ли коллекция с учетом всех картинок данноый высоты в видимую часть
+            // Влазиет - ширина без скрола. Не влазиет - со скроллом.
+
+            var coll = Classes.AutoStackImage.DynamicRowFormatter(imagesPath, MainWrapPanel.ActualWidth);
+            
+            foreach (var item in coll)
             {
                 MainWrapPanel.Children.Add(item.ImageControl);
             }
 
             GC.Collect();
+        }
+
+        private void SmallSizeButton_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (var item in imagesPath)
+            {
+                item.CurrentSize = Classes.AutoStackImage.Size.SMALL;
+            }
+
+            ReloadSizes();
+        }
+
+        private void MedSizeButton_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (var item in imagesPath)
+            {
+                item.CurrentSize = Classes.AutoStackImage.Size.MEDIUM;
+            }
+
+            ReloadSizes();
+        }
+
+        private void BigSizeButton_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (var item in imagesPath)
+            {
+                item.CurrentSize = Classes.AutoStackImage.Size.BIG;
+            }
+
+            ReloadSizes();
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

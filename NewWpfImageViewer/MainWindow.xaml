@@ -32,11 +32,20 @@
             <TextBox x:Name="SearchTextBox" BorderBrush="Transparent" Padding="5,0,15,0" HorizontalContentAlignment="Left" VerticalContentAlignment="Center" HorizontalAlignment="Left" Height="30" Margin="75,10,0,0" TextWrapping="Wrap" Text="Search" VerticalAlignment="Top" Width="342"/>
             <Button Content="· · ·" FontSize="14"  Style="{StaticResource BlackAndWhite}"/>
             <Button Content="⌂" FontSize="16" Margin="0,0,50,0"  Style="{StaticResource BlackAndWhite}"/>
-            <Button Content="🕮" FontSize="16" Margin="0,0,100,0" Style="{StaticResource BlackAndWhite}"/>
+            <Button Content="🕮" FontSize="16" Margin="0,0,100,0" Style="{StaticResource BlackAndWhite}" Click="Button_Click"/>
         </Grid>
         <Grid Grid.Row="1">
-            <StackPanel Orientation="Horizontal" Margin="75, 0, 75, 0" FlowDirection="LeftToRight"  Background="PowderBlue" HorizontalAlignment="Stretch" Height="Auto" VerticalAlignment="Stretch" Width="Auto" Grid.RowSpan="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="75, 0, 0, 0" FlowDirection="LeftToRight"  Background="PowderBlue" HorizontalAlignment="Stretch" Height="Auto" VerticalAlignment="Stretch" Width="auto" Grid.RowSpan="2">
                 <Button Content="Collection" Margin="5,5,0,5" BorderThickness="0" Background="Transparent" Width="Auto" Height="Auto" HorizontalAlignment="Left" FontSize="14" FontFamily="Segoe WP Semibold"/>
+            </StackPanel>
+            <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="0, 0, 75, 0" FlowDirection="RightToLeft"  Background="PowderBlue" HorizontalAlignment="Stretch" Height="Auto" VerticalAlignment="Stretch" Width="auto" Grid.RowSpan="2">
+                <Button x:Name="SmallSizeButton" Content="⧠" Margin="5,5,0,5" BorderThickness="0" Background="Transparent" Width="20" Height="Auto" HorizontalAlignment="Left" FontSize="6" FontFamily="Segoe WP Semibold" Click="SmallSizeButton_Click"/>
+                <Button x:Name="MedSizeButton" Content="⧠" Margin="5,5,0,5" BorderThickness="0" Background="Transparent" Width="20" Height="Auto" HorizontalAlignment="Left" FontSize="10" FontFamily="Segoe WP Semibold" Click="MedSizeButton_Click"/>
+                <Button x:Name="BigSizeButton" Content="⧠" Margin="5,5,0,5" BorderThickness="0" Background="Transparent" Width="20" Height="Auto" HorizontalAlignment="Left" FontSize="14" FontFamily="Segoe WP Semibold" Click="BigSizeButton_Click"/>
             </StackPanel>
         </Grid>
         <Grid  Grid.Row="2">
@@ -49,7 +58,7 @@
             </Expander>
         </Grid>
         <Grid Grid.Row="3"  Background="Beige">
-            <ScrollViewer x:Name="MainScrollViewer" Grid.RowSpan="2" VerticalScrollBarVisibility="Auto" Background="CadetBlue" HorizontalAlignment="Stretch" Height="Auto" VerticalAlignment="Stretch" Width="Auto"  Margin="75, 0, 75, 0" Grid.ColumnSpan="2">
+            <ScrollViewer x:Name="MainScrollViewer" Grid.RowSpan="2" VerticalScrollBarVisibility="Auto" Background="CadetBlue" HorizontalAlignment="Stretch" Height="Auto" VerticalAlignment="Stretch" Width="Auto"  Margin="0" Grid.ColumnSpan="2" Padding="75, 0, 58, 0">
                 <WrapPanel x:Name="MainWrapPanel" HorizontalAlignment="Stretch" Height="Auto" VerticalAlignment="Stretch" Width="Auto">
                 </WrapPanel>
             </ScrollViewer>

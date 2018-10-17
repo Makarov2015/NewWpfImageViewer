@@ -17,11 +17,25 @@ namespace NewWpfImageViewer.Classes
         private System.Drawing.Image MaxSizedImage { get; }
 
         private int MaxImageSizeToResize => 350;
+        
+        public double Height
+        {
+            get
+            {
+                switch (CurrentSize)
+                {
+                    case Size.MEDIUM:
+                        return 200;
+                    case Size.SMALL:
+                        return 100;
+                    case Size.BIG:
+                        return 350;
+                    default:
+                        return 200;
+                }
+            }
+        }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public double Height { get; } = 300;
         public double Width
         {
             get
@@ -35,7 +49,7 @@ namespace NewWpfImageViewer.Classes
         {
             get
             {
-                return new Image { Source = GetSource(new System.Drawing.Bitmap(ResizeImage(MaxSizedImage))), Width = this.Width, Height = this.Height, Margin = new System.Windows.Thickness(5) };
+                return new Image { Source = GetSource(new System.Drawing.Bitmap(ResizeImage(null, MaxSizedImage))), Width = this.Width, Height = this.Height, Margin = new System.Windows.Thickness(5) };
             }
         }
 
@@ -43,43 +57,68 @@ namespace NewWpfImageViewer.Classes
         ///  Добавочная величина для динамического изменения ширины контролов
         /// </summary>
         public double WidthAdded { get; set; }
-        
-        public AutoStackImage(string ImgPath)
+
+        public enum Size
         {
-            MaxSizedImage = ResizeImage(System.Drawing.Image.FromFile(ImgPath));
+            MEDIUM,
+            SMALL,
+            BIG
         }
 
-        private System.Drawing.Image ResizeImage(System.Drawing.Image image)
+        public Size CurrentSize { get; set; }
+
+        public AutoStackImage(string ImgPath)
         {
-            int rW = 0;
-            int rH = 0;
+            // TODO нужно сделать кеш ресайзнутых картинок рядом с приложением и по знакомому пути брать уже ресайзнутую, а не ресайзить снова
+            MaxSizedImage = ResizeImage(ImgPath);
+        }
 
-            double c = 0;
-            c = ((double)image.Height / (double)MaxImageSizeToResize);
-            rW = (int)(image.Width / c);
-            rH = MaxImageSizeToResize;
-
-            var destRect = new System.Drawing.Rectangle(0, 0, rW, rH);
-            var destImage = new System.Drawing.Bitmap(rW, rH);
-
-            destImage.SetResolution(image.HorizontalResolution, image.VerticalResolution);
-
-            using (var graphics = System.Drawing.Graphics.FromImage(destImage))
+        private System.Drawing.Image ResizeImage(string path, System.Drawing.Image img = null)
+        {
+            if (String.IsNullOrEmpty(path) && img != null)
             {
-                graphics.CompositingMode = CompositingMode.SourceCopy;
-                graphics.CompositingQuality = CompositingQuality.HighQuality;
-                graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                graphics.SmoothingMode = SmoothingMode.HighQuality;
-                graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
-
-                using (var wrapMode = new System.Drawing.Imaging.ImageAttributes())
+                return LocalGet(img);
+            }
+            else
+            {
+                using (var image = System.Drawing.Image.FromFile(path))
                 {
-                    wrapMode.SetWrapMode(WrapMode.TileFlipXY);
-                    graphics.DrawImage(image, destRect, 0, 0, image.Width, image.Height, System.Drawing.GraphicsUnit.Pixel, wrapMode);
+                    return LocalGet(image);
                 }
             }
 
-            return destImage;
+            System.Drawing.Bitmap LocalGet(System.Drawing.Image image)
+            {
+                int rW = 0;
+                int rH = 0;
+
+                double c = 0;
+                c = ((double)image.Height / (double)MaxImageSizeToResize);
+                rW = (int)(image.Width / c);
+                rH = MaxImageSizeToResize;
+
+                var destRect = new System.Drawing.Rectangle(0, 0, rW, rH);
+                var destImage = new System.Drawing.Bitmap(rW, rH);
+
+                destImage.SetResolution(image.HorizontalResolution, image.VerticalResolution);
+
+                using (var graphics = System.Drawing.Graphics.FromImage(destImage))
+                {
+                    graphics.CompositingMode = CompositingMode.SourceCopy;
+                    graphics.CompositingQuality = CompositingQuality.HighQuality;
+                    graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                    graphics.SmoothingMode = SmoothingMode.HighQuality;
+                    graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+
+                    using (var wrapMode = new System.Drawing.Imaging.ImageAttributes())
+                    {
+                        wrapMode.SetWrapMode(WrapMode.TileFlipXY);
+                        graphics.DrawImage(image, destRect, 0, 0, image.Width, image.Height, System.Drawing.GraphicsUnit.Pixel, wrapMode);
+                    }
+                }
+
+                return destImage;
+            }
         }
 
         private BitmapSource GetSource(System.Drawing.Bitmap image)
@@ -173,6 +212,11 @@ namespace NewWpfImageViewer.Classes
             }
 
             return finalRow;
+        }
+
+        public static bool CheckScrollNeeded(List<AutoStackImage> autoStacks, double visPanelHeight, double visPanelWidth)
+        {
+            return false;
         }
     }
 }
