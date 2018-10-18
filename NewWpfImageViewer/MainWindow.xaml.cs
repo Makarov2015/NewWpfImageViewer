@@ -1,19 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing.Drawing2D;
 using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using System.Runtime.Caching;
 
 namespace NewWpfImageViewer
 {
@@ -25,18 +14,16 @@ namespace NewWpfImageViewer
         /// <summary>
         /// Таймер для зарежки пересчета размеров изображений 
         /// </summary>
-        System.Windows.Threading.DispatcherTimer _resizeTimer = new System.Windows.Threading.DispatcherTimer { Interval = new TimeSpan(0, 0, 0, 0, 500), IsEnabled = false };
+        System.Windows.Threading.DispatcherTimer _resizeTimer = new System.Windows.Threading.DispatcherTimer { Interval = new TimeSpan(0, 0, 0, 0, 250), IsEnabled = false };
 
-        List<Classes.AutoStackImage> imagesPath = new List<Classes.AutoStackImage>();
+        List<ClassDir.AutoStackImage> imagesPath = new List<ClassDir.AutoStackImage>();
 
         public MainWindow()
         {
             InitializeComponent();
-
-            foreach (var item in System.IO.Directory.GetFiles(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures)).Where(x => x.EndsWith(".gif") || x.EndsWith(".jpeg") || x.EndsWith(".jpg")))
-            {
-                imagesPath.Add(new Classes.AutoStackImage(item));
-            }
+            
+            using (ClassDir.CacheManager mngr = new ClassDir.CacheManager("images", Environment.GetFolderPath(Environment.SpecialFolder.MyPictures)))
+                imagesPath = mngr.DealWithCache();
 
             _resizeTimer.Tick += _resizeTimer_Tick;
         }
@@ -68,21 +55,19 @@ namespace NewWpfImageViewer
             // TODO нужна считалка для imagesPath - проверять влазиет ли коллекция с учетом всех картинок данноый высоты в видимую часть
             // Влазиет - ширина без скрола. Не влазиет - со скроллом.
 
-            var coll = Classes.AutoStackImage.DynamicRowFormatter(imagesPath, MainWrapPanel.ActualWidth);
-            
+            var coll = ClassDir.AutoStackImage.DynamicRowFormatter(imagesPath, MainWrapPanel.ActualWidth);
+
             foreach (var item in coll)
             {
                 MainWrapPanel.Children.Add(item.ImageControl);
             }
-
-            GC.Collect();
         }
 
         private void SmallSizeButton_Click(object sender, RoutedEventArgs e)
         {
             foreach (var item in imagesPath)
             {
-                item.CurrentSize = Classes.AutoStackImage.Size.SMALL;
+                item.CurrentSize = ClassDir.AutoStackImage.Size.SMALL;
             }
 
             ReloadSizes();
@@ -92,7 +77,7 @@ namespace NewWpfImageViewer
         {
             foreach (var item in imagesPath)
             {
-                item.CurrentSize = Classes.AutoStackImage.Size.MEDIUM;
+                item.CurrentSize = ClassDir.AutoStackImage.Size.MEDIUM;
             }
 
             ReloadSizes();
@@ -102,7 +87,7 @@ namespace NewWpfImageViewer
         {
             foreach (var item in imagesPath)
             {
-                item.CurrentSize = Classes.AutoStackImage.Size.BIG;
+                item.CurrentSize = ClassDir.AutoStackImage.Size.BIG;
             }
 
             ReloadSizes();

@@ -1,22 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
+using Drawing = System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
+using Control = System.Windows.Controls;
 using System.Windows.Media.Imaging;
+using System.Runtime.Caching;
 
-namespace NewWpfImageViewer.Classes
+namespace NewWpfImageViewer.ClassDir
 {
     public class AutoStackImage
     {
         /// <summary>
         /// Исходное озображение вписанное в максимальный размер отображаемых строк
         /// </summary>
-        private System.Drawing.Image MaxSizedImage { get; }
+        public Drawing.Image MaxSizedImage { get; }
 
-        private int MaxImageSizeToResize => 350;
+        private int MaxImageSizeToResize => 400;
         
         public double Height
         {
@@ -25,13 +25,13 @@ namespace NewWpfImageViewer.Classes
                 switch (CurrentSize)
                 {
                     case Size.MEDIUM:
-                        return 200;
+                        return 250;
                     case Size.SMALL:
-                        return 100;
+                        return 150;
                     case Size.BIG:
                         return 350;
                     default:
-                        return 200;
+                        return 250;
                 }
             }
         }
@@ -45,11 +45,15 @@ namespace NewWpfImageViewer.Classes
             }
         }
 
-        public Image ImageControl
+        private Control.Image imageControl;
+        public Control.Image ImageControl
         {
             get
             {
-                return new Image { Source = GetSource(new System.Drawing.Bitmap(ResizeImage(null, MaxSizedImage))), Width = this.Width, Height = this.Height, Margin = new System.Windows.Thickness(5) };
+                imageControl.Width = this.Width;
+                imageControl.Height = this.Height;
+
+                return imageControl;
             }
         }
 
@@ -69,11 +73,23 @@ namespace NewWpfImageViewer.Classes
 
         public AutoStackImage(string ImgPath)
         {
-            // TODO нужно сделать кеш ресайзнутых картинок рядом с приложением и по знакомому пути брать уже ресайзнутую, а не ресайзить снова
             MaxSizedImage = ResizeImage(ImgPath);
+            imageControl = new Control.Image { Source = GetSource(this.MaxSizedImage as Drawing.Bitmap), Width = this.Width, Height = this.Height, Margin = new System.Windows.Thickness(5), Stretch = System.Windows.Media.Stretch.UniformToFill, StretchDirection = Control.StretchDirection.Both };
         }
 
-        private System.Drawing.Image ResizeImage(string path, System.Drawing.Image img = null)
+        public AutoStackImage(Drawing.Image cachedImage)
+        {
+            MaxSizedImage = cachedImage;
+            imageControl = new Control.Image { Source = GetSource(this.MaxSizedImage as Drawing.Bitmap), Width = this.Width, Height = this.Height, Margin = new System.Windows.Thickness(5), Stretch = System.Windows.Media.Stretch.UniformToFill, StretchDirection = Control.StretchDirection.Both };
+        }
+
+        private Drawing.Image CropImageForSizing(Drawing.Image img, Drawing.Rectangle cropArea)
+        {
+            Drawing.Bitmap bmpImage = new Drawing.Bitmap(img);
+            return bmpImage.Clone(cropArea, bmpImage.PixelFormat);
+        }
+
+        private System.Drawing.Image ResizeImage(string path, Drawing.Image img = null)
         {
             if (String.IsNullOrEmpty(path) && img != null)
             {
@@ -81,7 +97,7 @@ namespace NewWpfImageViewer.Classes
             }
             else
             {
-                using (var image = System.Drawing.Image.FromFile(path))
+                using (var image = Drawing.Image.FromFile(path))
                 {
                     return LocalGet(image);
                 }
@@ -131,7 +147,7 @@ namespace NewWpfImageViewer.Classes
         /// C учетом внешних отступов картинок (считаем что они у всех одинаковые) и наличия скролбара
         /// </summary>
         /// <returns>Возвращает измененный список AutoStackImage с заполненным полем WidthAdded</returns>
-        public static List<AutoStackImage> DynamicRowFormatter(List<Classes.AutoStackImage> images, double wrapPanel)
+        public static List<AutoStackImage> DynamicRowFormatter(List<ClassDir.AutoStackImage> images, double wrapPanel)
         {
             // При множестве ресайзов - будет неправильный результат
             foreach (var item in images)
@@ -140,9 +156,9 @@ namespace NewWpfImageViewer.Classes
             }
 
             // Наполняем этот список, пока не забьем ряд
-            List<Classes.AutoStackImage> currentRow = new List<Classes.AutoStackImage>();
+            List<ClassDir.AutoStackImage> currentRow = new List<ClassDir.AutoStackImage>();
             // Наполняем этот список заполненными рядами
-            List<Classes.AutoStackImage> finalRow = new List<Classes.AutoStackImage>();
+            List<ClassDir.AutoStackImage> finalRow = new List<ClassDir.AutoStackImage>();
 
             // Сумма внешних отступов для картинок
             var marginSum = images.First(x => x.ImageControl != null).ImageControl.Margin.Left * 2;

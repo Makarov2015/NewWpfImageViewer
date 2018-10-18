@@ -48,8 +48,8 @@
                 <Button x:Name="BigSizeButton" Content="⧠" Margin="5,5,0,5" BorderThickness="0" Background="Transparent" Width="20" Height="Auto" HorizontalAlignment="Left" FontSize="14" FontFamily="Segoe WP Semibold" Click="BigSizeButton_Click"/>
             </StackPanel>
         </Grid>
-        <Grid  Grid.Row="2">
-            <Expander Padding="75,0,75,1" Header="Expand" HorizontalAlignment="Stretch" Height="Auto" VerticalAlignment="Stretch" Width="Auto" IsExpanded="True" Margin="-1, 0, -1, -1">
+        <Grid  Grid.Row="2" Background="AntiqueWhite">
+            <Expander Padding="75,0,75,1" Header="Favorite" HorizontalAlignment="Stretch" Height="Auto" VerticalAlignment="Stretch" Width="Auto" IsExpanded="True" Margin="-1, 0, -1, -1">
                 <Grid Background="LightGray">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="75"/>
@@ -57,8 +57,8 @@
                 </Grid>
             </Expander>
         </Grid>
-        <Grid Grid.Row="3"  Background="Beige">
-            <ScrollViewer x:Name="MainScrollViewer" Grid.RowSpan="2" VerticalScrollBarVisibility="Auto" Background="CadetBlue" HorizontalAlignment="Stretch" Height="Auto" VerticalAlignment="Stretch" Width="Auto"  Margin="0" Grid.ColumnSpan="2" Padding="75, 0, 58, 0">
+        <Grid Grid.Row="3"  Background="White">
+            <ScrollViewer x:Name="MainScrollViewer" Grid.RowSpan="2" VerticalScrollBarVisibility="Hidden" Background="Transparent" HorizontalAlignment="Stretch" Height="Auto" VerticalAlignment="Stretch" Width="Auto"  Margin="0" Grid.ColumnSpan="2" Padding="75, 0, 75, 0" >
                 <WrapPanel x:Name="MainWrapPanel" HorizontalAlignment="Stretch" Height="Auto" VerticalAlignment="Stretch" Width="Auto">
                 </WrapPanel>
             </ScrollViewer>
