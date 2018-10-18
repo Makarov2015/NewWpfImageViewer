@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
-using System.Runtime.Caching;
 
 namespace NewWpfImageViewer
 {
@@ -18,12 +17,14 @@ namespace NewWpfImageViewer
 
         List<ClassDir.AutoStackImage> imagesPath = new List<ClassDir.AutoStackImage>();
 
+        ClassDir.FolderEntity defaultFolder;
+
         public MainWindow()
         {
             InitializeComponent();
-            
-            using (ClassDir.CacheManager mngr = new ClassDir.CacheManager("images", Environment.GetFolderPath(Environment.SpecialFolder.MyPictures)))
-                imagesPath = mngr.DealWithCache();
+
+            defaultFolder = new ClassDir.FolderEntity("Стандартная папка", Environment.GetFolderPath(Environment.SpecialFolder.MyPictures));
+            imagesPath = defaultFolder.GetImages();
 
             _resizeTimer.Tick += _resizeTimer_Tick;
         }
@@ -95,7 +96,14 @@ namespace NewWpfImageViewer
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+            var fldr = defaultFolder.GetControl();
+            fldr.Mouse_Click += Fldr_Mouse_Click;
+            FavoriteStackPanel.Children.Add(fldr);
+        }
 
+        private void Fldr_Mouse_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("Кря!");
         }
     }
 }

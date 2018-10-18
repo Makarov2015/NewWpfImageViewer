@@ -49,16 +49,19 @@
             </StackPanel>
         </Grid>
         <Grid  Grid.Row="2" Background="AntiqueWhite">
-            <Expander Padding="75,0,75,1" Header="Favorite" HorizontalAlignment="Stretch" Height="Auto" VerticalAlignment="Stretch" Width="Auto" IsExpanded="True" Margin="-1, 0, -1, -1">
+            <Expander Padding="75,0,75,1" Header="Favorite" HorizontalAlignment="Stretch" Height="auto" VerticalAlignment="Stretch" Width="Auto" IsExpanded="False" Margin="-1, 0, -1, -1">
                 <Grid Background="LightGray">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="75"/>
+                        <RowDefinition Height="150"/>
                     </Grid.RowDefinitions>
+                    <StackPanel x:Name="FavoriteStackPanel" Orientation="Horizontal" HorizontalAlignment="Stretch" Height="auto" Margin="0" VerticalAlignment="Stretch" Width="auto">
+                       
+                    </StackPanel>
                 </Grid>
             </Expander>
         </Grid>
-        <Grid Grid.Row="3"  Background="White">
-            <ScrollViewer x:Name="MainScrollViewer" Grid.RowSpan="2" VerticalScrollBarVisibility="Hidden" Background="Transparent" HorizontalAlignment="Stretch" Height="Auto" VerticalAlignment="Stretch" Width="Auto"  Margin="0" Grid.ColumnSpan="2" Padding="75, 0, 75, 0" >
+        <Grid Grid.Row="3"  Background="LightBlue">
+            <ScrollViewer x:Name="MainScrollViewer" Grid.RowSpan="2" VerticalScrollBarVisibility="Hidden" HorizontalAlignment="Stretch" Height="Auto" VerticalAlignment="Stretch" Width="Auto"  Margin="0" Grid.ColumnSpan="2" Padding="75, 0, 75, 0" >
                 <WrapPanel x:Name="MainWrapPanel" HorizontalAlignment="Stretch" Height="Auto" VerticalAlignment="Stretch" Width="Auto">
                 </WrapPanel>
             </ScrollViewer>

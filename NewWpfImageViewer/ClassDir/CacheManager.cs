@@ -9,6 +9,9 @@ using System.Runtime.InteropServices;
 
 namespace NewWpfImageViewer.ClassDir
 {
+    /// <summary>
+    /// Класс для контроля кеширования
+    /// </summary>
     class CacheManager : IDisposable
     {
         bool disposed = false;

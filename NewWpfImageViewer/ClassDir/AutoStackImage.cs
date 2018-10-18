@@ -1,23 +1,40 @@
 ﻿using System;
-using System.Collections.Generic;
-using Drawing = System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Linq;
-using Control = System.Windows.Controls;
+using System.Drawing.Drawing2D;
+using System.Collections.Generic;
 using System.Windows.Media.Imaging;
-using System.Runtime.Caching;
+using Drawing = System.Drawing;
+using Control = System.Windows.Controls;
 
 namespace NewWpfImageViewer.ClassDir
 {
+    /// <summary>
+    /// Класс для представления изображения
+    /// Ресайзит изображение, хранит сжатый исходник и помогает сделать красивое отображение картинок на форме
+    /// (Динамически меняет ширину картинок, подгоняет их так, чтобы ряд был заполнен до конца), а так же помогает менять размер
+    /// </summary>
     public class AutoStackImage
     {
         /// <summary>
-        /// Исходное озображение вписанное в максимальный размер отображаемых строк
+        /// Исходное изображение вписанное в максимальный размер отображаемых строк
         /// </summary>
         public Drawing.Image MaxSizedImage { get; }
 
+        /// <summary>
+        /// Максимальная высота, до которой изображение будет уменьшено
+        /// </summary>
         private int MaxImageSizeToResize => 400;
-        
+
+        public enum Size
+        {
+            MEDIUM,
+            SMALL,
+            BIG
+        }
+
+        /// <summary>
+        /// Доступные варианты высоты
+        /// </summary>
         public double Height
         {
             get
@@ -36,6 +53,9 @@ namespace NewWpfImageViewer.ClassDir
             }
         }
 
+        /// <summary>
+        /// Динамический подсчет ширины в зависимости от подгона и масштаба
+        /// </summary>
         public double Width
         {
             get
@@ -45,6 +65,9 @@ namespace NewWpfImageViewer.ClassDir
             }
         }
 
+        /// <summary>
+        /// Тут возвращаем готовый контрол, который сразу закидываем на форму
+        /// </summary>
         private Control.Image imageControl;
         public Control.Image ImageControl
         {
@@ -62,45 +85,41 @@ namespace NewWpfImageViewer.ClassDir
         /// </summary>
         public double WidthAdded { get; set; }
 
-        public enum Size
-        {
-            MEDIUM,
-            SMALL,
-            BIG
-        }
-
+        /// <summary>
+        /// Хранилка текущего размера
+        /// </summary>
         public Size CurrentSize { get; set; }
 
+        /// <summary>
+        /// Конструктор через файл
+        /// </summary>
+        /// <param name="ImgPath">Путь к файлу</param>
         public AutoStackImage(string ImgPath)
         {
             MaxSizedImage = ResizeImage(ImgPath);
             imageControl = new Control.Image { Source = GetSource(this.MaxSizedImage as Drawing.Bitmap), Width = this.Width, Height = this.Height, Margin = new System.Windows.Thickness(5), Stretch = System.Windows.Media.Stretch.UniformToFill, StretchDirection = Control.StretchDirection.Both };
         }
 
+        /// <summary>
+        /// Констуктор через кеш
+        /// </summary>
+        /// <param name="cachedImage">Ресайзнутое изображение</param>
         public AutoStackImage(Drawing.Image cachedImage)
         {
             MaxSizedImage = cachedImage;
             imageControl = new Control.Image { Source = GetSource(this.MaxSizedImage as Drawing.Bitmap), Width = this.Width, Height = this.Height, Margin = new System.Windows.Thickness(5), Stretch = System.Windows.Media.Stretch.UniformToFill, StretchDirection = Control.StretchDirection.Both };
         }
 
-        private Drawing.Image CropImageForSizing(Drawing.Image img, Drawing.Rectangle cropArea)
+        /// <summary>
+        /// Изменение размера изображения с сохранением пропорций и без потери качества
+        /// </summary>
+        /// <param name="path">Путь к изображению</param>
+        /// <returns></returns>
+        private System.Drawing.Image ResizeImage(string path)
         {
-            Drawing.Bitmap bmpImage = new Drawing.Bitmap(img);
-            return bmpImage.Clone(cropArea, bmpImage.PixelFormat);
-        }
-
-        private System.Drawing.Image ResizeImage(string path, Drawing.Image img = null)
-        {
-            if (String.IsNullOrEmpty(path) && img != null)
+            using (var image = Drawing.Image.FromFile(path))
             {
-                return LocalGet(img);
-            }
-            else
-            {
-                using (var image = Drawing.Image.FromFile(path))
-                {
-                    return LocalGet(image);
-                }
+                return LocalGet(image);
             }
 
             System.Drawing.Bitmap LocalGet(System.Drawing.Image image)
@@ -137,6 +156,11 @@ namespace NewWpfImageViewer.ClassDir
             }
         }
 
+        /// <summary>
+        /// Перевод картинки из Битмапа в читаемый контролом формат Соурса
+        /// </summary>
+        /// <param name="image">Картинка для контрола</param>
+        /// <returns></returns>
         private BitmapSource GetSource(System.Drawing.Bitmap image)
         {
             return System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(image.GetHbitmap(), IntPtr.Zero, System.Windows.Int32Rect.Empty, null);
@@ -228,11 +252,6 @@ namespace NewWpfImageViewer.ClassDir
             }
 
             return finalRow;
-        }
-
-        public static bool CheckScrollNeeded(List<AutoStackImage> autoStacks, double visPanelHeight, double visPanelWidth)
-        {
-            return false;
         }
     }
 }
