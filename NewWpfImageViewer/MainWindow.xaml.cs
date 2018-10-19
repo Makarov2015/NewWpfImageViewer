@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Windows;
 
@@ -17,14 +18,23 @@ namespace NewWpfImageViewer
 
         List<ClassDir.AutoStackImage> imagesPath = new List<ClassDir.AutoStackImage>();
 
-        ClassDir.FolderEntity defaultFolder;
+        //ClassDir.FolderEntity defaultFolder;
 
         public MainWindow()
         {
             InitializeComponent();
 
-            defaultFolder = new ClassDir.FolderEntity("Стандартная папка", Environment.GetFolderPath(Environment.SpecialFolder.MyPictures));
-            imagesPath = defaultFolder.GetImages();
+            ClassDir.CacheFileManager manager = new ClassDir.CacheFileManager();
+
+            foreach (var item in Directory.GetFiles(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures)).Where(x => x.EndsWith(".gif") || x.EndsWith(".jpeg") || x.EndsWith(".jpg")).ToList())
+            {
+                //imagesPath.Add(new ClassDir.AutoStackImage(item)); // Вариант без кеша
+                imagesPath.Add(manager.GetImage(item)); // Вариант с кешем
+            }
+
+            manager.SaveDictionary();
+
+            System.Diagnostics.Debug.WriteLine(manager.CacheSize.ToString());
 
             _resizeTimer.Tick += _resizeTimer_Tick;
         }
@@ -96,9 +106,9 @@ namespace NewWpfImageViewer
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            var fldr = defaultFolder.GetControl();
-            fldr.Mouse_Click += Fldr_Mouse_Click;
-            FavoriteStackPanel.Children.Add(fldr);
+            //var fldr = defaultFolder.GetControl();
+            //fldr.Mouse_Click += Fldr_Mouse_Click;
+            //FavoriteStackPanel.Children.Add(fldr);
         }
 
         private void Fldr_Mouse_Click(object sender, RoutedEventArgs e)

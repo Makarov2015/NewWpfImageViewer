@@ -18,7 +18,7 @@ namespace NewWpfImageViewer.ClassDir
         /// <summary>
         /// Исходное изображение вписанное в максимальный размер отображаемых строк
         /// </summary>
-        public Drawing.Image MaxSizedImage { get; }
+        public Drawing.Image MaxSizedImage { get; set; }
 
         /// <summary>
         /// Максимальная высота, до которой изображение будет уменьшено
@@ -106,7 +106,10 @@ namespace NewWpfImageViewer.ClassDir
         /// <param name="cachedImage">Ресайзнутое изображение</param>
         public AutoStackImage(Drawing.Image cachedImage)
         {
-            MaxSizedImage = cachedImage;
+            // Без этого юзинга память не чистится
+            using(cachedImage)
+                MaxSizedImage = new Drawing.Bitmap(cachedImage);
+
             imageControl = new Control.Image { Source = GetSource(this.MaxSizedImage as Drawing.Bitmap), Width = this.Width, Height = this.Height, Margin = new System.Windows.Thickness(5), Stretch = System.Windows.Media.Stretch.UniformToFill, StretchDirection = Control.StretchDirection.Both };
         }
 

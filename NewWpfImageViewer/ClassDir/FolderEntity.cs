@@ -12,30 +12,30 @@ namespace NewWpfImageViewer.ClassDir
     /// </summary>
     class FolderEntity
     {
-        public string ShownName { get; set; }
-        public string FolderPath { get; set; }
+        //public string ShownName { get; set; }
+        //public string FolderPath { get; set; }
 
-        public Bitmap PreviewImage { get; set; }
+        //public Bitmap PreviewImage { get; set; }
 
-        public FolderEntity(string name, string path)
-        {
-            ShownName = name;
-            FolderPath = path;
-        }
+        //public FolderEntity(string name, string path)
+        //{
+        //    ShownName = name;
+        //    FolderPath = path;
+        //}
 
-        public List<ClassDir.AutoStackImage> GetImages()
-        {
-            using (ClassDir.CacheManager mngr = new ClassDir.CacheManager("images", FolderPath))
-                return mngr.DealWithCache();
-        }
+        //public List<ClassDir.AutoStackImage> GetImages()
+        //{
+        //    using (ClassDir.CacheManager mngr = new ClassDir.CacheManager("images", FolderPath))
+        //        return mngr.DealWithCache();
+        //}
 
-        /// <summary>
-        /// Готовый контрол для отображения папки с превью
-        /// </summary>
-        /// <returns></returns>
-        public ClassDir.FolderButton GetControl()
-        {
-            return new ClassDir.FolderButton(ShownName);
-        }
+        ///// <summary>
+        ///// Готовый контрол для отображения папки с превью
+        ///// </summary>
+        ///// <returns></returns>
+        //public ClassDir.FolderButton GetControl()
+        //{
+        //    return new ClassDir.FolderButton(ShownName);
+        //}
     }
 }
