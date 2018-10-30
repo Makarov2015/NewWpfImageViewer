@@ -23,7 +23,7 @@ namespace NewWpfImageViewer.ClassDir
         /// <summary>
         /// Максимальная высота, до которой изображение будет уменьшено
         /// </summary>
-        private int MaxImageSizeToResize => 400;
+        private int MaxImageSizeToResize => 350;
 
         public enum Size
         {
@@ -174,7 +174,7 @@ namespace NewWpfImageViewer.ClassDir
         /// C учетом внешних отступов картинок (считаем что они у всех одинаковые) и наличия скролбара
         /// </summary>
         /// <returns>Возвращает измененный список AutoStackImage с заполненным полем WidthAdded</returns>
-        public static List<AutoStackImage> DynamicRowFormatter(List<ClassDir.AutoStackImage> images, double wrapPanel)
+        public static void DynamicRowFormatter(List<ClassDir.AutoStackImage> images, double wrapPanel)
         {
             // При множестве ресайзов - будет неправильный результат
             foreach (var item in images)
@@ -253,8 +253,6 @@ namespace NewWpfImageViewer.ClassDir
                     }
                 }
             }
-
-            return finalRow;
         }
     }
 }

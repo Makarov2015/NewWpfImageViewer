@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace NewWpfImageViewer.ClassDir
 {
     /// <summary>
-    /// Класс для управления кешем картинок. В случае использования является конструктором AutoStackImage
+    /// Класс для управления кешем картинок. В случае использования является фабрикой для AutoStackImage.
     /// </summary>
     public class CacheFileManager : IDisposable
     {
@@ -18,7 +17,7 @@ namespace NewWpfImageViewer.ClassDir
         /// Ключ - начальный путь, значение - GUID-имя кешированного файла
         /// </summary>
         private Dictionary<string, string> CacheDictionary { get; set; } = new Dictionary<string, string>();
-        private string CacheFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\NewWpfImageViewer\\_cache\\";
+        private string CacheFolder = Properties.Settings.Default.ProgramDataFolder + "_cache\\";
         private string CacheTableFile => CacheFolder + "_cache";
 
         /// <summary>
@@ -29,7 +28,7 @@ namespace NewWpfImageViewer.ClassDir
             get
             {
                 string[] a = Directory.GetFiles(CacheFolder);
-                
+
                 long b = 0;
                 foreach (string name in a)
                 {
@@ -49,15 +48,19 @@ namespace NewWpfImageViewer.ClassDir
         }
 
         /// <summary>
-        /// Грузим словарь при инициализации
+        /// Грузим словарь при инициализации и создаем директорию, если нет
         /// </summary>
         private void LoadDictionary()
         {
-            if (File.Exists(CacheTableFile))
-                CacheDictionary = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, string>>(Encoding.UTF8.GetString(File.ReadAllBytes(CacheTableFile)));
-
-            // 1 Проверяем наличие директории (Создаем если нет)
-            // 2 Проверяем наличие файла (создаем позже если нет, если есть - грузим словарь)
+            if (Directory.Exists(CacheFolder))
+            {
+                if (File.Exists(CacheTableFile))
+                    CacheDictionary = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, string>>(Encoding.UTF8.GetString(File.ReadAllBytes(CacheTableFile)));
+            }
+            else
+            {
+                Directory.CreateDirectory(CacheFolder);
+            }
         }
 
         public void SaveDictionary()
@@ -72,14 +75,14 @@ namespace NewWpfImageViewer.ClassDir
 
             if (Search(pathToFile, out findPath))
             {
-                return new AutoStackImage(ByteArrayToImage(File.ReadAllBytes(findPath)));
+                return new AutoStackImage(ByteArrayToImage(File.ReadAllBytes(CacheFolder + findPath)));
             }
             else
             {
                 AutoStackImage cacheNotFound = new AutoStackImage(pathToFile);
                 string guid = Guid.NewGuid().ToString();
 
-                ByteArrayToFile(guid, ImageToByteArray(cacheNotFound.MaxSizedImage, System.Drawing.Imaging.ImageFormat.Png));
+                ByteArrayToFile(CacheFolder + guid, ImageToByteArray(cacheNotFound.MaxSizedImage, System.Drawing.Imaging.ImageFormat.Png));
                 CacheDictionary.Add(pathToFile, guid);
 
                 return cacheNotFound;
@@ -97,6 +100,18 @@ namespace NewWpfImageViewer.ClassDir
             {
                 name = null;
                 return false;
+            }
+        }
+
+        public string Search(string path)
+        {
+            try
+            {
+                return CacheFolder + CacheDictionary.Where(x => x.Key == path).First().Value;
+            }
+            catch (Exception)
+            {
+                return null;
             }
         }
 
@@ -142,9 +157,41 @@ namespace NewWpfImageViewer.ClassDir
             }
         }
 
+        #region IDisposable Support
+        private bool disposedValue = false; // Для определения избыточных вызовов
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    // TODO: освободить управляемое состояние (управляемые объекты).
+                    CacheDictionary.Clear();
+                    CacheFolder = null;
+                }
+
+                // TODO: освободить неуправляемые ресурсы (неуправляемые объекты) и переопределить ниже метод завершения.
+                // TODO: задать большим полям значение NULL.
+
+                disposedValue = true;
+            }
+        }
+
+        // TODO: переопределить метод завершения, только если Dispose(bool disposing) выше включает код для освобождения неуправляемых ресурсов.
+        // ~CacheFileManager() {
+        //   // Не изменяйте этот код. Разместите код очистки выше, в методе Dispose(bool disposing).
+        //   Dispose(false);
+        // }
+
+        // Этот код добавлен для правильной реализации шаблона высвобождаемого класса.
         public void Dispose()
         {
-            throw new NotImplementedException();
+            // Не изменяйте этот код. Разместите код очистки выше, в методе Dispose(bool disposing).
+            Dispose(true);
+            // TODO: раскомментировать следующую строку, если метод завершения переопределен выше.
+            // GC.SuppressFinalize(this);
         }
+        #endregion
     }
 }

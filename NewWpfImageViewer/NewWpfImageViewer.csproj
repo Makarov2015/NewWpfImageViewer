@@ -59,7 +59,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="ClassDir\FolderButton.xaml">
+    <Page Include="Forms\Favorites\AddFolderButton.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Forms\Favorites\FolderButton.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -73,7 +77,11 @@
     </Compile>
     <Compile Include="ClassDir\AutoStackImage.cs" />
     <Compile Include="ClassDir\CacheFileManager.cs" />
-    <Compile Include="ClassDir\FolderButton.xaml.cs">
+    <Compile Include="ClassDir\FolderManager.cs" />
+    <Compile Include="Forms\Favorites\AddFolderButton.xaml.cs">
+      <DependentUpon>AddFolderButton.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Favorites\FolderButton.xaml.cs">
       <DependentUpon>FolderButton.xaml</DependentUpon>
     </Compile>
     <Compile Include="ClassDir\FolderEntity.cs" />
