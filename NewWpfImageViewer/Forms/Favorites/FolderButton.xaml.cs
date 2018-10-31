@@ -32,9 +32,6 @@ namespace NewWpfImageViewer.Forms
 
             folder = entity;
             NameLabel.Content = entity.ShownName;
-
-            if (entity.PreviewImage != null)
-                this.PreviewImage.Source = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(entity.PreviewImage.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, null);
         }
 
         private void MainButton_Click(object sender, RoutedEventArgs e)

@@ -41,6 +41,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Caching" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -77,7 +78,7 @@
     </Compile>
     <Compile Include="ClassDir\AutoStackImage.cs" />
     <Compile Include="ClassDir\CacheFileManager.cs" />
-    <Compile Include="ClassDir\FolderManager.cs" />
+    <Compile Include="ClassDir\FavoritePanelManager.cs" />
     <Compile Include="Forms\Favorites\AddFolderButton.xaml.cs">
       <DependentUpon>AddFolderButton.xaml</DependentUpon>
     </Compile>

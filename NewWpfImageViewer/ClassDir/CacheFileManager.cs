@@ -71,9 +71,7 @@ namespace NewWpfImageViewer.ClassDir
 
         public AutoStackImage GetImage(string pathToFile)
         {
-            string findPath;
-
-            if (Search(pathToFile, out findPath))
+            if (Search(pathToFile, out string findPath))
             {
                 return new AutoStackImage(ByteArrayToImage(File.ReadAllBytes(CacheFolder + findPath)));
             }

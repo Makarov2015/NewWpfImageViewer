@@ -7,7 +7,7 @@ using System.Linq;
 namespace NewWpfImageViewer.ClassDir
 {
     /// <summary>
-    /// Класс представляющий папку с изображениями
+    /// Класс папки на панеле Избранных
     /// </summary>
     public class FolderEntity
     {
@@ -27,11 +27,6 @@ namespace NewWpfImageViewer.ClassDir
         public string FolderPath { get; set; }
 
         /// <summary>
-        /// Превью на панеле с папками
-        /// </summary>
-        public Bitmap PreviewImage { get; set; }
-
-        /// <summary>
         /// Путь к изображениями в папке
         /// </summary>
         public List<string> ImagesPaths { get; set; }
@@ -42,36 +37,8 @@ namespace NewWpfImageViewer.ClassDir
             ShownName = name;
             FolderPath = path;
 
-            LoadFoderFiles();
-            GetRandomImageForPreview();
-        }
-
-        /// <summary>
-        /// Пробуем найти в кеше хоть какую-то картинку для превью
-        /// </summary>
-        private void GetRandomImageForPreview()
-        {
-            Random rand = new Random();
-
-            using (ClassDir.CacheFileManager manager = new ClassDir.CacheFileManager())
-            {
-                while (PreviewImage == null)
-                {
-                    try
-                    {
-                        PreviewImage = Bitmap.FromFile(manager.Search(ImagesPaths.ElementAt(rand.Next(0, ImagesPaths.Count - 1)))) as Bitmap;
-                    }
-                    catch (ArgumentNullException)
-                    {
-                        Bitmap flag = new Bitmap(200, 100);
-                        Graphics flagGraphics = Graphics.FromImage(flag);
-
-                        flagGraphics.FillRectangle(Brushes.GhostWhite, 0, 0, 200, 100);
-
-                        PreviewImage = flag;
-                    }
-                }
-            }
+            if (name != null && path != null)
+                LoadFoderFiles();
         }
 
         private void LoadFoderFiles()

@@ -26,16 +26,7 @@ namespace NewWpfImageViewer
         /// </summary>
         private List<ClassDir.AutoStackImage> ImageGallery = new List<ClassDir.AutoStackImage>();
 
-        /// <summary>
-        /// Список папок для выбора
-        /// </summary>
-        private List<ClassDir.FolderEntity> FavoriteList = new List<ClassDir.FolderEntity>();
-
-        /// <summary>
-        /// Скорее всего не понадобится
-        /// </summary>
-        ClassDir.FolderEntity defaultFolder;
-        ClassDir.FolderEntity currentFolder;
+        ClassDir.FavoritePanelManager favoritePanelManager;
 
         public MainWindow()
         {
@@ -44,7 +35,6 @@ namespace NewWpfImageViewer
             // Выбираем дефолтную папку в зависимости от запуска
             {
                 // При первом запуске - дефолтная "Изображения". Создаем список папок, кидаем первой - дефолтную, докидываем остальные и в конец кнопку "ADD"
-                // TODO Нужен конструктор. При добавлении папок нужно будет налету пересобирать очередь
                 if (Properties.Settings.Default.IsFirstLaunch)
                 {
                     Properties.Settings.Default.DefaultDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
@@ -53,24 +43,28 @@ namespace NewWpfImageViewer
 
                     Properties.Settings.Default.Save();
                 }
-
-                defaultFolder = new ClassDir.FolderEntity("Defaulr Folder", Properties.Settings.Default.DefaultDirectory);
-                currentFolder = new ClassDir.FolderEntity("Defaulr Folder", Properties.Settings.Default.DefaultDirectory);
             }
-
-            // Загружаем и отрисовываем картинки для дефолтной папки
-            // Отрисовывается на Window_Loaded
-            LoadFolderToGallery(defaultFolder.ImagesPaths);
+            
+            favoritePanelManager = new ClassDir.FavoritePanelManager(Properties.Settings.Default.ProgramDataFolder, "_favorites");
+            favoritePanelManager.SelectedFolderChanged += FavoritePanelManager_SelectedFolderChanged;
 
             // Отрисовываем коллекцию добавленых папок в Фэйворитс
             {
-                FirstInit();
                 FavoritesConstructor();
             }
-            
+
+            // Отрисовывается на Window_Loaded
+            LoadFolderToGallery(favoritePanelManager.CurrentFolder.ImagesPaths);
+
             // Пока все. Папки нарисованы, дефолтная показана, остальные показаны, интерфейс готов
             
             _resizeTimer.Tick += _resizeTimer_Tick;
+        }
+
+        private void FavoritePanelManager_SelectedFolderChanged(ClassDir.FolderEntity folder)
+        {
+            LoadFolderToGallery(favoritePanelManager.CurrentFolder.ImagesPaths);
+            LoadImagesOnBoard();
         }
 
         private void FavoritesConstructor()
@@ -78,28 +72,10 @@ namespace NewWpfImageViewer
             // Отчистиили панель
             FavoriteStackPanel.Children.Clear();
 
-            var fldr = defaultFolder.GetControl();
-            fldr.Mouse_Click += Fldr_Mouse_Click;
-            FavoriteStackPanel.Children.Add(fldr);
-
-            foreach (var item in FavoriteList)
+            foreach (var item in favoritePanelManager.ButtonsCollection)
             {
-                var folderToAdd = item.GetControl();
-                folderToAdd.Mouse_Click += Fldr_Mouse_Click;
-
-                FavoriteStackPanel.Children.Add(folderToAdd);
+                FavoriteStackPanel.Children.Add(item);
             }
-
-            Forms.Favorites.AddFolderButton addFolder = new Forms.Favorites.AddFolderButton();
-            addFolder.Mouse_Click += AddFolder_Mouse_Click;
-
-            FavoriteStackPanel.Children.Add(addFolder);
-        }
-
-        private void FirstInit()
-        {
-            var fldr2 = new ClassDir.FolderEntity("Вторая папочка", @"C:\Users\makarov\Pictures\Saved Pictures");
-            FavoriteList.Add(fldr2);
         }
 
         /// <summary>
@@ -189,9 +165,9 @@ namespace NewWpfImageViewer
 
         private void Fldr_Mouse_Click(object sender, RoutedEventArgs e)
         {
-            currentFolder = sender as ClassDir.FolderEntity;
-            LoadFolderToGallery(currentFolder.ImagesPaths);
-            LoadImagesOnBoard();
+            //currentFolder = sender as ClassDir.FolderEntity;
+            //LoadFolderToGallery(currentFolder.ImagesPaths);
+            //LoadImagesOnBoard();
         }
 
         private void AddFolder_Mouse_Click(object sender, RoutedEventArgs e)
