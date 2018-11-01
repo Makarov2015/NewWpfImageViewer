@@ -31,7 +31,6 @@ namespace NewWpfImageViewer.Forms.Favorites
         private void AddButton_Click(object sender, RoutedEventArgs e)
         {
             Mouse_Click(sender, e);
-            MessageBox.Show("Что-то добавляем!");
         }
     }
 }

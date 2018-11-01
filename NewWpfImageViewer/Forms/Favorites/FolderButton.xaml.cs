@@ -26,12 +26,20 @@ namespace NewWpfImageViewer.Forms
 
         private FolderEntity folder = null;
 
-        public FolderButton(FolderEntity entity)
+        public FolderButton(FolderEntity entity, string previeFilePath, bool IsSelected)
         {
             InitializeComponent();
 
             folder = entity;
             NameLabel.Content = entity.ShownName;
+
+            if (System.IO.File.Exists(previeFilePath))
+                PreviewImage.Source = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap((System.Drawing.Bitmap.FromFile(previeFilePath) as System.Drawing.Bitmap).GetHbitmap(), IntPtr.Zero, System.Windows.Int32Rect.Empty, null);
+
+            if(IsSelected)
+                NamePlate.Background = Brushes.Coral;
+            else
+                NamePlate.Background = Brushes.CadetBlue;
         }
 
         private void MainButton_Click(object sender, RoutedEventArgs e)

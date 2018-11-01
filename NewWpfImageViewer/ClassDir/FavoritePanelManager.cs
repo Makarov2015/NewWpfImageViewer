@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace NewWpfImageViewer.ClassDir
 {
@@ -40,10 +41,12 @@ namespace NewWpfImageViewer.ClassDir
             }
             set
             {
-                if (_currentFolder != null)
-                    SelectedFolderChanged(_currentFolder);
+                bool n = _currentFolder != null;
 
                 _currentFolder = value;
+
+                if (n)
+                    SelectedFolderChanged(_currentFolder);
             }
         }
 
@@ -60,7 +63,7 @@ namespace NewWpfImageViewer.ClassDir
                 return addBtn;
             }
         }
-
+        
         /// <summary>
         /// Возвращает коллекцию элементов для добавления на панель
         /// </summary>
@@ -97,9 +100,20 @@ namespace NewWpfImageViewer.ClassDir
         public delegate void FavoriteFolderSelectionHandler(FolderEntity folder);
         public event FavoriteFolderSelectionHandler SelectedFolderChanged;
 
+        public delegate void FavoriteFolderAddedHandler();
+        public event FavoriteFolderAddedHandler NewFavoriteFolderAdded;
+
         private void FavoriteFolder_Mouse_Click(object sender, System.Windows.RoutedEventArgs e)
         {
-            CurrentFolder = sender as FolderEntity;
+            var obj = sender as FolderEntity;
+            obj.IsSelected = true;
+
+
+            if (sender == CurrentFolder)
+                return;
+
+            CurrentFolder.IsSelected = false;
+            CurrentFolder = obj;
         }
 
         private void AddFavoriteFolder_Mouse_Click(object sender, System.Windows.RoutedEventArgs e)
@@ -112,6 +126,7 @@ namespace NewWpfImageViewer.ClassDir
                 {
                     FavoriteFolderEntities.Add(new FolderEntity(new System.IO.DirectoryInfo(dialog.SelectedPath).Name, dialog.SelectedPath));
                     SaveToFile();
+                    NewFavoriteFolderAdded();
                 }
             }
         }

@@ -26,6 +26,31 @@ namespace NewWpfImageViewer.ClassDir
         /// </summary>
         public string FolderPath { get; set; }
 
+        private bool _isSelected;
+        public bool IsSelected
+        {
+            get
+            {
+                return _isSelected;
+            }
+            set
+            {
+                if (_button != null)
+                {
+                    if (value == true)
+                    {
+                        _button.NamePlate.Background = System.Windows.Media.Brushes.Coral;
+                        _isSelected = true;
+                    }
+                    else
+                    {
+                        _button.NamePlate.Background = System.Windows.Media.Brushes.CadetBlue;
+                        _isSelected = false;
+                    }
+                }
+            }
+        }
+
         /// <summary>
         /// Путь к изображениями в папке
         /// </summary>
@@ -51,13 +76,21 @@ namespace NewWpfImageViewer.ClassDir
             }
         }
 
+        private FolderButton _button;
+
         /// <summary>
         /// Готовый контрол для отображения папки с превью
         /// </summary>
         /// <returns></returns>
         public FolderButton GetControl()
         {
-            return new FolderButton(this);
+            Random rand = new Random();
+            CacheFileManager manager = new CacheFileManager();
+
+            if (_button == null)
+                _button = new FolderButton(this, manager.Search(ImagesPaths.ElementAt(rand.Next(0, ImagesPaths.Count - 1))), IsSelected);
+
+            return _button;
         }
     }
 }

@@ -48,19 +48,19 @@
                 <Button x:Name="BigSizeButton" Content="⧠" Margin="5,5,0,5" BorderThickness="0" Background="Transparent" Width="20" Height="Auto" HorizontalAlignment="Left" FontSize="14" FontFamily="Segoe WP Semibold" Click="BigSizeButton_Click"/>
             </StackPanel>
         </Grid>
-        <Grid  Grid.Row="2" Background="AntiqueWhite">
-            <Expander Padding="75,0,75,1" Header="Favorite" HorizontalAlignment="Stretch" Height="auto" VerticalAlignment="Stretch" Width="Auto" IsExpanded="False" Margin="-1, 0, -1, -1">
-                <Grid Background="LightGray">
+        <Grid  x:Name="ExpanderGrid" Grid.Row="2" Background="AntiqueWhite" MouseDown="ExpanderGrid_MouseDown">
+            <Expander x:Name="FavoitesExpander" Padding="75,15,75,15" Header="Favorite" HorizontalAlignment="Stretch" Height="auto" VerticalAlignment="Stretch" Width="Auto" IsExpanded="False" Margin="-1, 0, -1, -1">
+                <Grid Margin="0, -20, 0 ,0" Background="LightGray">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="150"/>
                     </Grid.RowDefinitions>
-                    <StackPanel x:Name="FavoriteStackPanel" Orientation="Horizontal" HorizontalAlignment="Stretch" Height="auto" Margin="0" VerticalAlignment="Stretch" Width="auto">
-                       
-                    </StackPanel>
+                    <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Hidden" PreviewMouseWheel="ScrollViewer_PreviewMouseWheel">
+                        <StackPanel x:Name="FavoriteStackPanel" Orientation="Horizontal" HorizontalAlignment="Stretch" Height="auto" Margin="0" VerticalAlignment="Stretch" Width="auto"/>
+                    </ScrollViewer>
                 </Grid>
             </Expander>
         </Grid>
-        <Grid Grid.Row="3"  Background="LightBlue">
+        <Grid Grid.Row="3" Background="SlateGray" >
             <ScrollViewer x:Name="MainScrollViewer" Grid.RowSpan="2" VerticalScrollBarVisibility="Hidden" HorizontalAlignment="Stretch" Height="Auto" VerticalAlignment="Stretch" Width="Auto"  Margin="0" Grid.ColumnSpan="2" Padding="75, 0, 75, 0" >
                 <WrapPanel x:Name="MainWrapPanel" HorizontalAlignment="Stretch" Height="Auto" VerticalAlignment="Stretch" Width="Auto">
                 </WrapPanel>

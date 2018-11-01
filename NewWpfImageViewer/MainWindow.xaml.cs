@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace NewWpfImageViewer
 {
@@ -47,7 +48,7 @@ namespace NewWpfImageViewer
             
             favoritePanelManager = new ClassDir.FavoritePanelManager(Properties.Settings.Default.ProgramDataFolder, "_favorites");
             favoritePanelManager.SelectedFolderChanged += FavoritePanelManager_SelectedFolderChanged;
-
+            favoritePanelManager.NewFavoriteFolderAdded += FavoritePanelManager_NewFavoriteFolderAdded;
             // Отрисовываем коллекцию добавленых папок в Фэйворитс
             {
                 FavoritesConstructor();
@@ -59,6 +60,11 @@ namespace NewWpfImageViewer
             // Пока все. Папки нарисованы, дефолтная показана, остальные показаны, интерфейс готов
             
             _resizeTimer.Tick += _resizeTimer_Tick;
+        }
+
+        private void FavoritePanelManager_NewFavoriteFolderAdded()
+        {
+            FavoritesConstructor();
         }
 
         private void FavoritePanelManager_SelectedFolderChanged(ClassDir.FolderEntity folder)
@@ -173,6 +179,22 @@ namespace NewWpfImageViewer
         private void AddFolder_Mouse_Click(object sender, RoutedEventArgs e)
         {
             throw new NotImplementedException();
+        }
+
+        private void ScrollViewer_PreviewMouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
+        {
+            ScrollViewer scrollviewer = sender as ScrollViewer;
+
+            if (e.Delta > 0)
+                scrollviewer.PageLeft();
+            else
+                scrollviewer.PageRight();
+            e.Handled = true;
+        }
+
+        private void ExpanderGrid_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            FavoitesExpander.IsExpanded = !FavoitesExpander.IsExpanded;
         }
     }
 }
