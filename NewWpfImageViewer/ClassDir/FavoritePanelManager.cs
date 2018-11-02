@@ -144,16 +144,22 @@ namespace NewWpfImageViewer.ClassDir
             if (File.Exists(FavoriteFileDirectory))
             {
                 FavoriteFolderEntities = JsonConvert.DeserializeObject<List<FolderEntity>>(Encoding.UTF8.GetString(File.ReadAllBytes(FavoriteFileDirectory)));
+
+                foreach (var item in FavoriteFolderEntities)
+                {
+                    item.LoadFoderFiles();
+                }
             }
             // Если файла нет - создаем первую папку в коллекции = дефолтной папке
             else
             {
                 FavoriteFolderEntities = new List<FolderEntity>
                 {
-                    new FolderEntity("Изображения", Properties.Settings.Default.DefaultDirectory, true)
+                    new FolderEntity("Изображения", Properties.Settings.Default.DefaultDirectory)
                 };
-                SaveToFile();
             }
+
+            SaveToFile();
 
             CurrentFolder = FavoriteFolderEntities.First();
         }

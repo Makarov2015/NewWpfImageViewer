@@ -20,8 +20,9 @@
             <Setter Property="Control.HorizontalAlignment"  Value="Right" />
             <Setter Property="Control.VerticalAlignment"  Value="Top" />
         </Style>
+        <SolidColorBrush x:Name="TransparentBlack" x:Key="TransparentBlack" Color="Black" Opacity="0.75" />
     </Window.Resources>
-    <Grid>
+    <Grid x:Name="MainGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="50"/>
             <RowDefinition Height="30" />
@@ -32,7 +33,7 @@
             <TextBox x:Name="SearchTextBox" BorderBrush="Transparent" Padding="5,0,15,0" HorizontalContentAlignment="Left" VerticalContentAlignment="Center" HorizontalAlignment="Left" Height="30" Margin="75,10,0,0" TextWrapping="Wrap" Text="Search" VerticalAlignment="Top" Width="342"/>
             <Button Content="· · ·" FontSize="14"  Style="{StaticResource BlackAndWhite}"/>
             <Button Content="⌂" FontSize="16" Margin="0,0,50,0"  Style="{StaticResource BlackAndWhite}"/>
-            <Button Content="🕮" FontSize="16" Margin="0,0,100,0" Style="{StaticResource BlackAndWhite}" Click="Button_Click"/>
+            <Button Content="🕮" FontSize="16" Margin="0,0,100,0" Style="{StaticResource BlackAndWhite}"/>
         </Grid>
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
@@ -49,7 +50,7 @@
             </StackPanel>
         </Grid>
         <Grid  x:Name="ExpanderGrid" Grid.Row="2" Background="AntiqueWhite" MouseDown="ExpanderGrid_MouseDown">
-            <Expander x:Name="FavoitesExpander" Padding="75,15,75,15" Header="Favorite" HorizontalAlignment="Stretch" Height="auto" VerticalAlignment="Stretch" Width="Auto" IsExpanded="False" Margin="-1, 0, -1, -1">
+            <Expander x:Name="FavoitesExpander" Padding="10" Header="Favorite" HorizontalAlignment="Stretch" Height="auto" VerticalAlignment="Stretch" Width="Auto" IsExpanded="False" Margin="-1, 0, -1, -1">
                 <Grid Margin="0, -20, 0 ,0" Background="LightGray">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="150"/>

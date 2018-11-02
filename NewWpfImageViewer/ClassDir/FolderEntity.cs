@@ -12,11 +12,6 @@ namespace NewWpfImageViewer.ClassDir
     public class FolderEntity
     {
         /// <summary>
-        /// Маркер, является ли данная папка - папкой по умолчанию
-        /// </summary>
-        public bool IsDfault { get; }
-
-        /// <summary>
         /// Отображаемое имя на панеле с папками
         /// </summary>
         public string ShownName { get; set; }
@@ -56,9 +51,8 @@ namespace NewWpfImageViewer.ClassDir
         /// </summary>
         public List<string> ImagesPaths { get; set; }
 
-        public FolderEntity(string name, string path, bool @default = false)
+        public FolderEntity(string name, string path)
         {
-            IsDfault = @default;
             ShownName = name;
             FolderPath = path;
 
@@ -66,14 +60,10 @@ namespace NewWpfImageViewer.ClassDir
                 LoadFoderFiles();
         }
 
-        private void LoadFoderFiles()
+        public void LoadFoderFiles()
         {
             ImagesPaths = new List<string>();
-
-            foreach (var item in System.IO.Directory.GetFiles(FolderPath).Where(x => x.EndsWith(".gif") || x.EndsWith(".jpeg") || x.EndsWith(".jpg")))
-            {
-                ImagesPaths.Add(item);
-            }
+            ImagesPaths = System.IO.Directory.GetFiles(FolderPath).Where(x => x.EndsWith(".gif") || x.EndsWith(".jpeg") || x.EndsWith(".jpg")).ToList();
         }
 
         private FolderButton _button;
@@ -87,8 +77,10 @@ namespace NewWpfImageViewer.ClassDir
             Random rand = new Random();
             CacheFileManager manager = new CacheFileManager();
 
-            if (_button == null)
+            if (_button == null && ImagesPaths.Count != 0)
                 _button = new FolderButton(this, manager.Search(ImagesPaths.ElementAt(rand.Next(0, ImagesPaths.Count - 1))), IsSelected);
+            else
+                _button = new FolderButton(this, null, IsSelected);
 
             return _button;
         }

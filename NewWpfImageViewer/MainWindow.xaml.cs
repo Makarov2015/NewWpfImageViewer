@@ -29,6 +29,8 @@ namespace NewWpfImageViewer
 
         ClassDir.FavoritePanelManager favoritePanelManager;
 
+        private Grid PrevieRectangle;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -45,7 +47,7 @@ namespace NewWpfImageViewer
                     Properties.Settings.Default.Save();
                 }
             }
-            
+
             favoritePanelManager = new ClassDir.FavoritePanelManager(Properties.Settings.Default.ProgramDataFolder, "_favorites");
             favoritePanelManager.SelectedFolderChanged += FavoritePanelManager_SelectedFolderChanged;
             favoritePanelManager.NewFavoriteFolderAdded += FavoritePanelManager_NewFavoriteFolderAdded;
@@ -58,8 +60,29 @@ namespace NewWpfImageViewer
             LoadFolderToGallery(favoritePanelManager.CurrentFolder.ImagesPaths);
 
             // Пока все. Папки нарисованы, дефолтная показана, остальные показаны, интерфейс готов
-            
+
             _resizeTimer.Tick += _resizeTimer_Tick;
+        }
+
+        #region Search
+
+        #endregion
+
+        #region Collection
+
+        #endregion
+
+        #region Favorite
+
+        private void FavoritesConstructor()
+        {
+            // Отчистиили панель
+            FavoriteStackPanel.Children.Clear();
+
+            foreach (var item in favoritePanelManager.ButtonsCollection)
+            {
+                FavoriteStackPanel.Children.Add(item);
+            }
         }
 
         private void FavoritePanelManager_NewFavoriteFolderAdded()
@@ -73,16 +96,25 @@ namespace NewWpfImageViewer
             LoadImagesOnBoard();
         }
 
-        private void FavoritesConstructor()
+        private void ScrollViewer_PreviewMouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
         {
-            // Отчистиили панель
-            FavoriteStackPanel.Children.Clear();
+            ScrollViewer scrollviewer = sender as ScrollViewer;
 
-            foreach (var item in favoritePanelManager.ButtonsCollection)
-            {
-                FavoriteStackPanel.Children.Add(item);
-            }
+            if (e.Delta > 0)
+                scrollviewer.PageLeft();
+            else
+                scrollviewer.PageRight();
+            e.Handled = true;
         }
+
+        private void ExpanderGrid_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            FavoitesExpander.IsExpanded = !FavoitesExpander.IsExpanded;
+        }
+
+        #endregion
+
+        #region Images
 
         /// <summary>
         /// Создаем список сущностей изображений из выбранной (текущей) папки
@@ -113,6 +145,9 @@ namespace NewWpfImageViewer
         /// <param name="autoStacks"></param>
         private void LoadImagesOnBoard()
         {
+            if (ImageGallery.Count == 0)
+                return;
+
             MainWrapPanel.Children.Clear();
 
             foreach (var item in ImageGallery)
@@ -124,26 +159,10 @@ namespace NewWpfImageViewer
 
             foreach (var item in ImageGallery)
             {
-                MainWrapPanel.Children.Add(item.ImageControl);
+                var img = item.ImageControl;
+                img.MouseUp += Img_MouseUp;
+                MainWrapPanel.Children.Add(img);
             }
-        }
-
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-            LoadImagesOnBoard();
-        }
-
-        private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            _resizeTimer.IsEnabled = true;
-            _resizeTimer.Stop();
-            _resizeTimer.Start();
-        }
-
-        void _resizeTimer_Tick(object sender, EventArgs e)
-        {
-            _resizeTimer.IsEnabled = false;
-            LoadImagesOnBoard();
         }
 
         private void SmallSizeButton_Click(object sender, RoutedEventArgs e)
@@ -164,37 +183,54 @@ namespace NewWpfImageViewer
             LoadImagesOnBoard();
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
+        #endregion
 
+        #region ImagePrevie
+
+        private void Img_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (PrevieRectangle != null)
+                return;
+
+            var autoStackImage = ImageGallery.First(x => x.ImageControl == sender);
+
+            PrevieRectangle = new Grid
+            {
+                Visibility = Visibility.Visible,
+                Background = this.Resources["TransparentBlack"] as System.Windows.Media.Brush
+            };
+
+            PrevieRectangle.Children.Add(new Image { Source = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap((System.Drawing.Bitmap.FromFile(autoStackImage.OriginalFilepath) as System.Drawing.Bitmap).GetHbitmap(), IntPtr.Zero, System.Windows.Int32Rect.Empty, null), Margin = new Thickness(50), Width = Double.NaN, Height = Double.NaN, Opacity = 1 });
+            PrevieRectangle.MouseUp += PrevieRectangle_MouseRightButtonUp;
+
+            Grid.SetRowSpan(PrevieRectangle, 4);
+            MainGrid.Children.Add(PrevieRectangle);
         }
 
-        private void Fldr_Mouse_Click(object sender, RoutedEventArgs e)
+        private void PrevieRectangle_MouseRightButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            //currentFolder = sender as ClassDir.FolderEntity;
-            //LoadFolderToGallery(currentFolder.ImagesPaths);
-            //LoadImagesOnBoard();
+            MainGrid.Children.Remove(PrevieRectangle);
+            PrevieRectangle = null;
         }
 
-        private void AddFolder_Mouse_Click(object sender, RoutedEventArgs e)
+        #endregion
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            throw new NotImplementedException();
+            LoadImagesOnBoard();
         }
 
-        private void ScrollViewer_PreviewMouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
+        private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            ScrollViewer scrollviewer = sender as ScrollViewer;
-
-            if (e.Delta > 0)
-                scrollviewer.PageLeft();
-            else
-                scrollviewer.PageRight();
-            e.Handled = true;
+            _resizeTimer.IsEnabled = true;
+            _resizeTimer.Stop();
+            _resizeTimer.Start();
         }
 
-        private void ExpanderGrid_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        void _resizeTimer_Tick(object sender, EventArgs e)
         {
-            FavoitesExpander.IsExpanded = !FavoitesExpander.IsExpanded;
+            _resizeTimer.IsEnabled = false;
+            LoadImagesOnBoard();
         }
     }
 }

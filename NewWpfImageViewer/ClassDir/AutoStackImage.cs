@@ -90,12 +90,15 @@ namespace NewWpfImageViewer.ClassDir
         /// </summary>
         public Size CurrentSize { get; set; }
 
+        public string OriginalFilepath { get; }
+
         /// <summary>
         /// Конструктор через файл
         /// </summary>
         /// <param name="ImgPath">Путь к файлу</param>
         public AutoStackImage(string ImgPath)
         {
+            OriginalFilepath = ImgPath;
             MaxSizedImage = ResizeImage(ImgPath);
             imageControl = new Control.Image { Source = GetSource(this.MaxSizedImage as Drawing.Bitmap), Width = this.Width, Height = this.Height, Margin = new System.Windows.Thickness(5), Stretch = System.Windows.Media.Stretch.UniformToFill, StretchDirection = Control.StretchDirection.Both };
         }
@@ -104,12 +107,13 @@ namespace NewWpfImageViewer.ClassDir
         /// Констуктор через кеш
         /// </summary>
         /// <param name="cachedImage">Ресайзнутое изображение</param>
-        public AutoStackImage(Drawing.Image cachedImage)
+        public AutoStackImage(Drawing.Image cachedImage, string Original)
         {
             // Без этого юзинга память не чистится
             using(cachedImage)
                 MaxSizedImage = new Drawing.Bitmap(cachedImage);
 
+            OriginalFilepath = Original;
             imageControl = new Control.Image { Source = GetSource(this.MaxSizedImage as Drawing.Bitmap), Width = this.Width, Height = this.Height, Margin = new System.Windows.Thickness(5), Stretch = System.Windows.Media.Stretch.UniformToFill, StretchDirection = Control.StretchDirection.Both };
         }
 

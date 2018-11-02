@@ -73,7 +73,7 @@ namespace NewWpfImageViewer.ClassDir
         {
             if (Search(pathToFile, out string findPath))
             {
-                return new AutoStackImage(ByteArrayToImage(File.ReadAllBytes(CacheFolder + findPath)));
+                return new AutoStackImage(ByteArrayToImage(File.ReadAllBytes(CacheFolder + findPath)), pathToFile);
             }
             else
             {
@@ -89,12 +89,12 @@ namespace NewWpfImageViewer.ClassDir
 
         private bool Search(string path, out string name)
         {
-            try
+            if (CacheDictionary.Any(x => x.Key == path))
             {
                 name = CacheDictionary.Where(x => x.Key == path).First().Value;
                 return true;
             }
-            catch (Exception)
+            else
             {
                 name = null;
                 return false;
