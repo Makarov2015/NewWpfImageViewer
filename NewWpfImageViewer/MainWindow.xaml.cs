@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media.Imaging;
 
 namespace NewWpfImageViewer
 {
@@ -30,6 +31,7 @@ namespace NewWpfImageViewer
         ClassDir.FavoritePanelManager favoritePanelManager;
 
         private Grid PrevieRectangle;
+        private BitmapSource PreviewSource;
 
         public MainWindow()
         {
@@ -199,8 +201,10 @@ namespace NewWpfImageViewer
                 Visibility = Visibility.Visible,
                 Background = this.Resources["TransparentBlack"] as System.Windows.Media.Brush
             };
+            
+            PreviewSource = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap((System.Drawing.Bitmap.FromFile(autoStackImage.OriginalFilepath) as System.Drawing.Bitmap).GetHbitmap(), IntPtr.Zero, System.Windows.Int32Rect.Empty, null);
 
-            PrevieRectangle.Children.Add(new Image { Source = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap((System.Drawing.Bitmap.FromFile(autoStackImage.OriginalFilepath) as System.Drawing.Bitmap).GetHbitmap(), IntPtr.Zero, System.Windows.Int32Rect.Empty, null), Margin = new Thickness(50), Width = Double.NaN, Height = Double.NaN, Opacity = 1 });
+            PrevieRectangle.Children.Add(new Image { Source = PreviewSource, Margin = new Thickness(50), Width = Double.NaN, Height = Double.NaN, Opacity = 1 });
             PrevieRectangle.MouseUp += PrevieRectangle_MouseRightButtonUp;
 
             Grid.SetRowSpan(PrevieRectangle, 4);
@@ -210,7 +214,19 @@ namespace NewWpfImageViewer
         private void PrevieRectangle_MouseRightButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             MainGrid.Children.Remove(PrevieRectangle);
+
+            PreviewSource.Freeze();
+
+            PrevieRectangle.Children.Clear();
             PrevieRectangle = null;
+            GC.Collect();
+            
+            System.Threading.Thread thread = new System.Threading.Thread(new System.Threading.ThreadStart(delegate
+            {
+                System.Threading.Thread.Sleep(500);
+                GC.Collect();
+            }));
+            thread.Start();
         }
 
         #endregion

@@ -5,8 +5,13 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
              d:DesignHeight="150" d:DesignWidth="300">
-    <Grid>
-        <Button x:Name="MainButton" Width="290" Padding="0" Margin="5" BorderThickness="0" Click="MainButton_Click">
+    <Control.Resources>
+        <SolidColorBrush x:Name="TransparentWhite" x:Key="TransparentWhite" Color="White" Opacity="0.60" />
+        <SolidColorBrush x:Name="TransparentHoverWhite" x:Key="TransparentHoverWhite" Color="White" Opacity="0.80" />
+    </Control.Resources>
+    <Grid x:Name="FolderButtonGrid" MouseEnter="FolderButtonGrid_MouseEnter" MouseLeave="FolderButtonGrid_MouseLeave">
+        <Button x:Name="DeledeFolderButton" Visibility="Hidden" Panel.ZIndex="1" Background="Transparent" Width="35" Height="35" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="5" Content="⛌" FontSize="25" BorderThickness="0" Click="DeledeFolderButton_Click" />
+        <Button Panel.ZIndex="0" x:Name="MainButton" Width="290" Padding="0" Margin="5" BorderThickness="0" Click="MainButton_Click">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="95"/>

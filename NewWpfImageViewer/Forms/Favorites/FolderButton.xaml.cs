@@ -46,5 +46,22 @@ namespace NewWpfImageViewer.Forms
         {
             Mouse_Click(folder, e);
         }
+
+        private void FolderButtonGrid_MouseEnter(object sender, MouseEventArgs e)
+        {
+            DeledeFolderButton.Visibility = Visibility.Visible;
+            DeledeFolderButton.Background = this.Resources["TransparentWhite"] as System.Windows.Media.Brush;
+        }
+
+        private void FolderButtonGrid_MouseLeave(object sender, MouseEventArgs e)
+        {
+            DeledeFolderButton.Visibility = Visibility.Hidden;
+            DeledeFolderButton.Background = System.Windows.Media.Brushes.Transparent;
+        }
+
+        private void DeledeFolderButton_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("Удаляшки!");
+        }
     }
 }
