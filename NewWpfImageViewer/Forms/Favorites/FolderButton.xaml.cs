@@ -23,6 +23,7 @@ namespace NewWpfImageViewer.Forms
     {
         public delegate void Mouse_ClickHandler(object sender, RoutedEventArgs e);
         public event Mouse_ClickHandler Mouse_Click;
+        public event Mouse_ClickHandler Delete_Click;
 
         private FolderEntity folder = null;
 
@@ -61,7 +62,7 @@ namespace NewWpfImageViewer.Forms
 
         private void DeledeFolderButton_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Удаляшки!");
+            Delete_Click(folder, e);
         }
     }
 }

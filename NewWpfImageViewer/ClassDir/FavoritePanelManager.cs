@@ -63,7 +63,7 @@ namespace NewWpfImageViewer.ClassDir
                 return addBtn;
             }
         }
-        
+
         /// <summary>
         /// Возвращает коллекцию элементов для добавления на панель
         /// </summary>
@@ -77,6 +77,7 @@ namespace NewWpfImageViewer.ClassDir
                 {
                     var ctrl = item.GetControl();
                     ctrl.Mouse_Click += FavoriteFolder_Mouse_Click;
+                    ctrl.Delete_Click += Ctrl_Delete_Click;
 
                     controls.Add(ctrl);
                 }
@@ -107,8 +108,7 @@ namespace NewWpfImageViewer.ClassDir
         {
             var obj = sender as FolderEntity;
             obj.IsSelected = true;
-
-
+            
             if (sender == CurrentFolder)
                 return;
 
@@ -129,6 +129,13 @@ namespace NewWpfImageViewer.ClassDir
                     NewFavoriteFolderAdded();
                 }
             }
+        }
+
+        private void Ctrl_Delete_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            FavoriteFolderEntities.Remove(sender as FolderEntity);
+            SaveToFile();
+            NewFavoriteFolderAdded();
         }
 
         #endregion
