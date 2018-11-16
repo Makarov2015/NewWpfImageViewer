@@ -162,7 +162,7 @@ namespace NewWpfImageViewer.ClassDir
             {
                 FavoriteFolderEntities = new List<FolderEntity>
                 {
-                    new FolderEntity("Изображения", Properties.Settings.Default.DefaultDirectory)
+                    //new FolderEntity("Изображения", Properties.Settings.Default.DefaultDirectory)
                 };
             }
 

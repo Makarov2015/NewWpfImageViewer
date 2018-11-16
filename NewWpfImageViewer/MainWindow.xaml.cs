@@ -29,6 +29,7 @@ namespace NewWpfImageViewer
         private List<ClassDir.AutoStackImage> ImageGallery = new List<ClassDir.AutoStackImage>();
 
         ClassDir.FavoritePanelManager favoritePanelManager;
+        AlbumClassLibrary.AlbumManager.AlbumsManager albumsManager = new AlbumClassLibrary.AlbumManager.AlbumsManager();
 
         private Grid PrevieRectangle;
         private BitmapSource PreviewSource;
@@ -37,20 +38,7 @@ namespace NewWpfImageViewer
         {
             InitializeComponent();
 
-            // Выбираем дефолтную папку в зависимости от запуска
-            {
-                // При первом запуске - дефолтная "Изображения". Создаем список папок, кидаем первой - дефолтную, докидываем остальные и в конец кнопку "ADD"
-                if (Properties.Settings.Default.IsFirstLaunch)
-                {
-                    Properties.Settings.Default.DefaultDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
-                    Properties.Settings.Default.IsFirstLaunch = false;
-                    Properties.Settings.Default.ProgramDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\NewWpfImageViewer\\";
-
-                    Properties.Settings.Default.Save();
-                }
-            }
-
-            favoritePanelManager = new ClassDir.FavoritePanelManager(Properties.Settings.Default.ProgramDataFolder, "_favorites");
+            //favoritePanelManager = new ClassDir.FavoritePanelManager(Properties.Settings.Default.ProgramDataFolder, "_favorites");
             favoritePanelManager.SelectedFolderChanged += FavoritePanelManager_SelectedFolderChanged;
             favoritePanelManager.NewFavoriteFolderAdded += FavoritePanelManager_NewFavoriteFolderAdded;
             // Отрисовываем коллекцию добавленых папок в Фэйворитс
@@ -125,19 +113,12 @@ namespace NewWpfImageViewer
         {
             ImageGallery = new List<ClassDir.AutoStackImage>();
 
-            using (ClassDir.CacheFileManager manager = new ClassDir.CacheFileManager())
+            using (AlbumClassLibrary.CacheManager.CacheManager manager = new AlbumClassLibrary.CacheManager.CacheManager(Properties.Settings.Default.CacheFilePath))
             {
-                this.Title = "Main Window cache size : " + manager.CacheSize + " Mb";
-
                 foreach (var item in files)
                 {
-                    // imagesPath.Add(new ClassDir.AutoStackImage(item)); // Вариант без кеша
-                    ImageGallery.Add(manager.GetImage(item)); // Вариант с кешем
+                    ImageGallery.Add(new ClassDir.AutoStackImage(manager.GetImage(item), item));
                 }
-
-                manager.SaveDictionary();
-
-                System.Diagnostics.Debug.WriteLine(manager.CacheSize.ToString());
             }
         }
 
@@ -247,6 +228,20 @@ namespace NewWpfImageViewer
         {
             _resizeTimer.IsEnabled = false;
             LoadImagesOnBoard();
+        }
+
+        private void HomeButton_Click(object sender, RoutedEventArgs e)
+        {
+            //using (var dialog = new System.Windows.Forms.FolderBrowserDialog())
+            //{
+            //    System.Windows.Forms.DialogResult result = dialog.ShowDialog();
+
+            //    if (result == System.Windows.Forms.DialogResult.OK)
+            //    {
+            //        Directory.
+            //        var a = dialog.SelectedPath;
+            //    }
+            //}
         }
     }
 }

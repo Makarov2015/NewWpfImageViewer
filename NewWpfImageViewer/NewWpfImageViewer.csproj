@@ -77,7 +77,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ClassDir\AutoStackImage.cs" />
-    <Compile Include="ClassDir\CacheFileManager.cs" />
     <Compile Include="ClassDir\FavoritePanelManager.cs" />
     <Compile Include="Forms\Favorites\AddFolderButton.xaml.cs">
       <DependentUpon>AddFolderButton.xaml</DependentUpon>
@@ -117,6 +116,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AlbumClassLibrary\AlbumClassLibrary.csproj">
+      <Project>{0eb1ddc1-8256-48d1-803e-6c29a0fc6a21}</Project>
+      <Name>AlbumClassLibrary</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

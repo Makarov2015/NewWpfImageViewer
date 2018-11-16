@@ -1,7 +1,6 @@
 ﻿using NewWpfImageViewer.Forms;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 
 namespace NewWpfImageViewer.ClassDir
@@ -74,15 +73,14 @@ namespace NewWpfImageViewer.ClassDir
         /// <returns></returns>
         public FolderButton GetControl()
         {
-            Random rand = new Random();
-            CacheFileManager manager = new CacheFileManager();
+            using (AlbumClassLibrary.CacheManager.CacheManager manager = new AlbumClassLibrary.CacheManager.CacheManager(@"C:\Users\makarov\_cacheDataBase.db"))
+            {
+                Random rand = new Random();
 
-            if (_button == null && ImagesPaths.Count != 0)
-                _button = new FolderButton(this, manager.Search(ImagesPaths.ElementAt(rand.Next(0, ImagesPaths.Count - 1))), IsSelected);
-            else
                 _button = new FolderButton(this, null, IsSelected);
 
-            return _button;
+                return _button;
+            }
         }
     }
 }
