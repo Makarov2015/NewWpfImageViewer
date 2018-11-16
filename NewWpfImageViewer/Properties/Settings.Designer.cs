@@ -25,37 +25,13 @@ namespace NewWpfImageViewer.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool IsFirstLaunch {
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\Users\\makarov\\_cacheDataBase.db")]
+        public string CacheFilePath {
             get {
-                return ((bool)(this["IsFirstLaunch"]));
+                return ((string)(this["CacheFilePath"]));
             }
             set {
-                this["IsFirstLaunch"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string DefaultDirectory {
-            get {
-                return ((string)(this["DefaultDirectory"]));
-            }
-            set {
-                this["DefaultDirectory"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string ProgramDataFolder {
-            get {
-                return ((string)(this["ProgramDataFolder"]));
-            }
-            set {
-                this["ProgramDataFolder"] = value;
+                this["CacheFilePath"] = value;
             }
         }
     }

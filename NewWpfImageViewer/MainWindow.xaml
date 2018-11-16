@@ -33,7 +33,7 @@
             <TextBox x:Name="SearchTextBox" BorderBrush="Transparent" Padding="5,0,15,0" HorizontalContentAlignment="Left" VerticalContentAlignment="Center" HorizontalAlignment="Left" Height="30" Margin="75,10,0,0" TextWrapping="Wrap" Text="Search" VerticalAlignment="Top" Width="342"/>
             <Button Content="· · ·" FontSize="14"  Style="{StaticResource BlackAndWhite}"/>
             <Button Content="⌂" FontSize="16" Margin="0,0,50,0"  Style="{StaticResource BlackAndWhite}"/>
-            <Button Content="🕮" FontSize="16" Margin="0,0,100,0" Style="{StaticResource BlackAndWhite}"/>
+            <Button x:Name="HomeButton" Content="🕮" FontSize="16" Margin="0,0,100,0" Style="{StaticResource BlackAndWhite}" Click="HomeButton_Click"/>
         </Grid>
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
