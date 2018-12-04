@@ -20,7 +20,6 @@
             <Setter Property="Control.HorizontalAlignment"  Value="Right" />
             <Setter Property="Control.VerticalAlignment"  Value="Top" />
         </Style>
-        <SolidColorBrush x:Name="TransparentBlack" x:Key="TransparentBlack" Color="Black" Opacity="0.75" />
     </Window.Resources>
     <Grid x:Name="MainGrid">
         <Grid.RowDefinitions>

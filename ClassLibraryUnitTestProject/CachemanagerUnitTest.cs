@@ -7,7 +7,7 @@ namespace ClassLibraryUnitTestProject
     [TestClass]
     public class CachemanagerUnitTest
     {
-        private string _pathToCacheFolder = @"C:\Users\makarov\AppData\Roaming\NewWpfImageViewer\_cache\";
+        private readonly string _pathToCacheFolder = @"C:\Users\makarov\AppData\Roaming\NewWpfImageViewer\_cache\";
 
         [TestMethod]
         public void OpenGoodFileTest_1()

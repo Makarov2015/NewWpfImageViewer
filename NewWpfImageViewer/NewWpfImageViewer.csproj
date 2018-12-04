@@ -68,6 +68,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Forms\ImagePreview\ImegePreview.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -85,6 +89,9 @@
       <DependentUpon>FolderButton.xaml</DependentUpon>
     </Compile>
     <Compile Include="ClassDir\FolderEntity.cs" />
+    <Compile Include="Forms\ImagePreview\ImegePreview.xaml.cs">
+      <DependentUpon>ImegePreview.xaml</DependentUpon>
+    </Compile>
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
