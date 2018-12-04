@@ -29,13 +29,18 @@ namespace NewWpfImageViewer
         private List<ClassDir.AutoStackImage> ImageGallery = new List<ClassDir.AutoStackImage>();
 
         ClassDir.FavoritePanelManager favoritePanelManager;
-        AlbumClassLibrary.AlbumManager.AlbumsManager albumsManager = new AlbumClassLibrary.AlbumManager.AlbumsManager();
+        //AlbumClassLibrary.AlbumManager.AlbumsManager albumsManager = new AlbumClassLibrary.AlbumManager.AlbumsManager();
+
+        private Grid PrevieRectangle;
+        private BitmapSource PreviewSource;
 
         public MainWindow()
         {
             InitializeComponent();
 
-            favoritePanelManager = new ClassDir.FavoritePanelManager(@"C:\Users\makarov\AppData\Roaming\NewWpfImageViewer\", "_favorites");
+            AlbumClassLibrary.AlbumManager.AlbumsManager albumsManager = new AlbumClassLibrary.AlbumManager.AlbumsManager(Properties.Settings.Default.CacheFilePath);
+
+            favoritePanelManager = new ClassDir.FavoritePanelManager(@"C:\Users\user\AppData\Roaming\NewWpfImageViewer\", "_favorites");
             favoritePanelManager.SelectedFolderChanged += FavoritePanelManager_SelectedFolderChanged;
             favoritePanelManager.NewFavoriteFolderAdded += FavoritePanelManager_NewFavoriteFolderAdded;
             // Отрисовываем коллекцию добавленых папок в Фэйворитс
@@ -169,35 +174,41 @@ namespace NewWpfImageViewer
 
         private void Img_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            if (MainGrid.Children.Cast<object>().Any(x => x.GetType() == typeof(Forms.ImagePreview.ImegePreview)))
+            if (PrevieRectangle != null)
                 return;
 
-            var preview = new Forms.ImagePreview.ImegePreview(ImageGallery, ImageGallery.IndexOf(ImageGallery.First(x => x.ImageControl == sender)));
+            var autoStackImage = ImageGallery.First(x => x.ImageControl == sender);
 
-            preview.Close += Preview_Close;
+            PrevieRectangle = new Grid
+            {
+                Visibility = Visibility.Visible,
+                Background = this.Resources["TransparentBlack"] as System.Windows.Media.Brush
+            };
+            
+            PreviewSource = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap((System.Drawing.Bitmap.FromFile(autoStackImage.OriginalFilepath) as System.Drawing.Bitmap).GetHbitmap(), IntPtr.Zero, System.Windows.Int32Rect.Empty, null);
 
-            Grid.SetRowSpan(preview, 4);
-            MainGrid.Children.Add(preview);
+            PrevieRectangle.Children.Add(new Image { Source = PreviewSource, Margin = new Thickness(50), Width = Double.NaN, Height = Double.NaN, Opacity = 1 });
+            PrevieRectangle.MouseUp += PrevieRectangle_MouseRightButtonUp;
+
+            Grid.SetRowSpan(PrevieRectangle, 4);
+            MainGrid.Children.Add(PrevieRectangle);
         }
 
-        private void Preview_Close(object sender, EventArgs e)
+        private void PrevieRectangle_MouseRightButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            MainGrid.Children.Remove(sender as Forms.ImagePreview.ImegePreview);
+            MainGrid.Children.Remove(PrevieRectangle);
 
-            (sender as Forms.ImagePreview.ImegePreview).MainImage.Source.Freeze();
+            PreviewSource.Freeze();
 
-            (sender as Forms.ImagePreview.ImegePreview).MainGrid.Children.Clear();
-            (sender as Forms.ImagePreview.ImegePreview).MainGrid = null;
-            (sender as Forms.ImagePreview.ImegePreview).MainImage = null;
-
+            PrevieRectangle.Children.Clear();
+            PrevieRectangle = null;
             GC.Collect();
-
+            
             System.Threading.Thread thread = new System.Threading.Thread(new System.Threading.ThreadStart(delegate
             {
                 System.Threading.Thread.Sleep(500);
                 GC.Collect();
             }));
-
             thread.Start();
         }
 

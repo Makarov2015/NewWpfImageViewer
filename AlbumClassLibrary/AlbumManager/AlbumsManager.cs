@@ -8,6 +8,25 @@ namespace AlbumClassLibrary.AlbumManager
 {
     public class AlbumsManager
     {
-        public List<Album> Albums { get; set; }
+        public List<Folder> Folders { get; set; }
+        private string _dataBaseFilePath { get; }
+
+        public AlbumsManager(string dataBaseFilePath)
+        {
+            _dataBaseFilePath = dataBaseFilePath;
+
+            using (DataBaseController controller = new DataBaseController(_dataBaseFilePath))
+            {
+                Folders = controller.FoldersSearch();
+            }
+        }
+
+        public void AddFolder()
+        {
+            using (DataBaseController controller = new DataBaseController(_dataBaseFilePath))
+            {
+                controller.FolderAdd();
+            }
+        }
     }
 }
