@@ -29,13 +29,13 @@ namespace NewWpfImageViewer
         private List<ClassDir.AutoStackImage> ImageGallery = new List<ClassDir.AutoStackImage>();
 
         ClassDir.FavoritePanelManager favoritePanelManager;
-        AlbumClassLibrary.AlbumManager.AlbumsManager albumsManager = new AlbumClassLibrary.AlbumManager.AlbumsManager();
+        //AlbumClassLibrary.AlbumManager.AlbumsManager albumsManager = new AlbumClassLibrary.AlbumManager.AlbumsManager();
 
         public MainWindow()
         {
             InitializeComponent();
 
-            favoritePanelManager = new ClassDir.FavoritePanelManager(@"C:\Users\makarov\AppData\Roaming\NewWpfImageViewer\", "_favorites");
+            favoritePanelManager = new ClassDir.FavoritePanelManager(@"C:\Users\user\AppData\Roaming\NewWpfImageViewer\", "_favorites");
             favoritePanelManager.SelectedFolderChanged += FavoritePanelManager_SelectedFolderChanged;
             favoritePanelManager.NewFavoriteFolderAdded += FavoritePanelManager_NewFavoriteFolderAdded;
             // Отрисовываем коллекцию добавленых папок в Фэйворитс
