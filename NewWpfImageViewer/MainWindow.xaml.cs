@@ -29,7 +29,7 @@ namespace NewWpfImageViewer
         private List<ClassDir.AutoStackImage> ImageGallery = new List<ClassDir.AutoStackImage>();
 
         ClassDir.FavoritePanelManager favoritePanelManager;
-        AlbumClassLibrary.AlbumManager.AlbumsManager albumsManager = new AlbumClassLibrary.AlbumManager.AlbumsManager();
+        //AlbumClassLibrary.AlbumManager.AlbumsManager albumsManager = new AlbumClassLibrary.AlbumManager.AlbumsManager();
 
         private Grid PrevieRectangle;
         private BitmapSource PreviewSource;
@@ -38,7 +38,9 @@ namespace NewWpfImageViewer
         {
             InitializeComponent();
 
-            //favoritePanelManager = new ClassDir.FavoritePanelManager(Properties.Settings.Default.ProgramDataFolder, "_favorites");
+            AlbumClassLibrary.AlbumManager.AlbumsManager albumsManager = new AlbumClassLibrary.AlbumManager.AlbumsManager(Properties.Settings.Default.CacheFilePath);
+
+            favoritePanelManager = new ClassDir.FavoritePanelManager(@"C:\Users\user\AppData\Roaming\NewWpfImageViewer\", "_favorites");
             favoritePanelManager.SelectedFolderChanged += FavoritePanelManager_SelectedFolderChanged;
             favoritePanelManager.NewFavoriteFolderAdded += FavoritePanelManager_NewFavoriteFolderAdded;
             // Отрисовываем коллекцию добавленых папок в Фэйворитс
