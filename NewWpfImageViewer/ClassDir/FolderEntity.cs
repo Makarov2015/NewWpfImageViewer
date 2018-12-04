@@ -73,7 +73,7 @@ namespace NewWpfImageViewer.ClassDir
         /// <returns></returns>
         public FolderButton GetControl()
         {
-            using (AlbumClassLibrary.CacheManager.CacheManager manager = new AlbumClassLibrary.CacheManager.CacheManager(@"C:\Users\makarov\_cacheDataBase.db"))
+            using (AlbumClassLibrary.CacheManager.CacheManager manager = new AlbumClassLibrary.CacheManager.CacheManager(@"C:\Users\user\_cacheDataBase.db"))
             {
                 Random rand = new Random();
 
