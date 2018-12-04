@@ -54,6 +54,9 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="WpfAnimatedGif, Version=1.4.17.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\WpfAnimatedGif.1.4.17\lib\net\WpfAnimatedGif.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -65,6 +68,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Forms\Favorites\FolderButton.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Forms\ImagePreview\ImegePreview.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -85,6 +92,9 @@
       <DependentUpon>FolderButton.xaml</DependentUpon>
     </Compile>
     <Compile Include="ClassDir\FolderEntity.cs" />
+    <Compile Include="Forms\ImagePreview\ImegePreview.xaml.cs">
+      <DependentUpon>ImegePreview.xaml</DependentUpon>
+    </Compile>
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

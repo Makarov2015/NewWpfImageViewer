@@ -61,8 +61,10 @@ namespace AlbumClassLibrary.CacheManager
         /// <param name="img">Ужатое изображение</param>
         public void CacheAdd(string path, byte[] img)
         {
-            SQLiteParameter param = new SQLiteParameter("@image", DbType.Binary);
-            param.Value = img;
+            SQLiteParameter param = new SQLiteParameter("@image", DbType.Binary)
+            {
+                Value = img
+            };
 
             string sql = $"INSERT INTO cache (filePath, imageBinary, addedDate) values ('{path}', @image, '{DateTime.Now.ToFileTimeUtc()}')";
             ExecuteNonQuery(sql, param);
