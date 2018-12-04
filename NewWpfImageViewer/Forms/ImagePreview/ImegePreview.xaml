@@ -9,24 +9,6 @@
     <UserControl.Resources>
         <SolidColorBrush x:Name="TransparentBlack" x:Key="TransparentBlack" Color="Black" Opacity="0.5" />
         <SolidColorBrush x:Name="TransparentBlackButton" x:Key="TransparentBlackButton" Color="LightGray" Opacity="0.75" />
-        <Style TargetType="{x:Type Button}">
-            <Setter Property="Background" Value="Black"/>
-            <Setter Property="Opacity" Value="0.5"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type Button}">
-                        <Border Background="{TemplateBinding Background}" BorderBrush="Black" BorderThickness="1">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="LightGray"/>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
     </UserControl.Resources>
     <Grid x:Name="MainGrid" Background="{StaticResource TransparentBlack}" >
         <Grid.RowDefinitions>
@@ -41,11 +23,13 @@
         </Grid.ColumnDefinitions>
         
         <Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3">
-            <Button x:Name="CloseButton" Content="Close" Grid.ColumnSpan="1" Click="CloseButton_Click" />
+            <Button x:Name="CloseButton" Content="Close" Grid.ColumnSpan="1" Click="CloseButton_Click"/>
         </Grid>
-        
+
         <Grid Grid.Row="1" Grid.Column="0">
-            <Button x:Name="BackButton" Content="СЮДА" FontSize="12" Click="BackButton_Click"/>
+            <Button x:Name="BackButton" Click="BackButton_Click">
+                <Image x:Name="BackPreviewImage" Opacity="1" ></Image>
+            </Button>
         </Grid>
 
         <Image ClipToBounds="True" Grid.Row="1" Grid.Column="1" x:Name="MainImage" Margin ="0" Opacity="1" />
@@ -53,7 +37,7 @@
         <Grid Grid.Row="1" Grid.Column="2">
             <Button x:Name="ForwardButton" Content="ТУДА" FontSize="12" Click="ForwardButton_Click"/>
         </Grid>
-        
+
         <Grid Background="{StaticResource TransparentBlack}" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3"/>
     </Grid>
 </UserControl>

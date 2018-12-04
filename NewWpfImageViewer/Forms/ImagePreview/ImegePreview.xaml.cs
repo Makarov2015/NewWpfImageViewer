@@ -35,11 +35,15 @@ namespace NewWpfImageViewer.Forms.ImagePreview
                 {
                     BackButton.IsEnabled = false;
                     ForwardButton.IsEnabled = true;
+
+                    BackPreviewImage = null;
                 }
                 else if (value >= AutoStackImages.Count - 1)
                 {
                     BackButton.IsEnabled = true;
                     ForwardButton.IsEnabled = false;
+
+                    BackPreviewImage = AutoStackImages[value - 1].ImageControl;
                 }
                 else if (value > AutoStackImages.Count - 1 || value < 0)
                     throw new IndexOutOfRangeException();
@@ -47,6 +51,8 @@ namespace NewWpfImageViewer.Forms.ImagePreview
                 {
                     BackButton.IsEnabled = true;
                     ForwardButton.IsEnabled = true;
+
+                    BackPreviewImage = AutoStackImages[value - 1].ImageControl;
                 }
 
                 _currentIndex = value;
@@ -86,20 +92,47 @@ namespace NewWpfImageViewer.Forms.ImagePreview
 
             await Task.Delay(1);
 
-            CurrentImage = await GetNewImageAsync(AutoStackImages[CurrentIndex].OriginalFilepath);
+            if (AutoStackImages[CurrentIndex].IsAnimation)
+            {
+                this.Cursor = Cursors.Wait;
+
+                var im = await GetAnimationSource(AutoStackImages[CurrentIndex].OriginalFilepath);
+                WpfAnimatedGif.ImageBehavior.SetAnimatedSource(MainImage, im);
+
+                this.Cursor = Cursors.Arrow;
+            }
+            else
+            {
+                CurrentImage = await GetNewImageAsync(AutoStackImages[CurrentIndex].OriginalFilepath);
+            }
 
             System.Diagnostics.Debug.WriteLine(sw.Elapsed);
             sw.Stop();
-        }
 
-        public static Task<BitmapSource> GetNewImageAsync(string path)
-        {
-            var tcs = new TaskCompletionSource<BitmapSource>();
-            var bitmap = new BitmapImage();
+            Task<BitmapImage> GetAnimationSource(string path)
+            {
+                return Task.Run<BitmapImage>(() =>
+                {
+                    var image = new BitmapImage();
+                    image.BeginInit();
+                    image.UriSource = new Uri(path);
+                    image.EndInit();
 
-            tcs.SetResult(System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap((System.Drawing.Bitmap.FromFile(path) as System.Drawing.Bitmap).GetHbitmap(), IntPtr.Zero, System.Windows.Int32Rect.Empty, null));
+                    image.Freeze();
 
-            return tcs.Task;
+                    return image;
+                });
+            }
+
+            Task<BitmapSource> GetNewImageAsync(string path)
+            {
+                var tcs = new TaskCompletionSource<BitmapSource>();
+                var bitmap = new BitmapImage();
+
+                tcs.SetResult(System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap((System.Drawing.Bitmap.FromFile(path) as System.Drawing.Bitmap).GetHbitmap(), IntPtr.Zero, System.Windows.Int32Rect.Empty, null));
+
+                return tcs.Task;
+            }
         }
 
         private void ForwardButton_Click(object sender, RoutedEventArgs e)

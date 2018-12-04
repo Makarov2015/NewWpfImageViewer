@@ -20,6 +20,8 @@ namespace NewWpfImageViewer.ClassDir
         /// </summary>
         public Drawing.Image MaxSizedImage { get; set; }
 
+        public bool IsAnimation => OriginalFilepath.EndsWith(".gif");
+
         /// <summary>
         /// Максимальная высота, до которой изображение будет уменьшено
         /// </summary>
