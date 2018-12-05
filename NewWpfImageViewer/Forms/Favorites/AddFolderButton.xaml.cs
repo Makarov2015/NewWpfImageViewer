@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AlbumClassLibrary;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,17 +21,14 @@ namespace NewWpfImageViewer.Forms.Favorites
     /// </summary>
     public partial class AddFolderButton : UserControl
     {
-        public delegate void Mouse_ClickHandler(object sender, RoutedEventArgs e);
-        public event Mouse_ClickHandler Mouse_Click;
-
-        public AddFolderButton()
+        public AddFolderButton(IAlbum ialbum)
         {
             InitializeComponent();
         }
 
         private void AddButton_Click(object sender, RoutedEventArgs e)
         {
-            Mouse_Click(sender, e);
+            
         }
     }
 }

@@ -63,6 +63,18 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Forms\Albums\NewAlbumButton.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Forms\Albums\AlbumButton.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Forms\Albums\NewAlbumWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Forms\Favorites\AddFolderButton.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -85,6 +97,15 @@
     </Compile>
     <Compile Include="ClassDir\AutoStackImage.cs" />
     <Compile Include="ClassDir\FavoritePanelManager.cs" />
+    <Compile Include="Forms\Albums\NewAlbumButton.xaml.cs">
+      <DependentUpon>NewAlbumButton.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Albums\AlbumButton.xaml.cs">
+      <DependentUpon>AlbumButton.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Albums\NewAlbumWindow.xaml.cs">
+      <DependentUpon>NewAlbumWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Forms\Favorites\AddFolderButton.xaml.cs">
       <DependentUpon>AddFolderButton.xaml</DependentUpon>
     </Compile>

@@ -65,19 +65,19 @@ namespace NewWpfImageViewer.ClassDir
             ImagesPaths = System.IO.Directory.GetFiles(FolderPath).Where(x => x.EndsWith(".gif") || x.EndsWith(".jpeg") || x.EndsWith(".jpg")).ToList();
         }
 
-        private FolderButton _button;
+        private Forms.Favorites.FolderButton _button;
 
         /// <summary>
         /// Готовый контрол для отображения папки с превью
         /// </summary>
         /// <returns></returns>
-        public FolderButton GetControl()
+        public Forms.Favorites.FolderButton GetControl()
         {
             using (AlbumClassLibrary.CacheManager.CacheManager manager = new AlbumClassLibrary.CacheManager.CacheManager(@"C:\Users\user\_cacheDataBase.db"))
             {
                 Random rand = new Random();
 
-                _button = new FolderButton(this, null, IsSelected);
+                //_button = new FolderButton(this, null, IsSelected);
 
                 return _button;
             }

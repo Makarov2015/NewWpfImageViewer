@@ -1,4 +1,5 @@
-﻿using NewWpfImageViewer.ClassDir;
+﻿using AlbumClassLibrary;
+using NewWpfImageViewer.ClassDir;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +15,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace NewWpfImageViewer.Forms
+namespace NewWpfImageViewer.Forms.Favorites
 {
     /// <summary>
     /// Логика взаимодействия для FolderButton.xaml
@@ -25,22 +26,17 @@ namespace NewWpfImageViewer.Forms
         public event Mouse_ClickHandler Mouse_Click;
         public event Mouse_ClickHandler Delete_Click;
 
-        private FolderEntity folder = null;
+        private IFolder folder = null;
 
-        public FolderButton(FolderEntity entity, string previeFilePath, bool IsSelected)
+        public FolderButton(IFolder entity)
         {
             InitializeComponent();
 
             folder = entity;
-            NameLabel.Content = entity.ShownName;
+            NameLabel.Content = entity.Name;
 
-            if (System.IO.File.Exists(previeFilePath))
-                PreviewImage.Source = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap((System.Drawing.Bitmap.FromFile(previeFilePath) as System.Drawing.Bitmap).GetHbitmap(), IntPtr.Zero, System.Windows.Int32Rect.Empty, null);
-
-            if(IsSelected)
-                NamePlate.Background = Brushes.Coral;
-            else
-                NamePlate.Background = Brushes.CadetBlue;
+            //if (System.IO.File.Exists(entity.Path))
+            //    PreviewImage.Source = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap((System.Drawing.Bitmap.FromFile(previeFilePath) as System.Drawing.Bitmap).GetHbitmap(), IntPtr.Zero, System.Windows.Int32Rect.Empty, null);
         }
 
         private void MainButton_Click(object sender, RoutedEventArgs e)

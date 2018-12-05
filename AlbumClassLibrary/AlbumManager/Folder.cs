@@ -4,27 +4,22 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AlbumClassLibrary.AlbumManager
+namespace AlbumClassLibrary
 {
-    public class Folder
+    internal class Folder : IFolder
     {
-        public int id { get; set; }
-        public string shownName { get; set; }
+        public string Name { get; }
+        public string Path { get; }
+        public byte[] PreviewImage { get; }
+        
+        public Guid Album => Guid.Parse(albumGuid);
+        private string albumGuid { get; }
 
-        private Guid _albumGuid;
-        public string albumGuid
+        public Folder(string _name, string _path, string _albumGuid)
         {
-            get
-            {
-                return _albumGuid.ToString();
-            }
-            set
-            {
-                Guid.TryParse(value, out _albumGuid);
-            }
+            Name = _name;
+            Path = _path;
+            albumGuid = _albumGuid;
         }
-
-        public string folderPath { get; set; }
-        public int creationDate { get; set; }
     }
 }

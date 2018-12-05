@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
+using AlbumClassLibrary;
 
 namespace NewWpfImageViewer
 {
@@ -28,25 +29,17 @@ namespace NewWpfImageViewer
         /// </summary>
         private List<ClassDir.AutoStackImage> ImageGallery = new List<ClassDir.AutoStackImage>();
 
-        ClassDir.FavoritePanelManager favoritePanelManager;
-        //AlbumClassLibrary.AlbumManager.AlbumsManager albumsManager = new AlbumClassLibrary.AlbumManager.AlbumsManager();
+        AlbumClassLibrary.AlbumManager.AlbumManager albumsManager;
 
         public MainWindow()
         {
+            // Загрузили альбомы
+            albumsManager = new AlbumClassLibrary.AlbumManager.AlbumManager(Properties.Settings.Default.CacheFilePath);
+
             InitializeComponent();
 
-            favoritePanelManager = new ClassDir.FavoritePanelManager(@"C:\Users\user\AppData\Roaming\NewWpfImageViewer\", "_favorites");
-            favoritePanelManager.SelectedFolderChanged += FavoritePanelManager_SelectedFolderChanged;
-            favoritePanelManager.NewFavoriteFolderAdded += FavoritePanelManager_NewFavoriteFolderAdded;
-            // Отрисовываем коллекцию добавленых папок в Фэйворитс
-            {
-                FavoritesConstructor();
-            }
-
-            // Отрисовывается на Window_Loaded
-            LoadFolderToGallery(favoritePanelManager.CurrentFolder.ImagesPaths);
-
-            // Пока все. Папки нарисованы, дефолтная показана, остальные показаны, интерфейс готов
+            // Сгенерировали и раскидали кнопки для каждого альбома (Кнопка имеет название и сам альбом)
+            AlbumsButtonsRenderer(albumsManager.Albums);
 
             _resizeTimer.Tick += _resizeTimer_Tick;
         }
@@ -57,6 +50,40 @@ namespace NewWpfImageViewer
 
         #region Collection
 
+        private void AlbumsButtonsRenderer(List<IAlbum> albums)
+        {
+            AlbumButtonPanel.Children.Clear();
+
+            if (albums != null)
+                foreach (var item in albums)
+                {
+                    var def = new Forms.Albums.AlbumButton(item);
+                    def.AlbumButtonClicked += AlbumButtonClicked;
+                    AlbumButtonPanel.Children.Add(def);
+                }
+
+            var addBtn = new Forms.Albums.NewAlbumButton(albumsManager);
+            addBtn.AlbumAdded += AddBtn_AlbumAdded;
+            AlbumButtonPanel.Children.Add(addBtn);
+        }
+
+        private void AlbumButtonClicked(object sender, EventArgs e)
+        {
+            FavoriteStackPanel.Children.Clear();
+
+            foreach (var item in (sender as IAlbum).Folders)
+            {
+                FavoriteStackPanel.Children.Add(new Forms.Favorites.FolderButton(item));
+            }
+
+            FavoriteStackPanel.Children.Add(new Forms.Favorites.AddFolderButton(sender as IAlbum));
+        }
+
+        private void AddBtn_AlbumAdded(object sender, EventArgs e)
+        {
+            AlbumsButtonsRenderer(albumsManager.Albums);
+        }
+
         #endregion
 
         #region Favorite
@@ -66,10 +93,10 @@ namespace NewWpfImageViewer
             // Отчистиили панель
             FavoriteStackPanel.Children.Clear();
 
-            foreach (var item in favoritePanelManager.ButtonsCollection)
-            {
-                FavoriteStackPanel.Children.Add(item);
-            }
+            //foreach (var item in favoritePanelManager.ButtonsCollection)
+            //{
+            //    FavoriteStackPanel.Children.Add(item);
+            //}
         }
 
         private void FavoritePanelManager_NewFavoriteFolderAdded()
@@ -79,7 +106,7 @@ namespace NewWpfImageViewer
 
         private void FavoritePanelManager_SelectedFolderChanged(ClassDir.FolderEntity folder)
         {
-            LoadFolderToGallery(favoritePanelManager.CurrentFolder.ImagesPaths);
+            //LoadFolderToGallery(favoritePanelManager.CurrentFolder.ImagesPaths);
             LoadImagesOnBoard();
         }
 
