@@ -13,49 +13,43 @@ namespace AlbumClassLibrary.AlbumManager
     {
         public DataBaseController(string dataBaseFilePath) : base(dataBaseFilePath) { }
 
-        public List<Folder> FoldersSearch()
+        public List<IAlbum> LoadAlbums()
         {
-            string sql = $"SELECT * FROM folders";
+            string albumSql = $"SELECT * FROM albums";
+            string folderSql = $"SELECT * FROM folders";
 
-            List<Folder> folders = null;
+            List<IAlbum> albums = null;
+            List<IFolder> folders = null;
 
-            try
-            {
-                m_dbConnection.Open();
+            m_dbConnection.Open();
 
-                System.Data.DataTable table = new System.Data.DataTable();
+            albums = m_dbConnection.Query<AlbumMapper>(albumSql).Cast<IAlbum>().ToList();
+            folders = m_dbConnection.Query<Folder>(folderSql).Cast<IFolder>().ToList();
 
-                SQLiteDataAdapter adapter = new SQLiteDataAdapter(sql, m_dbConnection);
-                adapter.Fill(table);
+            m_dbConnection.Close();
 
-                folders = m_dbConnection.Query<Folder>(sql).ToList();
+            if (albums != null)
+                foreach (var album in albums)
+                {
+                    album.Folders = folders.Where(x => x.Album == album.AlbumGuid).ToList();
+                }
 
-                //bytes = (from row in table.Rows.Cast<System.Data.DataRow>()
-                //         select (byte[])row[0]).Single();
-
-                if (folders.Count != 0)
-                    return folders;
-                else
-                    return null;
-            }
-            catch (Exception ex)
-            {
+            if (albums.Count != 0)
+                return albums;
+            else
                 return null;
-                throw;
-            }
-            finally
-            {
-                m_dbConnection.Close();
-            }
         }
 
-        public void FolderAdd()
+        public void AddAlbum(IAlbum album)
         {
-            //SQLiteParameter param = new SQLiteParameter("@image", DbType.Binary);
-            //param.Value = img;
+            string sql = $@"INSERT INTO albums (album, albumtype, displayname) VALUES ('{Guid.NewGuid().ToString()}', '{album.AlbumTypeGuid}', '{album.DisplayName}'); ";
+            this.ExecuteNonQuery(sql);
+        }
 
-            //string sql = $"INSERT INTO cache (filePath, imageBinary, addedDate) values ('{path}', @image, '{DateTime.Now.ToFileTimeUtc()}')";
-            //ExecuteNonQuery(sql, param);
+        public void AddFolder(IFolder folder)
+        {
+            string sql = $@"INSERT INTO folders (albumGuid, name, path) VALUES ('{Guid.NewGuid().ToString()}', '{folder.Album.ToString()}', '{folder.Name}', '{folder.Path}'); ";
+            this.ExecuteNonQuery(sql);
         }
 
         public void Dispose()

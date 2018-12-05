@@ -57,10 +57,10 @@ namespace NewWpfImageViewer.ClassDir
         {
             get
             {
-                var addBtn = new Forms.Favorites.AddFolderButton();
-                addBtn.Mouse_Click += AddFavoriteFolder_Mouse_Click;
+                //var addBtn = new Forms.Favorites.AddFolderButton();
+                //addBtn.Mouse_Click += AddFavoriteFolder_Mouse_Click;
 
-                return addBtn;
+                return null;
             }
         }
 
