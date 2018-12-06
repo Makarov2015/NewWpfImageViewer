@@ -5,5 +5,5 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:NewWpfImageViewer.Forms.Albums"
              mc:Ignorable="d">
-    <Button x:Name="MainButton" Content="Images" Margin="2" Padding="10,0,10,0" BorderThickness="0" Background="Transparent" Width="Auto" Height="Auto" HorizontalAlignment="Left" FontSize="15" FontFamily="Minion Web" FontWeight="DemiBold" Click="MainButton_Click"/>
+    <Button x:Name="MainButton" Content="Images" Margin="2" Padding="10,0,10,0" BorderThickness="0" Background="Transparent" Width="Auto" Height="Auto" HorizontalAlignment="Left" FontSize="15" FontFamily="Minion Web" FontWeight="Thin" Click="MainButton_Click"/>
 </UserControl>

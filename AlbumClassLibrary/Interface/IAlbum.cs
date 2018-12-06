@@ -12,7 +12,7 @@ namespace AlbumClassLibrary
     public interface IAlbum
     {
         #region Album Class Fields
-
+        
         /// <summary>
         /// Album Type Guid
         /// </summary>
@@ -30,7 +30,7 @@ namespace AlbumClassLibrary
         /// <summary>
         /// Uniqe Album Guid
         /// </summary>
-        Guid AlbumGuid { get; }
+        Guid AlbumGuid { get; set; }
 
         /// <summary>
         /// Personal Album Name
@@ -47,9 +47,27 @@ namespace AlbumClassLibrary
         #region Methods
 
         /// <summary>
-        /// Add-Button realozation
+        /// Add-Button realization
         /// </summary>
         void AddFolder();
+
+        /// <summary>
+        /// Event of added folder / selection changed
+        /// </summary>
+        event EventHandler FolderAdded;
+        event EventHandler PriorityChanged;
+
+        /// <summary>
+        /// Is album currently selected
+        /// </summary>
+        bool IsCurrent { get; set; }
+
+        /// <summary>
+        /// Constructod analog for transform from mapper to direct type
+        /// </summary>
+        /// <param name="mapper">mapper object</param>
+        /// <returns></returns>
+        IAlbum FromMapper(IAlbum mapper);
 
         #endregion
     }

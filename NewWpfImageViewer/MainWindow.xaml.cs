@@ -31,16 +31,32 @@ namespace NewWpfImageViewer
 
         AlbumClassLibrary.AlbumManager.AlbumManager albumsManager;
 
+        private event EventHandler CurrentAlbumChanged;
+
+        private AlbumClassLibrary.IAlbum _currentAlbum;
+        AlbumClassLibrary.IAlbum CurrentAlbum
+        {
+            get
+            {
+                return _currentAlbum;
+            }
+            set
+            {
+                _currentAlbum = value;
+                value.IsCurrent = true;
+                CurrentAlbumChanged(value, new EventArgs());
+            }
+        }
+
         public MainWindow()
         {
-            // Загрузили альбомы
             albumsManager = new AlbumClassLibrary.AlbumManager.AlbumManager(Properties.Settings.Default.CacheFilePath);
 
             InitializeComponent();
-
-            // Сгенерировали и раскидали кнопки для каждого альбома (Кнопка имеет название и сам альбом)
+            
             AlbumsButtonsRenderer(albumsManager.Albums);
 
+            CurrentAlbumChanged += MainWindow_CurrentAlbumChanged;
             _resizeTimer.Tick += _resizeTimer_Tick;
         }
 
@@ -65,50 +81,49 @@ namespace NewWpfImageViewer
             var addBtn = new Forms.Albums.NewAlbumButton(albumsManager);
             addBtn.AlbumAdded += AddBtn_AlbumAdded;
             AlbumButtonPanel.Children.Add(addBtn);
+
+            albumsManager.Albums.First().IsCurrent = true;
+
+            if (CurrentAlbum == null)
+                CurrentAlbum = albumsManager.Albums.First();
         }
 
         private void AlbumButtonClicked(object sender, EventArgs e)
         {
+            CurrentAlbum = sender as IAlbum;
+        }
+
+        private void MainWindow_CurrentAlbumChanged(object sender, EventArgs e)
+        {
             FavoriteStackPanel.Children.Clear();
 
-            foreach (var item in (sender as IAlbum).Folders)
-            {
-                FavoriteStackPanel.Children.Add(new Forms.Favorites.FolderButton(item));
-            }
+            if ((sender as IAlbum).Folders != null)
+                foreach (var item in (sender as IAlbum).Folders)
+                {
+                    var def = new Forms.Favorites.FolderButton(item);
+                    def.Mouse_Click += Folder_Mouse_Click;
+                    FavoriteStackPanel.Children.Add(def);
+                }
 
             FavoriteStackPanel.Children.Add(new Forms.Favorites.AddFolderButton(sender as IAlbum));
+        }
+
+        //TODO Временная реализация для наглядности
+        private void Folder_Mouse_Click(object sender, RoutedEventArgs e)
+        {
+            LoadFolderToGallery(Directory.GetFiles((sender as IFolder).Path).Where(x => x.EndsWith(".jpg") || x.EndsWith(".jpeg") || x.EndsWith(".gif")).ToList());
+            LoadImagesOnBoard();
         }
 
         private void AddBtn_AlbumAdded(object sender, EventArgs e)
         {
             AlbumsButtonsRenderer(albumsManager.Albums);
+            CurrentAlbum = sender as IAlbum;
         }
 
         #endregion
 
         #region Favorite
-
-        private void FavoritesConstructor()
-        {
-            // Отчистиили панель
-            FavoriteStackPanel.Children.Clear();
-
-            //foreach (var item in favoritePanelManager.ButtonsCollection)
-            //{
-            //    FavoriteStackPanel.Children.Add(item);
-            //}
-        }
-
-        private void FavoritePanelManager_NewFavoriteFolderAdded()
-        {
-            FavoritesConstructor();
-        }
-
-        private void FavoritePanelManager_SelectedFolderChanged(ClassDir.FolderEntity folder)
-        {
-            //LoadFolderToGallery(favoritePanelManager.CurrentFolder.ImagesPaths);
-            LoadImagesOnBoard();
-        }
 
         private void ScrollViewer_PreviewMouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
         {

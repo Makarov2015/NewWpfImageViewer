@@ -29,6 +29,22 @@ namespace NewWpfImageViewer.Forms.Albums
 
             this.Album = album;
             this.MainButton.Content = album.DisplayName;
+
+            album.PriorityChanged += Album_PriorityChanged;
+        }
+
+        private void Album_PriorityChanged(object sender, EventArgs e)
+        {
+            if ((sender as AlbumClassLibrary.IAlbum).IsCurrent)
+            {
+                this.MainButton.FontSize = 18;
+                this.MainButton.FontWeight = FontWeights.Bold;
+            }
+            else
+            {
+                this.MainButton.FontSize = 15;
+                this.MainButton.FontWeight = FontWeights.Thin;
+            }
         }
 
         private void MainButton_Click(object sender, RoutedEventArgs e)

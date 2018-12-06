@@ -41,9 +41,9 @@ namespace AlbumClassLibrary.ControllerBase
 			createCache += @"CREATE TABLE `folders` (
 							`id`	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
 							`albumGuid`	TEXT NOT NULL,
-							`name`	TEXT NOT NULL UNIQUE,
-							`path`	TEXT NOT NULL UNIQUE,
-							`previeImage`	BLOB
+							`name`	TEXT NOT NULL,
+							`path`	TEXT NOT NULL,
+							`previewImage`	BLOB
 							); ";
 
 			var gd = Guid.NewGuid().ToString();

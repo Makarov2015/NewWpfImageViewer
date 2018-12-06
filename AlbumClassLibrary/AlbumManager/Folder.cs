@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AlbumClassLibrary
+namespace AlbumClassLibrary.AlbumManager
 {
     internal class Folder : IFolder
     {
@@ -12,14 +12,14 @@ namespace AlbumClassLibrary
         public string Path { get; }
         public byte[] PreviewImage { get; }
         
-        public Guid Album => Guid.Parse(albumGuid);
-        private string albumGuid { get; }
+        public Guid Album => Guid.Parse(_albumGuid);
+        private string _albumGuid { get; }
 
-        public Folder(string _name, string _path, string _albumGuid)
+        public Folder(Int64 id, string albumGuid, string name, string path, byte[] previewImage)
         {
-            Name = _name;
-            Path = _path;
-            albumGuid = _albumGuid;
+            Name = name;
+            Path = path;
+            _albumGuid = albumGuid;
         }
     }
 }
