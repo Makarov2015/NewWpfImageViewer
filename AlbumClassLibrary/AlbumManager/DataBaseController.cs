@@ -42,13 +42,15 @@ namespace AlbumClassLibrary.AlbumManager
 
         public void AddAlbum(IAlbum album)
         {
-            string sql = $@"INSERT INTO albums (album, albumtype, displayname) VALUES ('{Guid.NewGuid().ToString()}', '{album.AlbumTypeGuid}', '{album.DisplayName}'); ";
+            album.AlbumGuid = Guid.NewGuid();
+
+            string sql = $@"INSERT INTO albums (album, albumtype, displayname) VALUES ('{album.AlbumGuid.ToString()}', '{album.AlbumTypeGuid}', '{album.DisplayName}'); ";
             this.ExecuteNonQuery(sql);
         }
 
         public void AddFolder(IFolder folder)
         {
-            string sql = $@"INSERT INTO folders (albumGuid, name, path) VALUES ('{Guid.NewGuid().ToString()}', '{folder.Album.ToString()}', '{folder.Name}', '{folder.Path}'); ";
+            string sql = $@"INSERT INTO folders (albumGuid, name, path) VALUES ('{folder.Album.ToString()}', '{folder.Name}', '{folder.Path}'); ";
             this.ExecuteNonQuery(sql);
         }
 

@@ -35,7 +35,7 @@ namespace NewWpfImageViewer.Forms.Albums
             newAlbum.ShowDialog();
 
             if (newAlbum.AlbumAdded)
-                AlbumAdded(null, new EventArgs());
+                AlbumAdded(newAlbum.newAlbum, new EventArgs());
         }
     }
 }

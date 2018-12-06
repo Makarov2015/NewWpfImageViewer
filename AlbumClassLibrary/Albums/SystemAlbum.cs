@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AlbumClassLibrary.AlbumManager;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,12 +17,39 @@ namespace AlbumClassLibrary
 
         public List<IFolder> Folders { get; set; }
 
-        public Guid AlbumGuid { get; }
+        public Guid AlbumGuid { get; set; }
 
-        public SystemAlbum(string displayName)
+        private bool _isCurrent;
+        public bool IsCurrent
         {
-            DisplayName = displayName;
+            get
+            {
+                return _isCurrent;
+            }
+            set
+            {
+                _isCurrent = value;
+                PriorityChanged(this, new EventArgs());
+            }
         }
+
+        public IAlbum FromMapper(IAlbum album)
+        {
+            if (album.AlbumTypeGuid == this.AlbumTypeGuid)
+            {
+                Folders = album.Folders;
+                AlbumGuid = album.AlbumGuid;
+                DisplayName = album.DisplayName;
+                Folders = album.Folders;
+            }
+            else
+                throw new InvalidCastException();
+
+            return this;
+        }
+
+        public event EventHandler FolderAdded;
+        public event EventHandler PriorityChanged;
 
         /// <summary>
         /// Реализация этого метода на плечах пользователя
@@ -35,11 +63,19 @@ namespace AlbumClassLibrary
         /// </remarks>
         public void AddFolder()
         {
+            if (Folders == null)
+                Folders = new List<IFolder>();
+
             // 1 - форма. Для системного альбома - это форма выбора папки из файловой системы
             var folderToLoad = ShowForm();
+
             // 2 - пропускаем, наполнение папки не требуется
-            // 3 - Добавляем в текущий альбом папку и сохраняем все в БД
-            Folders.Add(new Folder("Новенькая", folderToLoad, this.AlbumGuid.ToString()));
+
+            // 3 - Добавляем в текущий альбом папку
+            IFolder folder = new Folder(0, this.AlbumGuid.ToString(), $"{DateTime.Now.ToString()}", folderToLoad, null);
+            Folders.Add(folder);
+            // 4 - сохраняем все в БД через событие FolderAdded(IFolder, new EventArgs())
+            FolderAdded(folder, new EventArgs());
         }
 
         private string ShowForm()

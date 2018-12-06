@@ -92,7 +92,7 @@ namespace AlbumClassLibrary.CacheManager
         #region Destructors
 
         #endregion
-
+        
         public void Dispose()
         {
             //throw new NotImplementedException();

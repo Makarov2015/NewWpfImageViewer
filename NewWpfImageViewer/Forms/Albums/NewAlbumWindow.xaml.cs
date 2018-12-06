@@ -20,6 +20,7 @@ namespace NewWpfImageViewer.Forms.Albums
     public partial class NewAlbumWindow : Window
     {
         private AlbumClassLibrary.IAlbumManager AlbumManager;
+        public AlbumClassLibrary.IAlbum newAlbum;
         public bool AlbumAdded = false;
 
         public NewAlbumWindow(AlbumClassLibrary.IAlbumManager albumManager)
@@ -29,6 +30,8 @@ namespace NewWpfImageViewer.Forms.Albums
 
             TypeComboBox.ItemsSource = albumManager.AvailableAlbums;
             TypeComboBox.DisplayMemberPath = "AlbumName";
+
+            TypeComboBox.SelectedIndex = 0;
         }
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
@@ -39,6 +42,7 @@ namespace NewWpfImageViewer.Forms.Albums
             AlbumManager.AddAlbum(item);
 
             AlbumAdded = true;
+            newAlbum = item;
             Close();
         }
     }

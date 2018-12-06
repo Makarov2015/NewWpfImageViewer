@@ -21,14 +21,17 @@ namespace NewWpfImageViewer.Forms.Favorites
     /// </summary>
     public partial class AddFolderButton : UserControl
     {
+        private IAlbum Album;
+
         public AddFolderButton(IAlbum ialbum)
         {
+            Album = ialbum;
             InitializeComponent();
         }
 
         private void AddButton_Click(object sender, RoutedEventArgs e)
         {
-            
+            Album.AddFolder();
         }
     }
 }
