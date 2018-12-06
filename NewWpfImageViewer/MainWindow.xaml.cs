@@ -53,11 +53,11 @@ namespace NewWpfImageViewer
             albumsManager = new AlbumClassLibrary.AlbumManager.AlbumManager(Properties.Settings.Default.CacheFilePath);
 
             InitializeComponent();
-            
-            AlbumsButtonsRenderer(albumsManager.Albums);
 
             CurrentAlbumChanged += MainWindow_CurrentAlbumChanged;
             _resizeTimer.Tick += _resizeTimer_Tick;
+
+            AlbumsButtonsRenderer(albumsManager.Albums);
         }
 
         #region Search
