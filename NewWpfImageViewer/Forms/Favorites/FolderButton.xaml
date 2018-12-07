@@ -21,7 +21,7 @@
                     <ColumnDefinition Width="290"/>
                 </Grid.ColumnDefinitions>
                 <Grid Grid.Row="0" Background="Transparent">
-                    <Image x:Name="PreviewImage" Stretch="UniformToFill"/>
+                    <Image x:Name="PreviewImage" Stretch="UniformToFill" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                 </Grid>
                 <Grid x:Name="NamePlate" Grid.Row="1" Background="CadetBlue">
                     <Label x:Name="NameLabel" VerticalAlignment="Center" HorizontalAlignment="Center">default</Label>

@@ -1,30 +1,28 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.SQLite;
+using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AlbumClassLibrary.ControllerBase
 {
-	internal abstract class DataBaseControllerBase
-	{
-		protected SQLiteConnection m_dbConnection;
+    internal abstract class DataBaseControllerBase
+    {
+        protected SQLiteConnection m_dbConnection;
 
-		public DataBaseControllerBase(string dataBaseFilePath)
-		{
-			m_dbConnection = new SQLiteConnection($"Data Source={dataBaseFilePath};Version=3;");
+        public DataBaseControllerBase(string dataBaseFilePath)
+        {
+            m_dbConnection = new SQLiteConnection($"Data Source={dataBaseFilePath};Version=3;");
 
-			if (!System.IO.File.Exists(dataBaseFilePath))
-				CreateEmptyDataBaseFile(dataBaseFilePath);
-		}
+            if (!System.IO.File.Exists(dataBaseFilePath))
+                CreateEmptyDataBaseFile(dataBaseFilePath);
+        }
 
-		protected void CreateEmptyDataBaseFile(string name)
-		{
-			SQLiteConnection.CreateFile(name);
+        protected void CreateEmptyDataBaseFile(string name)
+        {
+            SQLiteConnection.CreateFile(name);
 
-			string createCache = @"CREATE TABLE `cache` (
+            string createCache = @"CREATE TABLE `cache` (
 							`id`	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
 							`filePath`	TEXT NOT NULL UNIQUE,
 							`imageBinary`	BLOB NOT NULL,
@@ -32,52 +30,59 @@ namespace AlbumClassLibrary.ControllerBase
 							`lastTaken`	INTEGER
 							);";
 
-			createCache += @"CREATE TABLE `albums` (
+            createCache += @"CREATE TABLE `albums` (
 							`album`	TEXT NOT NULL PRIMARY KEY,
 							`albumtype`	TEXT NOT NULL,
 							`displayname`	TEXT NOT NULL
 							); ";
 
-			createCache += @"CREATE TABLE `folders` (
+            createCache += @"CREATE TABLE `folders` (
 							`id`	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
 							`albumGuid`	TEXT NOT NULL,
 							`name`	TEXT NOT NULL,
-							`path`	TEXT NOT NULL,
-							`previewImage`	BLOB
+							`path`	TEXT NOT NULL
 							); ";
 
-			var gd = Guid.NewGuid().ToString();
-			
-			createCache += $@"INSERT INTO albums (album, albumtype, displayname) VALUES ('{gd}','804C01FD-772B-48E0-916C-1C24FC99968E', 'Библиотека'); ";
+            var gd = Guid.NewGuid().ToString();
 
-			var imgPath = System.IO.Path.Combine(Environment.ExpandEnvironmentVariables("%userprofile%"), "Pictures\\");
-			
-			if (System.IO.Directory.Exists(imgPath))
-				createCache += $@"INSERT INTO folders (albumGuid, name, path) VALUES ('{gd}', 'Изображения', '{imgPath}')";
+            createCache += $@"INSERT INTO albums (album, albumtype, displayname) VALUES ('{gd}','804C01FD-772B-48E0-916C-1C24FC99968E', 'Библиотека'); ";
 
-			ExecuteNonQuery(createCache);
-		}
+            var imgPath = System.IO.Path.Combine(Environment.ExpandEnvironmentVariables("%userprofile%"), "Pictures\\");
+            
+            ExecuteNonQuery(createCache);
 
-		protected void ExecuteNonQuery(string sql, SQLiteParameter param = null)
-		{
-			try
-			{
-				m_dbConnection.Open();
-				SQLiteCommand command = new SQLiteCommand(sql, m_dbConnection);
+            if (System.IO.Directory.Exists(imgPath))
+            {
+                AddFolder(new AlbumManager.Folder(0, gd, "Изображения", imgPath));
+            }
+        }
 
-				if (param != null)
-					command.Parameters.Add(param);
+        public void AddFolder(IFolder folder)
+        {
+            string sql = $@"INSERT INTO folders (albumGuid, name, path) VALUES ('{folder.Album.ToString()}', '{folder.Name}', '{folder.Path}'); ";
+            this.ExecuteNonQuery(sql);
+        }
 
-				command.ExecuteNonQuery();
-			}
-			catch (Exception)
-			{
-				throw;
-			}
-			finally
-			{
-				m_dbConnection.Close();
-			}
-		}
-	}
+        protected void ExecuteNonQuery(string sql, SQLiteParameter param = null)
+        {
+            try
+            {
+                m_dbConnection.Open();
+                SQLiteCommand command = new SQLiteCommand(sql, m_dbConnection);
+
+                if (param != null)
+                    command.Parameters.Add(param);
+
+                command.ExecuteNonQuery();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                m_dbConnection.Close();
+            }
+        }
+    }
 }

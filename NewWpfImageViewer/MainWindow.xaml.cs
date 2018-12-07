@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using AlbumClassLibrary;
+using AlbumClassLibrary.CacheManager;
 
 namespace NewWpfImageViewer
 {
@@ -125,6 +126,10 @@ namespace NewWpfImageViewer
             if ((sender as IAlbum).Folders != null)
                 foreach (var item in (sender as IAlbum).Folders)
                 {
+                    Random rand = new Random();
+                    using (CacheManager manager = new CacheManager(Properties.Settings.Default.CacheFilePath))
+                        item.PreviewImage = manager.GetImage((System.IO.Directory.GetFiles(item.Path)).ElementAt(rand.Next(0, (int)(System.IO.Directory.GetFiles(item.Path).Count() - 1))));
+
                     var def = new Forms.Favorites.FolderButton(item);
                     def.Mouse_Click += Folder_Mouse_Click;
                     FavoriteStackPanel.Children.Add(def);
