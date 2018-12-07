@@ -27,7 +27,29 @@ namespace NewWpfImageViewer
         /// <summary>
         /// Текущая галерея. Меняется при смене папок.
         /// </summary>
-        private List<ClassDir.AutoStackImage> ImageGallery = new List<ClassDir.AutoStackImage>();
+        private List<ClassDir.AutoStackImage> _imageGallery;
+        private List<ClassDir.AutoStackImage> ImageGallery
+        {
+            get
+            {
+                if (_imageGallery == null)
+                {
+                    _imageGallery = new List<ClassDir.AutoStackImage>();
+                }
+
+                return _imageGallery;
+            }
+            set
+            {
+                if (value.Count == 0 && (_imageGallery != null && _imageGallery.Count > 0))
+                    foreach (var item in _imageGallery)
+                    {
+                        item.Dispose();
+                    }
+
+                _imageGallery = value;
+            }
+        }
 
         AlbumClassLibrary.AlbumManager.AlbumManager albumsManager;
 
@@ -85,7 +107,10 @@ namespace NewWpfImageViewer
             albumsManager.Albums.First().IsCurrent = true;
 
             if (CurrentAlbum == null)
+            {
                 CurrentAlbum = albumsManager.Albums.First();
+                (FavoriteStackPanel.Children[0] as Forms.Favorites.FolderButton).MainButton_Click(this, new RoutedEventArgs());
+            }
         }
 
         private void AlbumButtonClicked(object sender, EventArgs e)

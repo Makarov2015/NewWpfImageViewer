@@ -13,7 +13,7 @@ namespace NewWpfImageViewer.ClassDir
     /// Ресайзит изображение, хранит сжатый исходник и помогает сделать красивое отображение картинок на форме
     /// (Динамически меняет ширину картинок, подгоняет их так, чтобы ряд был заполнен до конца), а так же помогает менять размер
     /// </summary>
-    public class AutoStackImage
+    public class AutoStackImage : IDisposable
     {
         /// <summary>
         /// Исходное изображение вписанное в максимальный размер отображаемых строк
@@ -102,7 +102,11 @@ namespace NewWpfImageViewer.ClassDir
         {
             OriginalFilepath = ImgPath;
             MaxSizedImage = ResizeImage(ImgPath);
-            imageControl = new Control.Image { Source = GetSource(this.MaxSizedImage as Drawing.Bitmap), Width = this.Width, Height = this.Height, Margin = new System.Windows.Thickness(5), Stretch = System.Windows.Media.Stretch.UniformToFill, StretchDirection = Control.StretchDirection.Both };
+
+            var src = GetSource(this.MaxSizedImage as Drawing.Bitmap);
+            src.Freeze();
+
+            imageControl = new Control.Image { Source = src, Width = this.Width, Height = this.Height, Margin = new System.Windows.Thickness(5), Stretch = System.Windows.Media.Stretch.UniformToFill, StretchDirection = Control.StretchDirection.Both };
         }
 
         /// <summary>
@@ -116,7 +120,11 @@ namespace NewWpfImageViewer.ClassDir
                 MaxSizedImage = new Drawing.Bitmap(cachedImage);
 
             OriginalFilepath = Original;
-            imageControl = new Control.Image { Source = GetSource(this.MaxSizedImage as Drawing.Bitmap), Width = this.Width, Height = this.Height, Margin = new System.Windows.Thickness(5), Stretch = System.Windows.Media.Stretch.UniformToFill, StretchDirection = Control.StretchDirection.Both };
+
+            var src = GetSource(this.MaxSizedImage as Drawing.Bitmap);
+            src.Freeze();
+
+            imageControl = new Control.Image { Source = src, Width = this.Width, Height = this.Height, Margin = new System.Windows.Thickness(5), Stretch = System.Windows.Media.Stretch.UniformToFill, StretchDirection = Control.StretchDirection.Both };
         }
 
         /// <summary>
@@ -259,6 +267,15 @@ namespace NewWpfImageViewer.ClassDir
                     }
                 }
             }
+        }
+
+        public void Dispose()
+        {
+            this.imageControl.Source.Freeze();
+            this.imageControl.Source = null;
+            this.imageControl = null;
+
+            this.MaxSizedImage.Dispose();
         }
     }
 }
