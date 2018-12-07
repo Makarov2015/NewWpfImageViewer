@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,6 +12,6 @@ namespace AlbumClassLibrary
         string Name { get; }
         string Path { get; }
         Guid Album { get; }
-        byte[] PreviewImage { get; }
+        Bitmap PreviewImage { get; set; }
     }
 }

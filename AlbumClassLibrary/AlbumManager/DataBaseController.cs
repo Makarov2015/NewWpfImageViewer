@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SQLite;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -45,12 +46,6 @@ namespace AlbumClassLibrary.AlbumManager
             album.AlbumGuid = Guid.NewGuid();
 
             string sql = $@"INSERT INTO albums (album, albumtype, displayname) VALUES ('{album.AlbumGuid.ToString()}', '{album.AlbumTypeGuid}', '{album.DisplayName}'); ";
-            this.ExecuteNonQuery(sql);
-        }
-
-        public void AddFolder(IFolder folder)
-        {
-            string sql = $@"INSERT INTO folders (albumGuid, name, path) VALUES ('{folder.Album.ToString()}', '{folder.Name}', '{folder.Path}'); ";
             this.ExecuteNonQuery(sql);
         }
 

@@ -1,6 +1,8 @@
 ﻿using AlbumClassLibrary.AlbumManager;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -69,13 +71,35 @@ namespace AlbumClassLibrary
             // 1 - форма. Для системного альбома - это форма выбора папки из файловой системы
             var folderToLoad = ShowForm();
 
+            var fldr = System.IO.Directory.GetFiles(folderToLoad).Where(x => x.EndsWith(".jpg") || x.EndsWith(".jpeg") || x.EndsWith(".gif"));
+
+            // берем рандомную превьюшку из папки
+            Random rand = new Random();
+            var pic = ImageToByte(CacheManager.ImageResize.Resize((fldr).ElementAt(rand.Next(0, (int)(fldr.Count() - 1))), 350) as Image);
+
             // 2 - пропускаем, наполнение папки не требуется
 
             // 3 - Добавляем в текущий альбом папку
-            IFolder folder = new Folder(0, this.AlbumGuid.ToString(), $"{DateTime.Now.ToString()}", folderToLoad, null);
+            Bitmap bmp;
+            using (var ms = new MemoryStream(pic))
+            {
+                bmp = new Bitmap(ms);
+            }
+
+            IFolder folder = new Folder(0, this.AlbumGuid.ToString(), $"{DateTime.Now.ToString()}", folderToLoad);
+            folder.PreviewImage = bmp;
             Folders.Add(folder);
             // 4 - сохраняем все в БД через событие FolderAdded(IFolder, new EventArgs())
             FolderAdded(folder, new EventArgs());
+
+            // Нужно перерисовать папки
+            this.IsCurrent = true;
+
+            byte[] ImageToByte(Image img)
+            {
+                ImageConverter converter = new ImageConverter();
+                return (byte[])converter.ConvertTo(img, typeof(byte[]));
+            }
         }
 
         private string ShowForm()
