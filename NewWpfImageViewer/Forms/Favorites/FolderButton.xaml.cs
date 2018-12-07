@@ -34,12 +34,9 @@ namespace NewWpfImageViewer.Forms.Favorites
 
             folder = entity;
             NameLabel.Content = entity.Name;
-
-            //if (System.IO.File.Exists(entity.Path))
-            //    PreviewImage.Source = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap((System.Drawing.Bitmap.FromFile(previeFilePath) as System.Drawing.Bitmap).GetHbitmap(), IntPtr.Zero, System.Windows.Int32Rect.Empty, null);
         }
 
-        private void MainButton_Click(object sender, RoutedEventArgs e)
+        public void MainButton_Click(object sender, RoutedEventArgs e)
         {
             Mouse_Click(folder, e);
         }

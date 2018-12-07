@@ -57,6 +57,7 @@
     <Compile Include="CacheManager\DataBaseController.cs" />
     <Compile Include="CacheManager\CacheManager.cs" />
     <Compile Include="CacheManager\ImageResize.cs" />
+    <Compile Include="CacheManager\WrappingStream.cs" />
     <Compile Include="ControllerBase\DataBaseControllerBase.cs" />
     <Compile Include="Albums\SystemAlbum.cs" />
     <Compile Include="AlbumManager\AlbumMapper.cs" />

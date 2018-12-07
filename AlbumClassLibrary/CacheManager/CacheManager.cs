@@ -62,8 +62,9 @@ namespace AlbumClassLibrary.CacheManager
                 if (controller.CacheSeach(pathToFile, out byte[] bytes))
                 {
                     using (MemoryStream ms = new MemoryStream(bytes))
+                    using (WrappingStream wrapper = new WrappingStream(ms))
                     {
-                        gettedBitmap = new Bitmap(ms);
+                        gettedBitmap = new Bitmap(wrapper);
                     }
                 }
                 else
@@ -74,7 +75,7 @@ namespace AlbumClassLibrary.CacheManager
             }
 
             return gettedBitmap;
-            
+
             byte[] ImageToByteArray(Image imageIn, System.Drawing.Imaging.ImageFormat format)
             {
                 MemoryStream ms = new MemoryStream();
@@ -92,7 +93,7 @@ namespace AlbumClassLibrary.CacheManager
         #region Destructors
 
         #endregion
-        
+
         public void Dispose()
         {
             //throw new NotImplementedException();
