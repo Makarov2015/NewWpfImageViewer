@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Windows.Media.Imaging;
 using Drawing = System.Drawing;
 using Control = System.Windows.Controls;
+using AlbumClassLibrary.Extensions;
 
 namespace NewWpfImageViewer.ClassDir
 {
@@ -82,6 +83,8 @@ namespace NewWpfImageViewer.ClassDir
             }
         }
 
+        public BitmapSource GetBitmapSource => BitmapSourceExtension.GetSource(this.MaxSizedImage as Drawing.Bitmap);
+
         /// <summary>
         ///  Добавочная величина для динамического изменения ширины контролов
         /// </summary>
@@ -103,10 +106,7 @@ namespace NewWpfImageViewer.ClassDir
             OriginalFilepath = ImgPath;
             MaxSizedImage = ResizeImage(ImgPath);
 
-            var src = GetSource(this.MaxSizedImage as Drawing.Bitmap);
-            src.Freeze();
-
-            imageControl = new Control.Image { Source = src, Width = this.Width, Height = this.Height, Margin = new System.Windows.Thickness(5), Stretch = System.Windows.Media.Stretch.UniformToFill, StretchDirection = Control.StretchDirection.Both };
+            imageControl = new Control.Image { Source = GetBitmapSource, Width = this.Width, Height = this.Height, Margin = new System.Windows.Thickness(5), Stretch = System.Windows.Media.Stretch.UniformToFill, StretchDirection = Control.StretchDirection.Both };
         }
 
         /// <summary>
@@ -116,15 +116,12 @@ namespace NewWpfImageViewer.ClassDir
         public AutoStackImage(Drawing.Image cachedImage, string Original)
         {
             // Без этого юзинга память не чистится
-            using(cachedImage)
+            using (cachedImage)
                 MaxSizedImage = new Drawing.Bitmap(cachedImage);
 
             OriginalFilepath = Original;
 
-            var src = GetSource(this.MaxSizedImage as Drawing.Bitmap);
-            src.Freeze();
-
-            imageControl = new Control.Image { Source = src, Width = this.Width, Height = this.Height, Margin = new System.Windows.Thickness(5), Stretch = System.Windows.Media.Stretch.UniformToFill, StretchDirection = Control.StretchDirection.Both };
+            imageControl = new Control.Image { Source = GetBitmapSource, Width = this.Width, Height = this.Height, Margin = new System.Windows.Thickness(5), Stretch = System.Windows.Media.Stretch.UniformToFill, StretchDirection = Control.StretchDirection.Both };
         }
 
         /// <summary>
@@ -171,16 +168,6 @@ namespace NewWpfImageViewer.ClassDir
 
                 return destImage;
             }
-        }
-
-        /// <summary>
-        /// Перевод картинки из Битмапа в читаемый контролом формат Соурса
-        /// </summary>
-        /// <param name="image">Картинка для контрола</param>
-        /// <returns></returns>
-        private BitmapSource GetSource(System.Drawing.Bitmap image)
-        {
-            return System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(image.GetHbitmap(), IntPtr.Zero, System.Windows.Int32Rect.Empty, null);
         }
 
         /// <summary>
@@ -279,3 +266,4 @@ namespace NewWpfImageViewer.ClassDir
         }
     }
 }
+
