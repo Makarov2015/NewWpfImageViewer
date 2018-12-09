@@ -85,7 +85,7 @@ namespace NewWpfImageViewer.Forms.ImagePreview
             System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
             sw.Start();
 
-            CurrentImage = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap((AutoStackImages[CurrentIndex].MaxSizedImage as System.Drawing.Bitmap).GetHbitmap(), IntPtr.Zero, System.Windows.Int32Rect.Empty, null);
+            CurrentImage = AutoStackImages[CurrentIndex].GetBitmapSource;
 
             System.Diagnostics.Debug.WriteLine(sw.Elapsed);
             sw.Restart();
@@ -129,7 +129,7 @@ namespace NewWpfImageViewer.Forms.ImagePreview
                 var tcs = new TaskCompletionSource<BitmapSource>();
                 var bitmap = new BitmapImage();
 
-                tcs.SetResult(System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap((System.Drawing.Bitmap.FromFile(path) as System.Drawing.Bitmap).GetHbitmap(), IntPtr.Zero, System.Windows.Int32Rect.Empty, null));
+                tcs.SetResult(AlbumClassLibrary.Extensions.BitmapSourceExtension.GetSource(System.Drawing.Bitmap.FromFile(path) as System.Drawing.Bitmap));
 
                 return tcs.Task;
             }
