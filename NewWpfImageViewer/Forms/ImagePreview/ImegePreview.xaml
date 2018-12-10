@@ -45,9 +45,7 @@
         </Grid>
 
         <Grid Grid.Row="1" Grid.Column="0">
-            <Button x:Name="BackButton" Click="BackButton_Click">
-                <Image x:Name="BackPreviewImage" Opacity="1" ></Image>
-            </Button>
+            <Button x:Name="BackButton" Content="СЮДА"  Click="BackButton_Click"/>
         </Grid>
 
         <Image ClipToBounds="True" Grid.Row="1" Grid.Column="1" x:Name="MainImage" Margin ="0" Opacity="1" />

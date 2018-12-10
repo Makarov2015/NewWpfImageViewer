@@ -28,6 +28,7 @@ namespace AlbumClassLibrary.Extensions
                 }
             }
 
+            source.Freeze();
             return source;
         }
 

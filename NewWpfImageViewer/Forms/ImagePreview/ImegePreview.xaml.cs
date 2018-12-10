@@ -20,6 +20,7 @@ namespace NewWpfImageViewer.Forms.ImagePreview
     /// </summary>
     public partial class ImegePreview : UserControl
     {
+        public event EventHandler HiResLoaded;
         public event EventHandler Close;
 
         private int _currentIndex;
@@ -36,14 +37,14 @@ namespace NewWpfImageViewer.Forms.ImagePreview
                     BackButton.IsEnabled = false;
                     ForwardButton.IsEnabled = true;
 
-                    BackPreviewImage = null;
+                    //BackPreviewImage = null;
                 }
                 else if (value >= AutoStackImages.Count - 1)
                 {
                     BackButton.IsEnabled = true;
                     ForwardButton.IsEnabled = false;
 
-                    BackPreviewImage = AutoStackImages[value - 1].ImageControl;
+                    //BackPreviewImage = AutoStackImages[value - 1].ImageControl;
                 }
                 else if (value > AutoStackImages.Count - 1 || value < 0)
                     throw new IndexOutOfRangeException();
@@ -52,7 +53,7 @@ namespace NewWpfImageViewer.Forms.ImagePreview
                     BackButton.IsEnabled = true;
                     ForwardButton.IsEnabled = true;
 
-                    BackPreviewImage = AutoStackImages[value - 1].ImageControl;
+                    //BackPreviewImage = AutoStackImages[value - 1].ImageControl;
                 }
 
                 _currentIndex = value;
@@ -105,6 +106,8 @@ namespace NewWpfImageViewer.Forms.ImagePreview
             {
                 CurrentImage = await GetNewImageAsync(AutoStackImages[CurrentIndex].OriginalFilepath);
             }
+
+            HiResLoaded(new Tuple<ClassDir.AutoStackImage, BitmapSource>(AutoStackImages[CurrentIndex],_curImage), new EventArgs());
 
             System.Diagnostics.Debug.WriteLine(sw.Elapsed);
             sw.Stop();

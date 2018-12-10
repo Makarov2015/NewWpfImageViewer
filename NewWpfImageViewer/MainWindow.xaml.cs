@@ -25,6 +25,8 @@ namespace NewWpfImageViewer
         /// </summary>
         private ClassDir.AutoStackImage.Size currentSize = ClassDir.AutoStackImage.Size.MEDIUM;
 
+        private Dictionary<ClassDir.AutoStackImage, BitmapSource> LocalCache = new Dictionary<ClassDir.AutoStackImage, BitmapSource>();
+
         /// <summary>
         /// Текущая галерея. Меняется при смене папок.
         /// </summary>
@@ -138,7 +140,6 @@ namespace NewWpfImageViewer
             FavoriteStackPanel.Children.Add(new Forms.Favorites.AddFolderButton(sender as IAlbum));
         }
 
-        //TODO Временная реализация для наглядности
         private void Folder_Mouse_Click(object sender, RoutedEventArgs e)
         {
             LoadFolderToGallery(Directory.GetFiles((sender as IFolder).Path).Where(x => x.EndsWith(".jpg") || x.EndsWith(".jpeg") || x.EndsWith(".gif")).ToList());
@@ -246,10 +247,22 @@ namespace NewWpfImageViewer
 
             var preview = new Forms.ImagePreview.ImegePreview(ImageGallery, ImageGallery.IndexOf(ImageGallery.First(x => x.ImageControl == sender)));
 
+            preview.HiResLoaded += Preview_HiResLoaded;
             preview.Close += Preview_Close;
 
             Grid.SetRowSpan(preview, 4);
             MainGrid.Children.Add(preview);
+        }
+
+        private void Preview_HiResLoaded(object sender, EventArgs e)
+        {
+            if (sender is Tuple<ClassDir.AutoStackImage, BitmapSource>)
+            {
+                var snd = sender as Tuple<ClassDir.AutoStackImage, BitmapSource>;
+                LocalCache.Add(snd.Item1, snd.Item2);
+                if (LocalCache.Count > 5)
+                    LocalCache.Remove(LocalCache.First().Key);
+            }
         }
 
         private void Preview_Close(object sender, EventArgs e)
