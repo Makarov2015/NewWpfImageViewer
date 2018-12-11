@@ -136,7 +136,11 @@ namespace NewWpfImageViewer
                 {
                     Random rand = new Random();
                     using (CacheManager manager = new CacheManager(Properties.Settings.Default.CacheFilePath))
-                        item.PreviewImage = manager.GetImage((System.IO.Directory.GetFiles(item.Path).Where(x => x.EndsWith(".jpg") || x.EndsWith(".jpeg") || x.EndsWith(".gif")).ElementAt(rand.Next(0, (int)(System.IO.Directory.GetFiles(item.Path).Count() - 1)))));
+                    {
+                        var files = System.IO.Directory.GetFiles(item.Path).Where(x => x.EndsWith(".jpg") || x.EndsWith(".jpeg") || x.EndsWith(".gif"));
+                        var previewIndex = rand.Next(0, files.Count() - 1);
+                        item.PreviewImage = manager.GetImage((files.ElementAt(previewIndex)));
+                    }
 
                     var def = new Forms.Favorites.FolderButton(item);
                     def.Mouse_Click += Folder_Mouse_Click;

@@ -21,43 +21,50 @@
             <Setter Property="Control.VerticalAlignment"  Value="Top" />
         </Style>
     </Window.Resources>
-    <Grid x:Name="MainGrid">
+    <Grid x:Name="MainGrid"  Background="SlateGray">
         <Grid.RowDefinitions>
             <RowDefinition Height="50"/>
             <RowDefinition Height="30" />
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <Grid Grid.Row="0" Background="AliceBlue" >
+        <Grid Grid.Row="0" Background="DarkGray" >
             <TextBox x:Name="SearchTextBox" BorderBrush="Transparent" Padding="5,0,15,0" HorizontalContentAlignment="Left" VerticalContentAlignment="Center" HorizontalAlignment="Left" Height="30" Margin="75,10,0,0" TextWrapping="Wrap" Text="Search" VerticalAlignment="Top" Width="342"/>
             <Button Content="· · ·" FontSize="14"  Style="{StaticResource BlackAndWhite}"/>
             <Button Content="⌂" FontSize="16" Margin="0,0,50,0"  Style="{StaticResource BlackAndWhite}"/>
             <Button x:Name="HomeButton" Content="🕮" FontSize="16" Margin="0,0,100,0" Style="{StaticResource BlackAndWhite}" Click="HomeButton_Click"/>
         </Grid>
-        <Grid Grid.Row="1">
+        <Grid Grid.Row="1" Background="Transparent">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="160"/>
             </Grid.ColumnDefinitions>
-            <StackPanel x:Name="AlbumButtonPanel" Grid.Column="0" Orientation="Horizontal" Margin="75, 0, 0, 0" FlowDirection="LeftToRight"  Background="PowderBlue" HorizontalAlignment="Stretch" Height="Auto" VerticalAlignment="Stretch" Width="auto" Grid.RowSpan="2">
+            <StackPanel x:Name="AlbumButtonPanel" Grid.Column="0" Orientation="Horizontal" Margin="75, 0, 0, 0" FlowDirection="LeftToRight"  Background="CadetBlue" HorizontalAlignment="Stretch" Height="Auto" VerticalAlignment="Stretch" Width="auto" Grid.RowSpan="2">
             </StackPanel>
-            <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="0, 0, 75, 0" FlowDirection="RightToLeft"  Background="PowderBlue" HorizontalAlignment="Stretch" Height="Auto" VerticalAlignment="Stretch" Grid.RowSpan="2">
+            <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="0, 0, 75, 0" FlowDirection="RightToLeft"  Background="CadetBlue" HorizontalAlignment="Stretch" Height="Auto" VerticalAlignment="Stretch" Grid.RowSpan="2">
                 <Button x:Name="SmallSizeButton" Content="⧠" Margin="5,5,0,5" BorderThickness="0" Background="Transparent" Width="20" Height="Auto" HorizontalAlignment="Left" FontSize="6" FontFamily="Segoe WP Semibold" Click="SmallSizeButton_Click"/>
                 <Button x:Name="MedSizeButton" Content="⧠" Margin="5,5,0,5" BorderThickness="0" Background="Transparent" Width="20" Height="Auto" HorizontalAlignment="Left" FontSize="10" FontFamily="Segoe WP Semibold" Click="MedSizeButton_Click"/>
                 <Button x:Name="BigSizeButton" Content="⧠" Margin="5,5,0,5" BorderThickness="0" Background="Transparent" Width="20" Height="Auto" HorizontalAlignment="Left" FontSize="14" FontFamily="Segoe WP Semibold" Click="BigSizeButton_Click"/>
             </StackPanel>
         </Grid>
-        <Grid  x:Name="ExpanderGrid" Grid.Row="2" Background="AntiqueWhite" MouseDown="ExpanderGrid_MouseDown">
-            <Expander x:Name="FavoitesExpander" Padding="10" Header="Favorite" HorizontalAlignment="Stretch" Height="auto" VerticalAlignment="Stretch" Width="Auto" IsExpanded="False" Margin="-1, 0, -1, -1">
-                <Grid Margin="0, -15, 0 ,0" Background="LightGray">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="150"/>
-                    </Grid.RowDefinitions>
-                    <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Hidden" PreviewMouseWheel="ScrollViewer_PreviewMouseWheel">
-                        <StackPanel x:Name="FavoriteStackPanel" Orientation="Horizontal" HorizontalAlignment="Stretch" Height="auto" Margin="0" VerticalAlignment="Stretch" Width="auto"/>
-                    </ScrollViewer>
+        <Grid Grid.Row="2" Background="Transparent">
+            <Border  Margin="0, 2, 0, 3" BorderBrush="Transparent" BorderThickness="0">
+                <Border.Effect>
+                    <DropShadowEffect ShadowDepth="1"/>
+                </Border.Effect>
+                <Grid x:Name="ExpanderGrid" MouseDown="ExpanderGrid_MouseDown">
+                    <Expander x:Name="FavoitesExpander" Background="WhiteSmoke" Padding="0, 10, 0, 10" Header="Favorite" HorizontalAlignment="Stretch" Height="auto" VerticalAlignment="Stretch" Width="Auto" IsExpanded="False" Margin="-1, 0, -1, -1">
+                        <Grid Margin="0, -15, 0 ,0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="150"/>
+                            </Grid.RowDefinitions>
+                            <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Hidden" PreviewMouseWheel="ScrollViewer_PreviewMouseWheel">
+                                <StackPanel  x:Name="FavoriteStackPanel" Orientation="Horizontal" HorizontalAlignment="Stretch" Height="auto" Margin="0" VerticalAlignment="Stretch" Width="auto"/>
+                            </ScrollViewer>
+                        </Grid>
+                    </Expander>
                 </Grid>
-            </Expander>
+            </Border>
         </Grid>
         <Grid Grid.Row="3" Background="SlateGray" >
             <ScrollViewer x:Name="MainScrollViewer" Grid.RowSpan="2" VerticalScrollBarVisibility="Hidden" HorizontalAlignment="Stretch" Height="Auto" VerticalAlignment="Stretch" Width="Auto"  Margin="0" Grid.ColumnSpan="2" Padding="75, 0, 75, 0" >

@@ -31,9 +31,19 @@ namespace AlbumClassLibrary.CacheManager
                 int rH = 0;
 
                 double c = 0;
-                c = ((double)image.Height / (double)MaxImageSizeToResize);
-                rW = (int)(image.Width / c);
-                rH = MaxImageSizeToResize;
+
+                if(MaxImageSizeToResize > (double)image.Height)
+                {
+                    c = ((double)image.Height / (double)MaxImageSizeToResize);
+                    rW = image.Width;
+                    rH = image.Height;
+                }
+                else
+                {
+                    c = ((double)image.Height / (double)MaxImageSizeToResize);
+                    rW = (int)(image.Width / c);
+                    rH = MaxImageSizeToResize;
+                }
 
                 var destRect = new System.Drawing.Rectangle(0, 0, rW, rH);
                 var destImage = new System.Drawing.Bitmap(rW, rH);

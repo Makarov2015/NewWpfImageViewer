@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="CacheFilePath" Type="System.String" Scope="User">
-      <Value Profile="(Default)">C:\Users\makarov\_cacheDataBase.db</Value>
+      <Value Profile="(Default)">C:\Users\user\_cacheDataBase.db</Value>
     </Setting>
   </Settings>
 </SettingsFile>
