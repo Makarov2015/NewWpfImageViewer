@@ -27,6 +27,8 @@ namespace NewWpfImageViewer.Forms.Favorites
         {
             Album = ialbum;
             InitializeComponent();
+
+            this.ColorGrid.Background = MainWindow.WinColor;
         }
 
         private void AddButton_Click(object sender, RoutedEventArgs e)

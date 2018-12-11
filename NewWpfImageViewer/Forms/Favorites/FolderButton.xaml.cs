@@ -33,6 +33,8 @@ namespace NewWpfImageViewer.Forms.Favorites
         {
             InitializeComponent();
 
+            NamePlate.Background = MainWindow.WinColor;
+
             folder = entity;
             NameLabel.Content = entity.Name;
 

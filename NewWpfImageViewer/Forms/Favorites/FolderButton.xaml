@@ -23,7 +23,7 @@
                 <Grid Grid.Row="0" Background="Transparent">
                     <Image x:Name="PreviewImage" Stretch="UniformToFill" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                 </Grid>
-                <Grid x:Name="NamePlate" Grid.Row="1" Background="CadetBlue">
+                <Grid x:Name="NamePlate" Grid.Row="1">
                     <Label x:Name="NameLabel" VerticalAlignment="Center" HorizontalAlignment="Center">default</Label>
                 </Grid>
             </Grid>

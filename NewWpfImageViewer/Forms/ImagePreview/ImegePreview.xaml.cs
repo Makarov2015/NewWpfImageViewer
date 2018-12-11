@@ -34,15 +34,15 @@ namespace NewWpfImageViewer.Forms.ImagePreview
             {
                 if (value == 0)
                 {
-                    BackButton.IsEnabled = false;
-                    ForwardButton.IsEnabled = true;
+                    //BackButton.IsEnabled = false;
+                    //ForwardButton.IsEnabled = true;
 
                     //BackPreviewImage = null;
                 }
                 else if (value >= AutoStackImages.Count - 1)
                 {
-                    BackButton.IsEnabled = true;
-                    ForwardButton.IsEnabled = false;
+                    //BackButton.IsEnabled = true;
+                    //ForwardButton.IsEnabled = false;
 
                     //BackPreviewImage = AutoStackImages[value - 1].ImageControl;
                 }
@@ -50,8 +50,8 @@ namespace NewWpfImageViewer.Forms.ImagePreview
                     throw new IndexOutOfRangeException();
                 else
                 {
-                    BackButton.IsEnabled = true;
-                    ForwardButton.IsEnabled = true;
+                    //BackButton.IsEnabled = true;
+                    //ForwardButton.IsEnabled = true;
 
                     //BackPreviewImage = AutoStackImages[value - 1].ImageControl;
                 }
@@ -60,20 +60,43 @@ namespace NewWpfImageViewer.Forms.ImagePreview
             }
         }
         private List<ClassDir.AutoStackImage> AutoStackImages;
+        private Dictionary<ClassDir.AutoStackImage, object> cached = null;
 
-        private BitmapSource _curImage;
+        private object _curImage;
         private BitmapSource CurrentImage
         {
             set
             {
-                _curImage = value;
-                this.MainImage.Source = _curImage;
+                if (AutoStackImages[CurrentIndex].IsAnimation)
+                {
+                    AnimationProgressBar.Visibility = Visibility.Visible;
+                    _curImage = value;
+
+                    WpfAnimatedGif.ImageBehavior.SetAnimatedSource(MainImage, _curImage as BitmapImage);
+
+                    AnimationController = WpfAnimatedGif.ImageBehavior.GetAnimationController(MainImage);
+                    AnimationController.CurrentFrameChanged += Controller_CurrentFrameChanged;
+
+                    AnimationProgressBar.Maximum = AnimationController.FrameCount;
+                }
+                else
+                {
+                    AnimationProgressBar.Visibility = Visibility.Hidden;
+                    _curImage = value;
+                    this.MainImage.Source = _curImage as BitmapSource;
+                }
             }
         }
 
-        public ImegePreview(List<ClassDir.AutoStackImage> gallery, int curIndex)
+        WpfAnimatedGif.ImageAnimationController AnimationController = null;
+
+        public ImegePreview(List<ClassDir.AutoStackImage> gallery, int curIndex, ref Dictionary<ClassDir.AutoStackImage, object> localCacheList)
         {
             InitializeComponent();
+
+            AnimationProgressBar.Loaded += AnimationProgressBar_Loaded;
+
+            cached = localCacheList as Dictionary<ClassDir.AutoStackImage, object>;
 
             AutoStackImages = gallery;
             CurrentIndex = curIndex;
@@ -81,36 +104,55 @@ namespace NewWpfImageViewer.Forms.ImagePreview
             LoadMainImageAsync();
         }
 
+        private void AnimationProgressBar_Loaded(object sender, RoutedEventArgs e)
+        {
+            var p = (ProgressBar)sender;
+            p.ApplyTemplate();
+
+            ((System.Windows.Shapes.Rectangle)p.Template.FindName("Animation", p)).Fill = MainWindow.WinColor;
+        }
+
         private async void LoadMainImageAsync()
         {
             System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
             sw.Start();
 
-            CurrentImage = AutoStackImages[CurrentIndex].GetBitmapSource;
+            this.MainImage.Source = AutoStackImages[CurrentIndex].GetBitmapSource;
 
-            System.Diagnostics.Debug.WriteLine(sw.Elapsed);
+            System.Diagnostics.Debug.WriteLine($"Загрузка превью {sw.Elapsed}");
+
+            this.Cursor = Cursors.Wait;
+            await Task.Delay(1);
             sw.Restart();
 
-            await Task.Delay(1);
+            if (!AutoStackImages[CurrentIndex].IsAnimation)
+                if (cached.Any(x => x.Key == AutoStackImages[CurrentIndex]))
+                {
+                    CurrentImage = cached.Single(x => x.Key == AutoStackImages[CurrentIndex]).Value as BitmapSource;
+
+                    System.Diagnostics.Debug.WriteLine($"Загрузка кеша {sw.Elapsed}");
+                    sw.Stop();
+
+                    this.Cursor = Cursors.Arrow;
+                    return;
+                }
 
             if (AutoStackImages[CurrentIndex].IsAnimation)
             {
-                this.Cursor = Cursors.Wait;
-
-                var im = await GetAnimationSource(AutoStackImages[CurrentIndex].OriginalFilepath);
-                WpfAnimatedGif.ImageBehavior.SetAnimatedSource(MainImage, im);
-
-                this.Cursor = Cursors.Arrow;
+                CurrentImage = await GetAnimationSource(AutoStackImages[CurrentIndex].OriginalFilepath);
             }
             else
             {
                 CurrentImage = await GetNewImageAsync(AutoStackImages[CurrentIndex].OriginalFilepath);
             }
 
-            HiResLoaded(new Tuple<ClassDir.AutoStackImage, BitmapSource>(AutoStackImages[CurrentIndex],_curImage), new EventArgs());
 
-            System.Diagnostics.Debug.WriteLine(sw.Elapsed);
+            System.Diagnostics.Debug.WriteLine($"Загрузка оригинала {sw.Elapsed}");
             sw.Stop();
+            this.Cursor = Cursors.Arrow;
+
+            if (!AutoStackImages[CurrentIndex].IsAnimation)
+                HiResLoaded(new Tuple<ClassDir.AutoStackImage, object>(AutoStackImages[CurrentIndex], _curImage), new EventArgs());
 
             Task<BitmapImage> GetAnimationSource(string path)
             {
@@ -126,16 +168,21 @@ namespace NewWpfImageViewer.Forms.ImagePreview
                     return image;
                 });
             }
-
+            
             Task<BitmapSource> GetNewImageAsync(string path)
             {
                 var tcs = new TaskCompletionSource<BitmapSource>();
                 var bitmap = new BitmapImage();
 
-                tcs.SetResult(AlbumClassLibrary.Extensions.BitmapSourceExtension.GetSource(System.Drawing.Bitmap.FromFile(path) as System.Drawing.Bitmap));
+                tcs.SetResult(AlbumClassLibrary.Extensions.BitmapSourceExtension.GetSource(path, System.Windows.Forms.Screen.PrimaryScreen.Bounds.Height));
 
                 return tcs.Task;
             }
+        }
+
+        private void Controller_CurrentFrameChanged(object sender, EventArgs e)
+        {
+            AnimationProgressBar.Value = (sender as WpfAnimatedGif.ImageAnimationController).CurrentFrame;
         }
 
         private void ForwardButton_Click(object sender, RoutedEventArgs e)

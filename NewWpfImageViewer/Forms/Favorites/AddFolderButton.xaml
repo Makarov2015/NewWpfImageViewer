@@ -14,7 +14,7 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="140"/>
                 </Grid.ColumnDefinitions>
-                <Grid Grid.Row="1" Background="CadetBlue">
+                <Grid x:Name="ColorGrid" Grid.Row="1">
                     <Label x:Name="NameLabel" VerticalAlignment="Center" HorizontalAlignment="Center">ADD</Label>
                 </Grid>
             </Grid>

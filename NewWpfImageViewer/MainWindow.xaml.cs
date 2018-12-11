@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using AlbumClassLibrary;
 using AlbumClassLibrary.CacheManager;
@@ -15,6 +16,8 @@ namespace NewWpfImageViewer
     /// </summary>
     public partial class MainWindow : Window
     {
+        public static Brush WinColor = new SolidColorBrush((Color) ColorConverter.ConvertFromString("#" + ClassDir.WinColor.GetColor()));
+
         /// <summary>
         /// Таймер для зарежки пересчета размеров изображений 
         /// </summary>
@@ -25,7 +28,10 @@ namespace NewWpfImageViewer
         /// </summary>
         private ClassDir.AutoStackImage.Size currentSize = ClassDir.AutoStackImage.Size.MEDIUM;
 
-        private Dictionary<ClassDir.AutoStackImage, BitmapSource> LocalCache = new Dictionary<ClassDir.AutoStackImage, BitmapSource>();
+        /// <summary>
+        /// Прототип локального кеша на 5 изображений
+        /// </summary>
+        public Dictionary<ClassDir.AutoStackImage, object> LocalCache = new Dictionary<ClassDir.AutoStackImage, object>();
 
         /// <summary>
         /// Текущая галерея. Меняется при смене папок.
@@ -138,6 +144,7 @@ namespace NewWpfImageViewer
                 }
 
             FavoriteStackPanel.Children.Add(new Forms.Favorites.AddFolderButton(sender as IAlbum));
+            LocalCache.Clear();
         }
 
         private void Folder_Mouse_Click(object sender, RoutedEventArgs e)
@@ -216,6 +223,8 @@ namespace NewWpfImageViewer
                 img.MouseUp += Img_MouseUp;
                 MainWrapPanel.Children.Add(img);
             }
+
+            MainScrollViewer.ScrollToTop();
         }
 
         private void SmallSizeButton_Click(object sender, RoutedEventArgs e)
@@ -245,7 +254,7 @@ namespace NewWpfImageViewer
             if (MainGrid.Children.Cast<object>().Any(x => x.GetType() == typeof(Forms.ImagePreview.ImegePreview)))
                 return;
 
-            var preview = new Forms.ImagePreview.ImegePreview(ImageGallery, ImageGallery.IndexOf(ImageGallery.First(x => x.ImageControl == sender)));
+            var preview = new Forms.ImagePreview.ImegePreview(ImageGallery, ImageGallery.IndexOf(ImageGallery.First(x => x.ImageControl == sender)), ref LocalCache);
 
             preview.HiResLoaded += Preview_HiResLoaded;
             preview.Close += Preview_Close;
@@ -256,9 +265,9 @@ namespace NewWpfImageViewer
 
         private void Preview_HiResLoaded(object sender, EventArgs e)
         {
-            if (sender is Tuple<ClassDir.AutoStackImage, BitmapSource>)
+            if (sender is Tuple<ClassDir.AutoStackImage, object>)
             {
-                var snd = sender as Tuple<ClassDir.AutoStackImage, BitmapSource>;
+                var snd = sender as Tuple<ClassDir.AutoStackImage, object>;
                 LocalCache.Add(snd.Item1, snd.Item2);
                 if (LocalCache.Count > 5)
                     LocalCache.Remove(LocalCache.First().Key);
@@ -269,7 +278,7 @@ namespace NewWpfImageViewer
         {
             MainGrid.Children.Remove(sender as Forms.ImagePreview.ImegePreview);
 
-            (sender as Forms.ImagePreview.ImegePreview).MainImage.Source.Freeze();
+            (sender as Forms.ImagePreview.ImegePreview).MainImage.Source?.Freeze();
 
             (sender as Forms.ImagePreview.ImegePreview).MainGrid.Children.Clear();
             (sender as Forms.ImagePreview.ImegePreview).MainGrid = null;
