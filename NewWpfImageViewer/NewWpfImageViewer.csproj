@@ -96,7 +96,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ClassDir\AutoStackImage.cs" />
-    <Compile Include="ClassDir\FavoritePanelManager.cs" />
+    <Compile Include="ClassDir\DynamicRowFormatter.cs" />
     <Compile Include="ClassDir\WinColor.cs" />
     <Compile Include="Forms\Albums\NewAlbumButton.xaml.cs">
       <DependentUpon>NewAlbumButton.xaml</DependentUpon>
@@ -113,7 +113,6 @@
     <Compile Include="Forms\Favorites\FolderButton.xaml.cs">
       <DependentUpon>FolderButton.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ClassDir\FolderEntity.cs" />
     <Compile Include="Forms\ImagePreview\ImegePreview.xaml.cs">
       <DependentUpon>ImegePreview.xaml</DependentUpon>
     </Compile>

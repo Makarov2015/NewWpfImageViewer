@@ -8,7 +8,7 @@ namespace AlbumClassLibrary.AlbumManager
 {
     public class AlbumManager : IAlbumManager
     {
-        private string DataBaseFilePath { get; set; }
+        private string DataBaseFilePath { get; }
         
         private List<IAlbum> LoadedAlbums { get; set; }
 

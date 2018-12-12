@@ -16,7 +16,7 @@ namespace NewWpfImageViewer
     /// </summary>
     public partial class MainWindow : Window
     {
-        public static Brush WinColor = new SolidColorBrush((Color) ColorConverter.ConvertFromString("#" + ClassDir.WinColor.GetColor()));
+        public static Brush WinColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#" + ClassDir.WinColor.GetColor()));
 
         /// <summary>
         /// Таймер для зарежки пересчета размеров изображений 
@@ -88,7 +88,7 @@ namespace NewWpfImageViewer
             CurrentAlbumChanged += MainWindow_CurrentAlbumChanged;
             _resizeTimer.Tick += _resizeTimer_Tick;
 
-            AlbumsButtonsRenderer(albumsManager.Albums);
+           AlbumsButtonsRenderer(albumsManager.Albums);
         }
 
         #region Search
@@ -97,6 +97,10 @@ namespace NewWpfImageViewer
 
         #region Collection
 
+        /// <summary>
+        /// Перерисовка кнопок альбомов
+        /// </summary>
+        /// <param name="albums">Набор альбомов</param>
         private void AlbumsButtonsRenderer(List<IAlbum> albums)
         {
             AlbumButtonPanel.Children.Clear();
@@ -104,6 +108,8 @@ namespace NewWpfImageViewer
             if (albums != null)
                 foreach (var item in albums)
                 {
+                    item.FolderAdded += Album_FolderAdded;
+
                     var def = new Forms.Albums.AlbumButton(item);
                     def.AlbumButtonClicked += AlbumButtonClicked;
                     AlbumButtonPanel.Children.Add(def);
@@ -122,6 +128,11 @@ namespace NewWpfImageViewer
             }
         }
 
+        private void Album_FolderAdded(object sender, EventArgs e)
+        {
+            MainWindow_CurrentAlbumChanged(CurrentAlbum, new EventArgs());
+        }
+
         private void AlbumButtonClicked(object sender, EventArgs e)
         {
             CurrentAlbum = sender as IAlbum;
@@ -130,6 +141,8 @@ namespace NewWpfImageViewer
         private void MainWindow_CurrentAlbumChanged(object sender, EventArgs e)
         {
             FavoriteStackPanel.Children.Clear();
+            MainWrapPanel.Children.Clear();
+            ImageGallery.Clear();
 
             if ((sender as IAlbum).Folders != null)
                 foreach (var item in (sender as IAlbum).Folders)
@@ -149,12 +162,14 @@ namespace NewWpfImageViewer
 
             FavoriteStackPanel.Children.Add(new Forms.Favorites.AddFolderButton(sender as IAlbum));
             LocalCache.Clear();
+
+            if (FavoriteStackPanel.Children.Count > 1)
+                (FavoriteStackPanel.Children[0] as Forms.Favorites.FolderButton).MainButton_Click(this, new RoutedEventArgs());
         }
 
         private void Folder_Mouse_Click(object sender, RoutedEventArgs e)
         {
             LoadFolderToGallery(Directory.GetFiles((sender as IFolder).Path).Where(x => x.EndsWith(".jpg") || x.EndsWith(".jpeg") || x.EndsWith(".gif")).ToList());
-            LoadImagesOnBoard();
         }
 
         private void AddBtn_AlbumAdded(object sender, EventArgs e)
@@ -188,12 +203,14 @@ namespace NewWpfImageViewer
         #region Images
 
         /// <summary>
-        /// Создаем список сущностей изображений из выбранной (текущей) папки
+        /// Загрузка изображений из папки в список AutoStackImages
         /// </summary>
+        /// <param name="files"></param>
         private void LoadFolderToGallery(List<string> files)
         {
             ImageGallery = new List<ClassDir.AutoStackImage>();
 
+            // Кормим менеджер путем к файлу, получаем кешированную копию, генерим АвтоСтаки и складываем в список
             using (AlbumClassLibrary.CacheManager.CacheManager manager = new AlbumClassLibrary.CacheManager.CacheManager(Properties.Settings.Default.CacheFilePath))
             {
                 foreach (var item in files)
@@ -201,11 +218,16 @@ namespace NewWpfImageViewer
                     ImageGallery.Add(new ClassDir.AutoStackImage(manager.GetImage(item), item));
                 }
             }
+
+            LoadImagesOnBoard();
         }
 
         /// <summary>
-        /// Заполняем изображениями из списка сущностей текущей папки форму
+        /// Заполняем изображениями из списка форму
         /// </summary>
+        /// <remarks>
+        /// Этот метод вынесен отдельно, так как отвечает не только за наполнение формы контролами, но и за изменение масштаба
+        /// </remarks>
         /// <param name="autoStacks"></param>
         private void LoadImagesOnBoard()
         {
@@ -219,13 +241,20 @@ namespace NewWpfImageViewer
                 item.CurrentSize = currentSize;
             }
 
-            ClassDir.AutoStackImage.DynamicRowFormatter(ImageGallery, MainWrapPanel.ActualWidth);
+            ClassDir.DynamicRowFormatter.FormatPlate(ImageGallery, MainWrapPanel.ActualWidth);
 
             foreach (var item in ImageGallery)
             {
+                System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+                sw.Start();
+
                 var img = item.ImageControl;
                 img.MouseUp += Img_MouseUp;
+                
                 MainWrapPanel.Children.Add(img);
+
+                sw.Stop();
+                System.Diagnostics.Debug.WriteLine(sw.Elapsed);
             }
 
             MainScrollViewer.ScrollToTop();

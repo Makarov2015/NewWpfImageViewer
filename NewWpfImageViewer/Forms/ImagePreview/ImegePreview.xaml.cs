@@ -114,24 +114,15 @@ namespace NewWpfImageViewer.Forms.ImagePreview
 
         private async void LoadMainImageAsync()
         {
-            System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
-            sw.Start();
-
             this.MainImage.Source = AutoStackImages[CurrentIndex].GetBitmapSource;
-
-            System.Diagnostics.Debug.WriteLine($"Загрузка превью {sw.Elapsed}");
 
             this.Cursor = Cursors.Wait;
             await Task.Delay(1);
-            sw.Restart();
 
             if (!AutoStackImages[CurrentIndex].IsAnimation)
                 if (cached.Any(x => x.Key == AutoStackImages[CurrentIndex]))
                 {
                     CurrentImage = cached.Single(x => x.Key == AutoStackImages[CurrentIndex]).Value as BitmapSource;
-
-                    System.Diagnostics.Debug.WriteLine($"Загрузка кеша {sw.Elapsed}");
-                    sw.Stop();
 
                     this.Cursor = Cursors.Arrow;
                     return;
@@ -146,9 +137,6 @@ namespace NewWpfImageViewer.Forms.ImagePreview
                 CurrentImage = await GetNewImageAsync(AutoStackImages[CurrentIndex].OriginalFilepath);
             }
 
-
-            System.Diagnostics.Debug.WriteLine($"Загрузка оригинала {sw.Elapsed}");
-            sw.Stop();
             this.Cursor = Cursors.Arrow;
 
             if (!AutoStackImages[CurrentIndex].IsAnimation)
@@ -168,7 +156,7 @@ namespace NewWpfImageViewer.Forms.ImagePreview
                     return image;
                 });
             }
-            
+
             Task<BitmapSource> GetNewImageAsync(string path)
             {
                 var tcs = new TaskCompletionSource<BitmapSource>();

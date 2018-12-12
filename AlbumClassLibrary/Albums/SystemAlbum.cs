@@ -71,6 +71,9 @@ namespace AlbumClassLibrary
             // 1 - форма. Для системного альбома - это форма выбора папки из файловой системы
             var folderToLoad = ShowForm();
 
+            if (folderToLoad is null)
+                return;
+
             var fldr = System.IO.Directory.GetFiles(folderToLoad).Where(x => x.EndsWith(".jpg") || x.EndsWith(".jpeg") || x.EndsWith(".gif"));
 
             // берем рандомную превьюшку из папки

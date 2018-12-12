@@ -6,7 +6,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="150" d:DesignWidth="150">
     <Grid>
-        <Border Margin="5" BorderBrush="Black" BorderThickness="2" Background="White">
+        <Border Margin="10" BorderBrush="Black" BorderThickness="2" Background="White">
             <Border.Effect>
                 <DropShadowEffect ShadowDepth="3"/>
             </Border.Effect>
