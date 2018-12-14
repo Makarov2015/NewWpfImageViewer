@@ -21,6 +21,9 @@
             <Setter Property="Control.VerticalAlignment"  Value="Top" />
         </Style>
     </Window.Resources>
+    <Window.DataContext>
+        <local:ViewModel/>
+    </Window.DataContext>
     <Grid x:Name="MainGrid"  Background="SlateGray">
         <Grid.RowDefinitions>
             <RowDefinition Height="50"/>

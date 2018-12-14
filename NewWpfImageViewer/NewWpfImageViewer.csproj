@@ -97,6 +97,7 @@
     </Compile>
     <Compile Include="ClassDir\AutoStackImage.cs" />
     <Compile Include="ClassDir\DynamicRowFormatter.cs" />
+    <Compile Include="ClassDir\ViewModel.cs" />
     <Compile Include="ClassDir\WinColor.cs" />
     <Compile Include="Forms\Albums\NewAlbumButton.xaml.cs">
       <DependentUpon>NewAlbumButton.xaml</DependentUpon>
