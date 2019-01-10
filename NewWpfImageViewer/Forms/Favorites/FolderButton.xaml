@@ -9,13 +9,13 @@
         <SolidColorBrush x:Name="TransparentWhite" x:Key="TransparentWhite" Color="White" Opacity="0.60" />
         <SolidColorBrush x:Name="TransparentHoverWhite" x:Key="TransparentHoverWhite" Color="White" Opacity="0.80" />
     </Control.Resources>
-    <Grid x:Name="FolderButtonGrid" MouseEnter="FolderButtonGrid_MouseEnter" MouseLeave="FolderButtonGrid_MouseLeave">
+    <Grid x:Name="FolderButtonGrid" MouseEnter="FolderButtonGrid_MouseEnter" MouseLeave="FolderButtonGrid_MouseLeave" Margin="2,0,2,0">
         <Border Margin="5" BorderBrush="Black" BorderThickness="2" Background="White">
             <Border.Effect>
-                <DropShadowEffect ShadowDepth="3"/>
+                <DropShadowEffect ShadowDepth="4"/>
             </Border.Effect>
         </Border>
-        <Border Margin="10" BorderBrush="Black" BorderThickness="1">
+        <Border Margin="5" BorderBrush="Black" BorderThickness="1">
             <StackPanel Orientation="Vertical" Margin="5">
                 <Label Content="Staying within borders"/>
                 <Button Content="Do It"/>

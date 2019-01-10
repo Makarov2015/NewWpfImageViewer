@@ -33,9 +33,9 @@
         </Grid.RowDefinitions>
         <Grid Grid.Row="0" Background="DarkGray" >
             <TextBox x:Name="SearchTextBox" BorderBrush="Transparent" Padding="5,0,15,0" HorizontalContentAlignment="Left" VerticalContentAlignment="Center" HorizontalAlignment="Left" Height="30" Margin="75,10,0,0" TextWrapping="Wrap" Text="Search" VerticalAlignment="Top" Width="342"/>
-            <Button Content="· · ·" FontSize="14"  Style="{StaticResource BlackAndWhite}"/>
-            <Button Content="⌂" FontSize="16" Margin="0,0,50,0"  Style="{StaticResource BlackAndWhite}"/>
-            <Button x:Name="HomeButton" Content="🕮" FontSize="16" Margin="0,0,100,0" Style="{StaticResource BlackAndWhite}" Click="HomeButton_Click"/>
+            <Button x:Name="SettingsButton" Content="⚙" FontSize="14"  Style="{StaticResource BlackAndWhite}" Click="SettingsButton_Click"/>
+            <Button IsEnabled="False" Content="⌂" FontSize="16" Margin="0,0,50,0"  Style="{StaticResource BlackAndWhite}"/>
+            <Button IsEnabled="False" x:Name="HomeButton" Content="🕮" FontSize="16" Margin="0,0,100,0" Style="{StaticResource BlackAndWhite}" Click="HomeButton_Click"/>
         </Grid>
         <Grid Grid.Row="1" Background="Transparent">
             <Grid.ColumnDefinitions>
@@ -56,7 +56,7 @@
                     <DropShadowEffect ShadowDepth="1"/>
                 </Border.Effect>
                 <Grid x:Name="ExpanderGrid" MouseDown="ExpanderGrid_MouseDown">
-                    <Expander x:Name="FavoitesExpander" Background="WhiteSmoke" Padding="0, 10, 0, 10" Header="Favorite" HorizontalAlignment="Stretch" Height="auto" VerticalAlignment="Stretch" Width="Auto" IsExpanded="False" Margin="-1, 0, -1, -1">
+                    <Expander x:Name="FavoitesExpander" Background="WhiteSmoke" Padding="0, 10, 0, 10" Header="Favorite" HorizontalAlignment="Stretch" Height="auto" VerticalAlignment="Stretch" Width="Auto" IsExpanded="False" Margin="0, 0, 0, -1">
                         <Grid Margin="0, -15, 0 ,0">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="150"/>

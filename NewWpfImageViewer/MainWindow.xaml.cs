@@ -79,16 +79,24 @@ namespace NewWpfImageViewer
             }
         }
 
+        private string CacheFile => Properties.Settings.Default.CacheFilePath + Properties.Settings.Default.CacheFileName;
+
         public MainWindow()
         {
-            albumsManager = new AlbumClassLibrary.AlbumManager.AlbumManager(Properties.Settings.Default.CacheFilePath);
+            ClassDir.SettingsManager.CheckSettings();
+            ReInitializer();
+        }
+
+        private void ReInitializer()
+        {
+            albumsManager = new AlbumClassLibrary.AlbumManager.AlbumManager(CacheFile);
 
             InitializeComponent();
 
             CurrentAlbumChanged += MainWindow_CurrentAlbumChanged;
             _resizeTimer.Tick += _resizeTimer_Tick;
 
-           AlbumsButtonsRenderer(albumsManager.Albums);
+            AlbumsButtonsRenderer(albumsManager.Albums);
         }
 
         #region Search
@@ -121,11 +129,9 @@ namespace NewWpfImageViewer
 
             albumsManager.Albums.First().IsCurrent = true;
 
-            if (CurrentAlbum == null)
-            {
-                CurrentAlbum = albumsManager.Albums.First();
-                (FavoriteStackPanel.Children[0] as Forms.Favorites.FolderButton).MainButton_Click(this, new RoutedEventArgs());
-            }
+            CurrentAlbum = albumsManager.Albums.First();
+
+            (FavoriteStackPanel.Children[0] as Forms.Favorites.FolderButton).MainButton_Click(this, new RoutedEventArgs());
         }
 
         private void Album_FolderAdded(object sender, EventArgs e)
@@ -148,7 +154,7 @@ namespace NewWpfImageViewer
                 foreach (var item in (sender as IAlbum).Folders)
                 {
                     Random rand = new Random();
-                    using (CacheManager manager = new CacheManager(Properties.Settings.Default.CacheFilePath))
+                    using (CacheManager manager = new CacheManager(CacheFile))
                     {
                         var files = System.IO.Directory.GetFiles(item.Path).Where(x => x.EndsWith(".jpg") || x.EndsWith(".jpeg") || x.EndsWith(".gif"));
                         var previewIndex = rand.Next(0, files.Count() - 1);
@@ -169,7 +175,18 @@ namespace NewWpfImageViewer
 
         private void Folder_Mouse_Click(object sender, RoutedEventArgs e)
         {
-            LoadFolderToGallery(Directory.GetFiles((sender as IFolder).Path).Where(x => x.EndsWith(".jpg") || x.EndsWith(".jpeg") || x.EndsWith(".gif")).ToList());
+            List<string> _suppFormats = new List<string>() { ".jpg", ".jpeg", ".gif" };
+            var reLst = Directory.GetFiles((sender as IFolder).Path).Where(x => _suppFormats.Any(y => x.EndsWith(y))).ToList();
+
+            //Random rnd = new Random();
+            //var randomizedList = from item in list
+            //                     orderby rnd.Next()
+            //                     select item;
+
+            if (Properties.Settings.Default.MaxFilesToLoad != 0)
+                LoadFolderToGallery(reLst.Take(Properties.Settings.Default.MaxFilesToLoad).ToList());
+            else
+                LoadFolderToGallery(reLst);
         }
 
         private void AddBtn_AlbumAdded(object sender, EventArgs e)
@@ -211,7 +228,7 @@ namespace NewWpfImageViewer
             ImageGallery = new List<ClassDir.AutoStackImage>();
 
             // Кормим менеджер путем к файлу, получаем кешированную копию, генерим АвтоСтаки и складываем в список
-            using (AlbumClassLibrary.CacheManager.CacheManager manager = new AlbumClassLibrary.CacheManager.CacheManager(Properties.Settings.Default.CacheFilePath))
+            using (AlbumClassLibrary.CacheManager.CacheManager manager = new AlbumClassLibrary.CacheManager.CacheManager(CacheFile))
             {
                 foreach (var item in files)
                 {
@@ -250,7 +267,7 @@ namespace NewWpfImageViewer
 
                 var img = item.ImageControl;
                 img.MouseUp += Img_MouseUp;
-                
+
                 MainWrapPanel.Children.Add(img);
 
                 sw.Stop();
@@ -287,7 +304,7 @@ namespace NewWpfImageViewer
             if (MainGrid.Children.Cast<object>().Any(x => x.GetType() == typeof(Forms.ImagePreview.ImegePreview)))
                 return;
 
-            var preview = new Forms.ImagePreview.ImegePreview(ImageGallery, ImageGallery.IndexOf(ImageGallery.First(x => x.ImageControl == sender)), ref LocalCache);
+            var preview = new Forms.ImagePreview.ImegePreview(ImageGallery, ImageGallery.IndexOf(ImageGallery.First(x => x.ImageControl == sender)), ref LocalCache, this);
 
             preview.HiResLoaded += Preview_HiResLoaded;
             preview.Close += Preview_Close;
@@ -326,6 +343,8 @@ namespace NewWpfImageViewer
             }));
 
             thread.Start();
+
+            this.Title = Properties.Settings.Default.MainWindowName;
         }
 
         #endregion
@@ -350,16 +369,34 @@ namespace NewWpfImageViewer
 
         private void HomeButton_Click(object sender, RoutedEventArgs e)
         {
-            //using (var dialog = new System.Windows.Forms.FolderBrowserDialog())
-            //{
-            //    System.Windows.Forms.DialogResult result = dialog.ShowDialog();
 
-            //    if (result == System.Windows.Forms.DialogResult.OK)
-            //    {
-            //        Directory.
-            //        var a = dialog.SelectedPath;
-            //    }
-            //}
+        }
+
+        private void SettingsButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (MainGrid.Children.Cast<object>().Any(x => x.GetType() == typeof(Forms.Settings.SettingsLayout)))
+                MainGrid.Children.Remove(MainGrid.Children.Cast<object>().First(x => x.GetType() == typeof(Forms.Settings.SettingsLayout)) as Forms.Settings.SettingsLayout);
+
+            var sett = new Forms.Settings.SettingsLayout();
+            sett.Close += Sett_Close;
+
+            Grid.SetRowSpan(sett, 4);
+            MainGrid.Children.Add(sett);
+
+            this.Title = "Settings";
+        }
+
+        private void Sett_Close(object sender, EventArgs e)
+        {
+            while ((sender as Forms.Settings.SettingsLayout).Width == 0)
+            {
+                MainGrid.Children.Remove(sender as Forms.Settings.SettingsLayout);
+            }
+
+            if ((sender as Forms.Settings.SettingsLayout).Edited)
+                ReInitializer();
+
+            this.Title = Properties.Settings.Default.MainWindowName;
         }
     }
 }

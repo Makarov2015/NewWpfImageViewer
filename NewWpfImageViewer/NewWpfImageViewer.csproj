@@ -87,6 +87,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Forms\Settings\SettingsLayout.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -97,6 +101,7 @@
     </Compile>
     <Compile Include="ClassDir\AutoStackImage.cs" />
     <Compile Include="ClassDir\DynamicRowFormatter.cs" />
+    <Compile Include="ClassDir\SettingsManager.cs" />
     <Compile Include="ClassDir\ViewModel.cs" />
     <Compile Include="ClassDir\WinColor.cs" />
     <Compile Include="Forms\Albums\NewAlbumButton.xaml.cs">
@@ -116,6 +121,9 @@
     </Compile>
     <Compile Include="Forms\ImagePreview\ImegePreview.xaml.cs">
       <DependentUpon>ImegePreview.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Settings\SettingsLayout.xaml.cs">
+      <DependentUpon>SettingsLayout.xaml</DependentUpon>
     </Compile>
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>

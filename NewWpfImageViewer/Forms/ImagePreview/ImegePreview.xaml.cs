@@ -90,10 +90,13 @@ namespace NewWpfImageViewer.Forms.ImagePreview
 
         WpfAnimatedGif.ImageAnimationController AnimationController = null;
 
-        public ImegePreview(List<ClassDir.AutoStackImage> gallery, int curIndex, ref Dictionary<ClassDir.AutoStackImage, object> localCacheList)
-        {
-            InitializeComponent();
+        private Window _parent;
 
+        public ImegePreview(List<ClassDir.AutoStackImage> gallery, int curIndex, ref Dictionary<ClassDir.AutoStackImage, object> localCacheList, Window parent)
+        {
+            _parent = parent;
+
+            InitializeComponent();
             AnimationProgressBar.Loaded += AnimationProgressBar_Loaded;
 
             cached = localCacheList as Dictionary<ClassDir.AutoStackImage, object>;
@@ -114,6 +117,9 @@ namespace NewWpfImageViewer.Forms.ImagePreview
 
         private async void LoadMainImageAsync()
         {
+            var _size = (double)(new System.IO.FileInfo(AutoStackImages[CurrentIndex].OriginalFilepath).Length / 1024F / 1024F);
+
+            this._parent.Title = $"({_size.ToString("F2")}" + " Mb) " + System.IO.Path.GetFileName(AutoStackImages[CurrentIndex].OriginalFilepath);
             this.MainImage.Source = AutoStackImages[CurrentIndex].GetBitmapSource;
 
             this.Cursor = Cursors.Wait;

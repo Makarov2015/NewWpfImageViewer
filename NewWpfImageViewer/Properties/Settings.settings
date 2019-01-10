@@ -3,7 +3,19 @@
   <Profiles />
   <Settings>
     <Setting Name="CacheFilePath" Type="System.String" Scope="User">
-      <Value Profile="(Default)">C:\Users\makarov\_cacheDataBase.db</Value>
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="CacheFileName" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">\_cacheDataBase.db</Value>
+    </Setting>
+    <Setting Name="MainWindowName" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">ImageViewer</Value>
+    </Setting>
+    <Setting Name="MaxFilesToLoad" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="RandomizePictures" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
     </Setting>
   </Settings>
 </SettingsFile>
