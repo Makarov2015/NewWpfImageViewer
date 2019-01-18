@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using AlbumClassLibrary;
 using AlbumClassLibrary.CacheManager;
@@ -262,16 +263,10 @@ namespace NewWpfImageViewer
 
             foreach (var item in ImageGallery)
             {
-                System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
-                sw.Start();
-
                 var img = item.ImageControl;
                 img.MouseUp += Img_MouseUp;
 
                 MainWrapPanel.Children.Add(img);
-
-                sw.Stop();
-                System.Diagnostics.Debug.WriteLine(sw.Elapsed);
             }
 
             MainScrollViewer.ScrollToTop();
@@ -397,6 +392,19 @@ namespace NewWpfImageViewer
                 ReInitializer();
 
             this.Title = Properties.Settings.Default.MainWindowName;
+        }
+
+        private async void FavoitesExpander_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            await System.Threading.Tasks.Task.Delay(200);
+
+            if ((sender as Expander).IsMouseOver)
+                (sender as Expander).IsExpanded = true;
+        }
+
+        private void FavoitesExpander_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            (sender as Expander).IsExpanded = false;
         }
     }
 }

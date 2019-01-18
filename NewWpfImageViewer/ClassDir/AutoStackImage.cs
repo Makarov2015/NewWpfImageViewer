@@ -7,6 +7,7 @@ using Drawing = System.Drawing;
 using Control = System.Windows.Controls;
 using AlbumClassLibrary.Extensions;
 using System.ComponentModel;
+using System.Threading.Tasks;
 
 namespace NewWpfImageViewer.ClassDir
 {
@@ -87,7 +88,7 @@ namespace NewWpfImageViewer.ClassDir
             }
         }
 
-        public BitmapSource GetBitmapSource => BitmapSourceExtension.GetSource(this.MaxSizedImage as Drawing.Bitmap);
+        public Task<BitmapSource> GetBitmapSource => Task.Run(() => { return BitmapSourceExtension.GetSource(this.MaxSizedImage as Drawing.Bitmap); });
 
         /// <summary>
         ///  Добавочная величина для динамического изменения ширины контролов
@@ -113,7 +114,7 @@ namespace NewWpfImageViewer.ClassDir
 
             OriginalFilepath = Original;
 
-            imageControl = new Control.Image { Source = GetBitmapSource, Width = this.Width, Height = this.Height, Margin = new System.Windows.Thickness(5), Stretch = System.Windows.Media.Stretch.UniformToFill, StretchDirection = Control.StretchDirection.Both };
+            imageControl = new Control.Image { Source = GetBitmapSource.Result, Width = this.Width, Height = this.Height, Margin = new System.Windows.Thickness(5), Stretch = System.Windows.Media.Stretch.UniformToFill, StretchDirection = Control.StretchDirection.Both };
         }
 
         public void Dispose()

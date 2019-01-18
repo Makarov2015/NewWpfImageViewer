@@ -9,6 +9,10 @@ using System.Threading.Tasks;
 
 namespace AlbumClassLibrary
 {
+
+    /// <summary>
+    /// Стандартный альбом для работы с проводником
+    /// </summary>
     public class SystemAlbum : IAlbum
     {
         public string AlbumName => "Системный альбом";

@@ -20,10 +20,19 @@
             <Setter Property="Control.HorizontalAlignment"  Value="Right" />
             <Setter Property="Control.VerticalAlignment"  Value="Top" />
         </Style>
+        <Style x:Key="ScrollBarThumbStyle" TargetType="{x:Type Thumb}">
+            <Setter Property="IsTabStop" Value="False"/>
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="Margin" Value="1,0,1,0" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Thumb}">
+                        <Rectangle Fill="LightBlue" Margin="2"></Rectangle>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Window.Resources>
-    <Window.DataContext>
-        <local:ViewModel/>
-    </Window.DataContext>
     <Grid x:Name="MainGrid"  Background="SlateGray">
         <Grid.RowDefinitions>
             <RowDefinition Height="50"/>
@@ -56,7 +65,7 @@
                     <DropShadowEffect ShadowDepth="1"/>
                 </Border.Effect>
                 <Grid x:Name="ExpanderGrid" MouseDown="ExpanderGrid_MouseDown">
-                    <Expander x:Name="FavoitesExpander" Background="WhiteSmoke" Padding="0, 10, 0, 10" Header="Favorite" HorizontalAlignment="Stretch" Height="auto" VerticalAlignment="Stretch" Width="Auto" IsExpanded="False" Margin="0, 0, 0, -1">
+                    <Expander x:Name="FavoitesExpander" Background="WhiteSmoke" Padding="0, 10, 0, 10" Header="Favorite" HorizontalAlignment="Stretch" Height="auto" VerticalAlignment="Stretch" Width="Auto" IsExpanded="False" Margin="0, 0, 0, -1" MouseEnter="FavoitesExpander_MouseEnter" MouseLeave="FavoitesExpander_MouseLeave">
                         <Grid Margin="0, -15, 0 ,0">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="150"/>
@@ -70,7 +79,7 @@
             </Border>
         </Grid>
         <Grid Grid.Row="3" Background="SlateGray" >
-            <ScrollViewer x:Name="MainScrollViewer" Grid.RowSpan="2" VerticalScrollBarVisibility="Hidden" HorizontalAlignment="Stretch" Height="Auto" VerticalAlignment="Stretch" Width="Auto"  Margin="0" Grid.ColumnSpan="2" Padding="75, 0, 75, 0" >
+            <ScrollViewer x:Name="MainScrollViewer" CanContentScroll="True" Grid.RowSpan="2" VerticalScrollBarVisibility="Visible" HorizontalAlignment="Stretch" Height="Auto" VerticalAlignment="Stretch" Width="Auto"  Margin="0" Grid.ColumnSpan="2" Padding="82, 0, 68, 0" >
                 <WrapPanel x:Name="MainWrapPanel" HorizontalAlignment="Stretch" Height="Auto" VerticalAlignment="Stretch" Width="Auto">
                 </WrapPanel>
             </ScrollViewer>

@@ -67,17 +67,32 @@ namespace NewWpfImageViewer.Forms.ImagePreview
         {
             set
             {
+                if (value.Height < PreviewStackPanel.ActualHeight || value.Width < PreviewStackPanel.ActualWidth)
+                {
+                    MainImage.MaxHeight = value.Height - 5;
+                    MainImage.MaxWidth = value.Width;
+                }
+                else
+                {
+                    MainImage.MaxHeight = Double.NaN;
+                    MainImage.MaxWidth = Double.NaN;
+                }
+
                 if (AutoStackImages[CurrentIndex].IsAnimation)
                 {
-                    AnimationProgressBar.Visibility = Visibility.Visible;
                     _curImage = value;
 
                     WpfAnimatedGif.ImageBehavior.SetAnimatedSource(MainImage, _curImage as BitmapImage);
 
                     AnimationController = WpfAnimatedGif.ImageBehavior.GetAnimationController(MainImage);
-                    AnimationController.CurrentFrameChanged += Controller_CurrentFrameChanged;
+
+                    if (AnimationController != null)
+                        AnimationController.CurrentFrameChanged += Controller_CurrentFrameChanged;
+                    else
+                        return;
 
                     AnimationProgressBar.Maximum = AnimationController.FrameCount;
+                    AnimationProgressBar.Visibility = Visibility.Visible;
                 }
                 else
                 {
@@ -120,7 +135,7 @@ namespace NewWpfImageViewer.Forms.ImagePreview
             var _size = (double)(new System.IO.FileInfo(AutoStackImages[CurrentIndex].OriginalFilepath).Length / 1024F / 1024F);
 
             this._parent.Title = $"({_size.ToString("F2")}" + " Mb) " + System.IO.Path.GetFileName(AutoStackImages[CurrentIndex].OriginalFilepath);
-            this.MainImage.Source = AutoStackImages[CurrentIndex].GetBitmapSource;
+            this.MainImage.Source = await AutoStackImages[CurrentIndex].GetBitmapSource;
 
             this.Cursor = Cursors.Wait;
             await Task.Delay(1);

@@ -102,7 +102,6 @@
     <Compile Include="ClassDir\AutoStackImage.cs" />
     <Compile Include="ClassDir\DynamicRowFormatter.cs" />
     <Compile Include="ClassDir\SettingsManager.cs" />
-    <Compile Include="ClassDir\ViewModel.cs" />
     <Compile Include="ClassDir\WinColor.cs" />
     <Compile Include="Forms\Albums\NewAlbumButton.xaml.cs">
       <DependentUpon>NewAlbumButton.xaml</DependentUpon>
@@ -162,6 +161,9 @@
       <Project>{0eb1ddc1-8256-48d1-803e-6c29a0fc6a21}</Project>
       <Name>AlbumClassLibrary</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Conntrols\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
