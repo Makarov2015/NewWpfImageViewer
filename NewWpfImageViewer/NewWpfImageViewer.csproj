@@ -99,7 +99,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ClassDir\AutoStackImage.cs" />
+    <Compile Include="ClassDir\AutoSizeImage.cs" />
     <Compile Include="ClassDir\DynamicRowFormatter.cs" />
     <Compile Include="ClassDir\SettingsManager.cs" />
     <Compile Include="ClassDir\WinColor.cs" />

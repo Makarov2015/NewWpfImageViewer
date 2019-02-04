@@ -20,7 +20,7 @@
         <Button x:Name="AddButton" Width="140" Padding="0" Margin="5" BorderThickness="0" Click="AddButton_Click">
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="140"/>
+                    <RowDefinition Height="120"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="140"/>

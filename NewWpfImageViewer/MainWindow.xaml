@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:NewWpfImageViewer"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800" MinWidth="400" MinHeight="500" Loaded="Window_Loaded" SizeChanged="Window_SizeChanged">
+        DataContext="{Binding RelativeSource={RelativeSource Self}}"
+        Title="MainWindow" Height="800" Width="800" MinWidth="600" MinHeight="500" Loaded="Window_Loaded" SizeChanged="Window_SizeChanged" KeyDown="Window_KeyDown">
     <Window.Resources>
         <Style x:Key="BlackAndWhite">
             <Setter Property="Control.FontFamily" Value="Verdana" />
@@ -41,9 +42,9 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Grid Grid.Row="0" Background="DarkGray" >
-            <TextBox x:Name="SearchTextBox" BorderBrush="Transparent" Padding="5,0,15,0" HorizontalContentAlignment="Left" VerticalContentAlignment="Center" HorizontalAlignment="Left" Height="30" Margin="75,10,0,0" TextWrapping="Wrap" Text="Search" VerticalAlignment="Top" Width="342"/>
+            <TextBox Focusable="False" x:Name="SearchTextBox" BorderBrush="Transparent" Padding="5,0,15,0" HorizontalContentAlignment="Left" VerticalContentAlignment="Center" HorizontalAlignment="Left" Height="30" Margin="75,10,0,0" TextWrapping="Wrap" Text="Search" VerticalAlignment="Top" Width="342"/>
             <Button x:Name="SettingsButton" Content="⚙" FontSize="14"  Style="{StaticResource BlackAndWhite}" Click="SettingsButton_Click"/>
-            <Button IsEnabled="False" Content="⌂" FontSize="16" Margin="0,0,50,0"  Style="{StaticResource BlackAndWhite}"/>
+            <Button x:Name="tst" IsEnabled="True" Content="⌂" FontSize="16" Margin="0,0,50,0"  Style="{StaticResource BlackAndWhite}" Click="Tst_Click"/>
             <Button IsEnabled="False" x:Name="HomeButton" Content="🕮" FontSize="16" Margin="0,0,100,0" Style="{StaticResource BlackAndWhite}" Click="HomeButton_Click"/>
         </Grid>
         <Grid Grid.Row="1" Background="Transparent">
@@ -70,7 +71,7 @@
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="150"/>
                             </Grid.RowDefinitions>
-                            <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Hidden" PreviewMouseWheel="ScrollViewer_PreviewMouseWheel">
+                            <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Visible" PreviewMouseWheel="ScrollViewer_PreviewMouseWheel" Padding="5">
                                 <StackPanel  x:Name="FavoriteStackPanel" Orientation="Horizontal" HorizontalAlignment="Stretch" Height="auto" Margin="0" VerticalAlignment="Stretch" Width="auto"/>
                             </ScrollViewer>
                         </Grid>
@@ -79,7 +80,8 @@
             </Border>
         </Grid>
         <Grid Grid.Row="3" Background="SlateGray" >
-            <ScrollViewer x:Name="MainScrollViewer" CanContentScroll="True" Grid.RowSpan="2" VerticalScrollBarVisibility="Visible" HorizontalAlignment="Stretch" Height="Auto" VerticalAlignment="Stretch" Width="Auto"  Margin="0" Grid.ColumnSpan="2" Padding="82, 0, 68, 0" >
+            <ScrollViewer
+                x:Name="MainScrollViewer" CanContentScroll="True" Grid.RowSpan="2" VerticalScrollBarVisibility="Visible" HorizontalAlignment="Stretch" Height="Auto" VerticalAlignment="Stretch" Width="Auto"  Margin="0" Grid.ColumnSpan="2" Padding="82, 0, 68, 0" SizeChanged="MainScrollViewer_SizeChanged" ScrollChanged="MainScrollViewer_ScrollChanged" >
                 <WrapPanel x:Name="MainWrapPanel" HorizontalAlignment="Stretch" Height="Auto" VerticalAlignment="Stretch" Width="Auto">
                 </WrapPanel>
             </ScrollViewer>

@@ -16,7 +16,7 @@ namespace NewWpfImageViewer.ClassDir
     /// Ресайзит изображение, хранит сжатый исходник и помогает сделать красивое отображение картинок на форме
     /// (Динамически меняет ширину картинок, подгоняет их так, чтобы ряд был заполнен до конца), а так же помогает менять размер
     /// </summary>
-    public class AutoStackImage : IDisposable, INotifyPropertyChanged
+    public class AutoSizeImage : IDisposable, INotifyPropertyChanged
     {
         /// <summary>
         /// Исходное изображение вписанное в максимальный размер отображаемых строк
@@ -24,11 +24,6 @@ namespace NewWpfImageViewer.ClassDir
         public Drawing.Image MaxSizedImage { get; set; }
 
         public bool IsAnimation => OriginalFilepath.EndsWith(".gif");
-
-        /// <summary>
-        /// Максимальная высота, до которой изображение будет уменьшено
-        /// </summary>
-        private int MaxImageSizeToResize => 350;
 
         public enum Size
         {
@@ -106,7 +101,7 @@ namespace NewWpfImageViewer.ClassDir
         /// Констуктор через кеш
         /// </summary>
         /// <param name="cachedImage">Ресайзнутое изображение</param>
-        public AutoStackImage(Drawing.Image cachedImage, string Original)
+        public AutoSizeImage(Drawing.Image cachedImage, string Original)
         {
             // Без этого юзинга память не чистится
             using (cachedImage)
@@ -114,11 +109,14 @@ namespace NewWpfImageViewer.ClassDir
 
             OriginalFilepath = Original;
 
-            imageControl = new Control.Image { Source = GetBitmapSource.Result, Width = this.Width, Height = this.Height, Margin = new System.Windows.Thickness(5), Stretch = System.Windows.Media.Stretch.UniformToFill, StretchDirection = Control.StretchDirection.Both };
+            imageControl = new Control.Image { Tag = this, Visibility = System.Windows.Visibility.Hidden, /*Source = GetBitmapSource.Result,*/ Width = this.Width, Height = this.Height, Margin = new System.Windows.Thickness(5), Stretch = System.Windows.Media.Stretch.UniformToFill, StretchDirection = Control.StretchDirection.Both };
         }
 
         public void Dispose()
         {
+            if (this.imageControl.Source is null)
+                return;
+
             this.imageControl.Source.Freeze();
             this.imageControl.Source = null;
             this.imageControl = null;

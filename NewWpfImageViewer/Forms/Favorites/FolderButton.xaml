@@ -25,8 +25,8 @@
         <Button Panel.ZIndex="0" x:Name="MainButton" Width="290" Padding="0" Margin="5" BorderThickness="0" Click="MainButton_Click">
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="95"/>
-                    <RowDefinition Height="45" />
+                    <RowDefinition Height="85"/>
+                    <RowDefinition Height="30" />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="290"/>

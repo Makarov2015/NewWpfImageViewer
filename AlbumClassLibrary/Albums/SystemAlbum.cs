@@ -93,7 +93,7 @@ namespace AlbumClassLibrary
                 bmp = new Bitmap(ms);
             }
 
-            IFolder folder = new Folder(0, this.AlbumGuid.ToString(), $"{DateTime.Now.ToString()}", folderToLoad);
+            IFolder folder = new Folder(0, this.AlbumGuid.ToString(), $"{new DirectoryInfo(folderToLoad).Name}", folderToLoad);
             folder.PreviewImage = bmp;
             Folders.Add(folder);
             // 4 - сохраняем все в БД через событие FolderAdded(IFolder, new EventArgs())

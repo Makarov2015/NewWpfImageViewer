@@ -32,52 +32,18 @@ namespace NewWpfImageViewer.Forms.ImagePreview
             }
             set
             {
-                if (value == 0)
-                {
-                    //BackButton.IsEnabled = false;
-                    //ForwardButton.IsEnabled = true;
-
-                    //BackPreviewImage = null;
-                }
-                else if (value >= AutoStackImages.Count - 1)
-                {
-                    //BackButton.IsEnabled = true;
-                    //ForwardButton.IsEnabled = false;
-
-                    //BackPreviewImage = AutoStackImages[value - 1].ImageControl;
-                }
-                else if (value > AutoStackImages.Count - 1 || value < 0)
-                    throw new IndexOutOfRangeException();
-                else
-                {
-                    //BackButton.IsEnabled = true;
-                    //ForwardButton.IsEnabled = true;
-
-                    //BackPreviewImage = AutoStackImages[value - 1].ImageControl;
-                }
-
                 _currentIndex = value;
+                IndexChanged(_currentIndex);
             }
         }
-        private List<ClassDir.AutoStackImage> AutoStackImages;
-        private Dictionary<ClassDir.AutoStackImage, object> cached = null;
+        private List<ClassDir.AutoSizeImage> AutoStackImages;
+        private Dictionary<ClassDir.AutoSizeImage, object> cached = null;
 
         private object _curImage;
         private BitmapSource CurrentImage
         {
             set
             {
-                if (value.Height < PreviewStackPanel.ActualHeight || value.Width < PreviewStackPanel.ActualWidth)
-                {
-                    MainImage.MaxHeight = value.Height - 5;
-                    MainImage.MaxWidth = value.Width;
-                }
-                else
-                {
-                    MainImage.MaxHeight = Double.NaN;
-                    MainImage.MaxWidth = Double.NaN;
-                }
-
                 if (AutoStackImages[CurrentIndex].IsAnimation)
                 {
                     _curImage = value;
@@ -96,6 +62,9 @@ namespace NewWpfImageViewer.Forms.ImagePreview
                 }
                 else
                 {
+                    if (AnimationController != null)
+                        AnimationController.Dispose();
+
                     AnimationProgressBar.Visibility = Visibility.Hidden;
                     _curImage = value;
                     this.MainImage.Source = _curImage as BitmapSource;
@@ -105,16 +74,16 @@ namespace NewWpfImageViewer.Forms.ImagePreview
 
         WpfAnimatedGif.ImageAnimationController AnimationController = null;
 
-        private Window _parent;
+        private readonly Window _parent;
 
-        public ImegePreview(List<ClassDir.AutoStackImage> gallery, int curIndex, ref Dictionary<ClassDir.AutoStackImage, object> localCacheList, Window parent)
+        public ImegePreview(List<ClassDir.AutoSizeImage> gallery, int curIndex, ref Dictionary<ClassDir.AutoSizeImage, object> localCacheList, Window parent)
         {
             _parent = parent;
 
             InitializeComponent();
             AnimationProgressBar.Loaded += AnimationProgressBar_Loaded;
 
-            cached = localCacheList as Dictionary<ClassDir.AutoStackImage, object>;
+            cached = localCacheList as Dictionary<ClassDir.AutoSizeImage, object>;
 
             AutoStackImages = gallery;
             CurrentIndex = curIndex;
@@ -130,12 +99,14 @@ namespace NewWpfImageViewer.Forms.ImagePreview
             ((System.Windows.Shapes.Rectangle)p.Template.FindName("Animation", p)).Fill = MainWindow.WinColor;
         }
 
+        private object _lock = new object();
+
         private async void LoadMainImageAsync()
         {
+            _parent.Focus();
             var _size = (double)(new System.IO.FileInfo(AutoStackImages[CurrentIndex].OriginalFilepath).Length / 1024F / 1024F);
 
             this._parent.Title = $"({_size.ToString("F2")}" + " Mb) " + System.IO.Path.GetFileName(AutoStackImages[CurrentIndex].OriginalFilepath);
-            this.MainImage.Source = await AutoStackImages[CurrentIndex].GetBitmapSource;
 
             this.Cursor = Cursors.Wait;
             await Task.Delay(1);
@@ -146,8 +117,11 @@ namespace NewWpfImageViewer.Forms.ImagePreview
                     CurrentImage = cached.Single(x => x.Key == AutoStackImages[CurrentIndex]).Value as BitmapSource;
 
                     this.Cursor = Cursors.Arrow;
+                    ChangeSize();
                     return;
                 }
+
+            this.MainImage.Source = await AutoStackImages[CurrentIndex].GetBitmapSource;
 
             if (AutoStackImages[CurrentIndex].IsAnimation)
             {
@@ -159,9 +133,10 @@ namespace NewWpfImageViewer.Forms.ImagePreview
             }
 
             this.Cursor = Cursors.Arrow;
+            ChangeSize();
 
             if (!AutoStackImages[CurrentIndex].IsAnimation)
-                HiResLoaded(new Tuple<ClassDir.AutoStackImage, object>(AutoStackImages[CurrentIndex], _curImage), new EventArgs());
+                HiResLoaded(new Tuple<ClassDir.AutoSizeImage, object>(AutoStackImages[CurrentIndex], _curImage), new EventArgs());
 
             Task<BitmapImage> GetAnimationSource(string path)
             {
@@ -180,12 +155,13 @@ namespace NewWpfImageViewer.Forms.ImagePreview
 
             Task<BitmapSource> GetNewImageAsync(string path)
             {
-                var tcs = new TaskCompletionSource<BitmapSource>();
-                var bitmap = new BitmapImage();
+                return Task.Run<BitmapSource>(() =>
+                {
+                    var a = AlbumClassLibrary.Extensions.BitmapSourceExtension.GetSource(path, System.Windows.Forms.Screen.PrimaryScreen.Bounds.Height);
+                    a.Freeze();
 
-                tcs.SetResult(AlbumClassLibrary.Extensions.BitmapSourceExtension.GetSource(path, System.Windows.Forms.Screen.PrimaryScreen.Bounds.Height));
-
-                return tcs.Task;
+                    return a;
+                });
             }
         }
 
@@ -196,6 +172,14 @@ namespace NewWpfImageViewer.Forms.ImagePreview
 
         private void ForwardButton_Click(object sender, RoutedEventArgs e)
         {
+            Forward();
+        }
+
+        public void Forward()
+        {
+            if (AutoStackImages.Count <= CurrentIndex + 1)
+                return;
+
             CurrentIndex++;
 
             this.MainImage.Source.Freeze();
@@ -210,12 +194,19 @@ namespace NewWpfImageViewer.Forms.ImagePreview
 
             thread.Start();
 
-            this.MainImage.Source = null;
             LoadMainImageAsync();
         }
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
+            Back();
+        }
+
+        public void Back()
+        {
+            if (CurrentIndex - 1 < 0)
+                return;
+
             CurrentIndex--;
 
             this.MainImage.Source.Freeze();
@@ -230,13 +221,60 @@ namespace NewWpfImageViewer.Forms.ImagePreview
 
             thread.Start();
 
-            this.MainImage.Source = null;
             LoadMainImageAsync();
+        }
+
+        private void IndexChanged(int currentIndex)
+        {
+            if (currentIndex + 1 >= AutoStackImages.Count)
+                ForwardButton.IsEnabled = false;
+            else
+                ForwardButton.IsEnabled = true;
+
+            if (currentIndex - 1 < 0)
+                BackButton.IsEnabled = false;
+            else
+                BackButton.IsEnabled = true;
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
             this.Close(this, new EventArgs());
+        }
+
+        private void ChangeSize()
+        {
+            if (MainImage.Source is null)
+                return;
+
+            var _sourceWidth = MainImage.Source.Width;
+            var _sourceHeight = MainImage.Source.Height;
+
+            int _z = 100;
+
+            MainImage.MaxHeight = this.ActualHeight - _z;
+            MainImage.MaxWidth = this.ActualWidth - _z;
+
+            if (MainImage.MaxHeight > _sourceHeight * 2)
+                MainImage.MaxHeight = _sourceHeight * 2;
+
+            if (MainImage.MaxWidth > _sourceWidth * 2)
+                MainImage.MaxWidth = _sourceWidth * 2;
+        }
+
+        public void CloseForm()
+        {
+            this.Close(this, new EventArgs());
+        }
+
+        private void UserControl_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            ChangeSize();
+        }
+
+        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

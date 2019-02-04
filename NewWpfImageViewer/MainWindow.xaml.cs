@@ -27,24 +27,24 @@ namespace NewWpfImageViewer
         /// <summary>
         /// Текущее состояние отрисовки масштаба
         /// </summary>
-        private ClassDir.AutoStackImage.Size currentSize = ClassDir.AutoStackImage.Size.MEDIUM;
+        private ClassDir.AutoSizeImage.Size currentSize = ClassDir.AutoSizeImage.Size.SMALL;
 
         /// <summary>
         /// Прототип локального кеша на 5 изображений
         /// </summary>
-        public Dictionary<ClassDir.AutoStackImage, object> LocalCache = new Dictionary<ClassDir.AutoStackImage, object>();
+        public Dictionary<ClassDir.AutoSizeImage, object> LocalCache = new Dictionary<ClassDir.AutoSizeImage, object>();
 
         /// <summary>
         /// Текущая галерея. Меняется при смене папок.
         /// </summary>
-        private List<ClassDir.AutoStackImage> _imageGallery;
-        private List<ClassDir.AutoStackImage> ImageGallery
+        private List<ClassDir.AutoSizeImage> _imageGallery;
+        private List<ClassDir.AutoSizeImage> ImageGallery
         {
             get
             {
                 if (_imageGallery == null)
                 {
-                    _imageGallery = new List<ClassDir.AutoStackImage>();
+                    _imageGallery = new List<ClassDir.AutoSizeImage>();
                 }
 
                 return _imageGallery;
@@ -226,14 +226,14 @@ namespace NewWpfImageViewer
         /// <param name="files"></param>
         private void LoadFolderToGallery(List<string> files)
         {
-            ImageGallery = new List<ClassDir.AutoStackImage>();
+            ImageGallery = new List<ClassDir.AutoSizeImage>();
 
             // Кормим менеджер путем к файлу, получаем кешированную копию, генерим АвтоСтаки и складываем в список
             using (AlbumClassLibrary.CacheManager.CacheManager manager = new AlbumClassLibrary.CacheManager.CacheManager(CacheFile))
             {
                 foreach (var item in files)
                 {
-                    ImageGallery.Add(new ClassDir.AutoStackImage(manager.GetImage(item), item));
+                    ImageGallery.Add(new ClassDir.AutoSizeImage(manager.GetImage(item), item));
                 }
             }
 
@@ -266,7 +266,14 @@ namespace NewWpfImageViewer
                 var img = item.ImageControl;
                 img.MouseUp += Img_MouseUp;
 
-                MainWrapPanel.Children.Add(img);
+                if (img.Parent != null)
+                {
+                    ((Border)img.Parent).Child = null;
+                }
+
+                var brd = new Border() { Child = img };
+
+                MainWrapPanel.Children.Add(brd);
             }
 
             MainScrollViewer.ScrollToTop();
@@ -274,19 +281,19 @@ namespace NewWpfImageViewer
 
         private void SmallSizeButton_Click(object sender, RoutedEventArgs e)
         {
-            currentSize = ClassDir.AutoStackImage.Size.SMALL;
+            currentSize = ClassDir.AutoSizeImage.Size.SMALL;
             LoadImagesOnBoard();
         }
 
         private void MedSizeButton_Click(object sender, RoutedEventArgs e)
         {
-            currentSize = ClassDir.AutoStackImage.Size.MEDIUM;
+            currentSize = ClassDir.AutoSizeImage.Size.MEDIUM;
             LoadImagesOnBoard();
         }
 
         private void BigSizeButton_Click(object sender, RoutedEventArgs e)
         {
-            currentSize = ClassDir.AutoStackImage.Size.BIG;
+            currentSize = ClassDir.AutoSizeImage.Size.BIG;
             LoadImagesOnBoard();
         }
 
@@ -306,16 +313,25 @@ namespace NewWpfImageViewer
 
             Grid.SetRowSpan(preview, 4);
             MainGrid.Children.Add(preview);
+
+            this.Focusable = true;
+            this.Focus();
         }
 
         private void Preview_HiResLoaded(object sender, EventArgs e)
         {
-            if (sender is Tuple<ClassDir.AutoStackImage, object>)
+            try
             {
-                var snd = sender as Tuple<ClassDir.AutoStackImage, object>;
-                LocalCache.Add(snd.Item1, snd.Item2);
-                if (LocalCache.Count > 5)
-                    LocalCache.Remove(LocalCache.First().Key);
+                if (sender is Tuple<ClassDir.AutoSizeImage, object>)
+                {
+                    var snd = sender as Tuple<ClassDir.AutoSizeImage, object>;
+                    LocalCache.Add(snd.Item1, snd.Item2);
+                    if (LocalCache.Count > 5)
+                        LocalCache.Remove(LocalCache.First().Key);
+                }
+            }
+            catch (Exception)
+            {
             }
         }
 
@@ -405,6 +421,36 @@ namespace NewWpfImageViewer
         private void FavoitesExpander_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
             (sender as Expander).IsExpanded = false;
+        }
+
+        private void Window_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (MainGrid.Children.Cast<object>().Any(x => x.GetType() == typeof(Forms.ImagePreview.ImegePreview)))
+            {
+                var _preview = MainGrid.Children.Cast<object>().First(x => x.GetType() == typeof(Forms.ImagePreview.ImegePreview)) as Forms.ImagePreview.ImegePreview;
+
+                if (e.Key == System.Windows.Input.Key.Right)
+                    _preview.Forward();
+                else if (e.Key == System.Windows.Input.Key.Left)
+                    _preview.Back();
+                else if (e.Key == System.Windows.Input.Key.Escape)
+                    _preview.CloseForm();
+            }
+        }
+
+        private void MainScrollViewer_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+
+        }
+
+        private void MainScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        {
+            ScrollViewer viewer = sender as ScrollViewer;
+        }
+
+        private void Tst_Click(object sender, RoutedEventArgs e)
+        {
+            MainWrapPanel.Children.Add(new Border() { Width = 500, Height = 500, BorderThickness = new Thickness(3,3,3,3), Child = new Image() {  Visibility = Visibility.Visible } });
         }
     }
 }
