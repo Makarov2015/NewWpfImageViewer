@@ -8,6 +8,7 @@ using Control = System.Windows.Controls;
 using AlbumClassLibrary.Extensions;
 using System.ComponentModel;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace NewWpfImageViewer.ClassDir
 {
@@ -22,6 +23,8 @@ namespace NewWpfImageViewer.ClassDir
         /// Исходное изображение вписанное в максимальный размер отображаемых строк
         /// </summary>
         public Drawing.Image MaxSizedImage { get; set; }
+
+        public Point Position { get; set; }
 
         public bool IsAnimation => OriginalFilepath.EndsWith(".gif");
 
@@ -60,40 +63,111 @@ namespace NewWpfImageViewer.ClassDir
         {
             get
             {
-                var r = ((this.Height * MaxSizedImage.Width) / MaxSizedImage.Height) + WidthAdded;
-                return r < 0 ? ((this.Height * MaxSizedImage.Width) / MaxSizedImage.Height) / 3 : r;
+                lock (this)
+                {
+                    var r = ((this.Height * MaxSizedImage.Width) / MaxSizedImage.Height) + WidthAdded;
+                    return r < 0 ? ((this.Height * MaxSizedImage.Width) / MaxSizedImage.Height) / 3 : r; 
+                }
             }
         }
-
-        /// <summary>
-        /// Тут возвращаем готовый контрол, который сразу закидываем на форму
-        /// </summary>
-        private Control.Image imageControl;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public Control.Image ImageControl
+        private System.Windows.Media.ImageSource _source;
+
+        public System.Windows.Media.ImageSource BitmapSource
         {
             get
             {
-                imageControl.Width = this.Width;
-                imageControl.Height = this.Height;
+                return _source;
+            }
+            set
+            {
+                _source = value;
+            }
+        }
+        public void VisabilityChanged(object sender, EventArgs e)
+        {
+            Control.ScrollViewer viewer = sender as Control.ScrollViewer;
 
-                return imageControl;
+            if (Position.Y >= viewer.VerticalOffset - Height * 5 && Position.Y <= viewer.VerticalOffset + viewer.ActualHeight + Height * 3)
+            {
+                this.LoadSourceAsync();
+            }
+            else
+            {
+                this.DisableSource();
             }
         }
 
-        public Task<BitmapSource> GetBitmapSource => Task.Run(() => { return BitmapSourceExtension.GetSource(this.MaxSizedImage as Drawing.Bitmap); });
+        public async void LoadSourceAsync()
+        {
+            if(BitmapSource is null)
+            {
+                BitmapSource = await GetBitmapSource;
+                OnPropertyChanged("BitmapSource");
+            }
+        }
+
+        public void LoadSource()
+        {
+            if (BitmapSource is null)
+            {
+                BitmapSource = GetBitmapSource.Result;
+                OnPropertyChanged("BitmapSource");
+            }
+        }
+
+        public void DisableSource()
+        {
+            if (BitmapSource != null)
+            {
+                BitmapSource = null;
+                OnPropertyChanged("BitmapSource"); 
+            }
+        }
+
+        public Task<BitmapSource> GetBitmapSource =>
+            Task.Run(() =>
+            {
+                lock (this)
+                {
+                    if (this._isForDispose)
+                        return null;
+
+                    return BitmapSourceExtension.GetSource(this.MaxSizedImage as Drawing.Bitmap, this); 
+                }
+            });
 
         /// <summary>
         ///  Добавочная величина для динамического изменения ширины контролов
         /// </summary>
         public double WidthAdded { get; set; }
 
+
+        // Create the OnPropertyChanged method to raise the event
+        protected void OnPropertyChanged(string name)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
+
         /// <summary>
         /// Хранилка текущего размера
         /// </summary>
-        public Size CurrentSize { get; set; }
+        private Size _curSize;
+        public Size CurrentSize
+        {
+            get
+            {
+                return _curSize;
+            }
+            set
+            {
+                _curSize = value;
+            }
+        }
+
+        public void ChangeTest() => OnPropertyChanged("Size");
 
         public string OriginalFilepath { get; }
 
@@ -108,18 +182,19 @@ namespace NewWpfImageViewer.ClassDir
                 MaxSizedImage = new Drawing.Bitmap(cachedImage);
 
             OriginalFilepath = Original;
-
-            imageControl = new Control.Image { Tag = this, Visibility = System.Windows.Visibility.Hidden, /*Source = GetBitmapSource.Result,*/ Width = this.Width, Height = this.Height, Margin = new System.Windows.Thickness(5), Stretch = System.Windows.Media.Stretch.UniformToFill, StretchDirection = Control.StretchDirection.Both };
         }
+
+        private bool _isForDispose = false;
 
         public void Dispose()
         {
-            if (this.imageControl.Source is null)
+            if (this.BitmapSource is null)
                 return;
 
-            this.imageControl.Source.Freeze();
-            this.imageControl.Source = null;
-            this.imageControl = null;
+            this.BitmapSource.Freeze();
+            this.BitmapSource = null;
+
+            _isForDispose = true;
 
             this.MaxSizedImage.Dispose();
         }

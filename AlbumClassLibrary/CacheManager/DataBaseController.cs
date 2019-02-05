@@ -34,6 +34,12 @@ namespace AlbumClassLibrary.CacheManager
                 SQLiteDataAdapter adapter = new SQLiteDataAdapter(sql, m_dbConnection);
                 adapter.Fill(table);
 
+                if(table.Rows.Count == 0)
+                {
+                    bytes = null;
+                    return false;
+                }
+
                 bytes = (from row in table.Rows.Cast<System.Data.DataRow>()
                          select (byte[])row[0]).Single();
 

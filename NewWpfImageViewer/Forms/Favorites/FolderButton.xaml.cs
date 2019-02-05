@@ -38,7 +38,7 @@ namespace NewWpfImageViewer.Forms.Favorites
             folder = entity;
             NameLabel.Content = entity.Name;
 
-            this.PreviewImage.Source = AlbumClassLibrary.Extensions.BitmapSourceExtension.GetSource(entity.PreviewImage);
+            this.PreviewImage.Source = AlbumClassLibrary.Extensions.BitmapSourceExtension.GetSource(entity.PreviewImage, this);
         }
 
         public void MainButton_Click(object sender, RoutedEventArgs e)

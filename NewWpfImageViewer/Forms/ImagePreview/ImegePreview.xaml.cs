@@ -99,8 +99,6 @@ namespace NewWpfImageViewer.Forms.ImagePreview
             ((System.Windows.Shapes.Rectangle)p.Template.FindName("Animation", p)).Fill = MainWindow.WinColor;
         }
 
-        private object _lock = new object();
-
         private async void LoadMainImageAsync()
         {
             _parent.Focus();

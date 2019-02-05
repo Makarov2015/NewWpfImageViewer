@@ -15,6 +15,9 @@ namespace NewWpfImageViewer.ClassDir
         /// <returns>Возвращает измененный список AutoStackImage с заполненным полем WidthAdded</returns>
         public static void FormatPlate(List<ClassDir.AutoSizeImage> images, double wrapPanel)
         {
+            if (wrapPanel == 0)
+                return;
+
             // При множестве ресайзов - будет неправильный результат
             foreach (var item in images)
             {
@@ -27,7 +30,7 @@ namespace NewWpfImageViewer.ClassDir
             List<ClassDir.AutoSizeImage> finalRow = new List<ClassDir.AutoSizeImage>();
 
             // Сумма внешних отступов для картинок
-            var marginSum = images.First(x => x.ImageControl != null).ImageControl.Margin.Left * 2;
+            var marginSum = 10;
 
             double panelWidth = wrapPanel;
 

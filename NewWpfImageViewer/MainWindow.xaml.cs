@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 using AlbumClassLibrary;
 using AlbumClassLibrary.CacheManager;
 
@@ -19,10 +21,17 @@ namespace NewWpfImageViewer
     {
         public static Brush WinColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#" + ClassDir.WinColor.GetColor()));
 
+        List<string> _suppFormats = new List<string>() { ".jpg", ".jpeg", ".gif", ".png" };
+
         /// <summary>
         /// Таймер для зарежки пересчета размеров изображений 
         /// </summary>
-        System.Windows.Threading.DispatcherTimer _resizeTimer = new System.Windows.Threading.DispatcherTimer { Interval = new TimeSpan(0, 0, 0, 0, 250), IsEnabled = false };
+        DispatcherTimer _resizeTimer = new DispatcherTimer { Interval = new TimeSpan(0, 0, 0, 0, 50), IsEnabled = false };
+
+        /// <summary>
+        /// Таймер для задержки отрисовкы скрытых элементов
+        /// </summary>
+        DispatcherTimer _scrollDelayTimer = new DispatcherTimer { Interval = new TimeSpan(0, 0, 0, 0, 50), IsEnabled = false };
 
         /// <summary>
         /// Текущее состояние отрисовки масштаба
@@ -64,6 +73,7 @@ namespace NewWpfImageViewer
         AlbumClassLibrary.AlbumManager.AlbumManager albumsManager;
 
         private event EventHandler CurrentAlbumChanged;
+        public event EventHandler Scrolled;
 
         private AlbumClassLibrary.IAlbum _currentAlbum;
         AlbumClassLibrary.IAlbum CurrentAlbum
@@ -86,6 +96,9 @@ namespace NewWpfImageViewer
         {
             ClassDir.SettingsManager.CheckSettings();
             ReInitializer();
+
+            _resizeTimer.Tick += _resizeTimer_Tick;
+            _scrollDelayTimer.Tick += _scrollDelayTimer_Tick;
         }
 
         private void ReInitializer()
@@ -95,7 +108,6 @@ namespace NewWpfImageViewer
             InitializeComponent();
 
             CurrentAlbumChanged += MainWindow_CurrentAlbumChanged;
-            _resizeTimer.Tick += _resizeTimer_Tick;
 
             AlbumsButtonsRenderer(albumsManager.Albums);
         }
@@ -148,7 +160,7 @@ namespace NewWpfImageViewer
         private void MainWindow_CurrentAlbumChanged(object sender, EventArgs e)
         {
             FavoriteStackPanel.Children.Clear();
-            MainWrapPanel.Children.Clear();
+            //MainWrapPanel.Children.Clear();
             ImageGallery.Clear();
 
             if ((sender as IAlbum).Folders != null)
@@ -157,7 +169,7 @@ namespace NewWpfImageViewer
                     Random rand = new Random();
                     using (CacheManager manager = new CacheManager(CacheFile))
                     {
-                        var files = System.IO.Directory.GetFiles(item.Path).Where(x => x.EndsWith(".jpg") || x.EndsWith(".jpeg") || x.EndsWith(".gif"));
+                        var files = System.IO.Directory.GetFiles(item.Path).Where(x => _suppFormats.Any(y => x.EndsWith(y)));
                         var previewIndex = rand.Next(0, files.Count() - 1);
                         item.PreviewImage = manager.GetImage((files.ElementAt(previewIndex)));
                     }
@@ -176,7 +188,6 @@ namespace NewWpfImageViewer
 
         private void Folder_Mouse_Click(object sender, RoutedEventArgs e)
         {
-            List<string> _suppFormats = new List<string>() { ".jpg", ".jpeg", ".gif" };
             var reLst = Directory.GetFiles((sender as IFolder).Path).Where(x => _suppFormats.Any(y => x.EndsWith(y))).ToList();
 
             //Random rnd = new Random();
@@ -252,29 +263,16 @@ namespace NewWpfImageViewer
             if (ImageGallery.Count == 0)
                 return;
 
-            MainWrapPanel.Children.Clear();
-
-            foreach (var item in ImageGallery)
+            Parallel.ForEach(ImageGallery, (x) =>
             {
-                item.CurrentSize = currentSize;
-            }
+                x.CurrentSize = currentSize;
+                Scrolled += x.VisabilityChanged;
+            });
 
             ClassDir.DynamicRowFormatter.FormatPlate(ImageGallery, MainWrapPanel.ActualWidth);
 
-            foreach (var item in ImageGallery)
-            {
-                var img = item.ImageControl;
-                img.MouseUp += Img_MouseUp;
-
-                if (img.Parent != null)
-                {
-                    ((Border)img.Parent).Child = null;
-                }
-
-                var brd = new Border() { Child = img };
-
-                MainWrapPanel.Children.Add(brd);
-            }
+            MainWrapPanel.ItemsSource = null;
+            MainWrapPanel.ItemsSource = ImageGallery;
 
             MainScrollViewer.ScrollToTop();
         }
@@ -300,23 +298,6 @@ namespace NewWpfImageViewer
         #endregion
 
         #region ImagePrevie
-
-        private void Img_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-            if (MainGrid.Children.Cast<object>().Any(x => x.GetType() == typeof(Forms.ImagePreview.ImegePreview)))
-                return;
-
-            var preview = new Forms.ImagePreview.ImegePreview(ImageGallery, ImageGallery.IndexOf(ImageGallery.First(x => x.ImageControl == sender)), ref LocalCache, this);
-
-            preview.HiResLoaded += Preview_HiResLoaded;
-            preview.Close += Preview_Close;
-
-            Grid.SetRowSpan(preview, 4);
-            MainGrid.Children.Add(preview);
-
-            this.Focusable = true;
-            this.Focus();
-        }
 
         private void Preview_HiResLoaded(object sender, EventArgs e)
         {
@@ -345,6 +326,13 @@ namespace NewWpfImageViewer
             (sender as Forms.ImagePreview.ImegePreview).MainGrid = null;
             (sender as Forms.ImagePreview.ImegePreview).MainImage = null;
 
+            CollectGarbage();
+
+            this.Title = Properties.Settings.Default.MainWindowName;
+        }
+
+        private static void CollectGarbage()
+        {
             GC.Collect();
 
             System.Threading.Thread thread = new System.Threading.Thread(new System.Threading.ThreadStart(delegate
@@ -354,8 +342,6 @@ namespace NewWpfImageViewer
             }));
 
             thread.Start();
-
-            this.Title = Properties.Settings.Default.MainWindowName;
         }
 
         #endregion
@@ -445,12 +431,65 @@ namespace NewWpfImageViewer
 
         private void MainScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
-            ScrollViewer viewer = sender as ScrollViewer;
+            if (_scrollDelayTimer.IsEnabled) _scrollDelayTimer.Stop();
+            _scrollDelayTimer.Start();
         }
 
-        private void Tst_Click(object sender, RoutedEventArgs e)
+        private void _scrollDelayTimer_Tick(object sender, EventArgs e)
         {
-            MainWrapPanel.Children.Add(new Border() { Width = 500, Height = 500, BorderThickness = new Thickness(3,3,3,3), Child = new Image() {  Visibility = Visibility.Visible } });
+            _scrollDelayTimer.Stop();
+
+            Scrolled(MainScrollViewer, new EventArgs());
+            CollectGarbage();
+        }
+
+        private void Image_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (MainGrid.Children.Cast<object>().Any(x => x.GetType() == typeof(Forms.ImagePreview.ImegePreview)))
+                return;
+
+            var preview = new Forms.ImagePreview.ImegePreview(ImageGallery, ImageGallery.IndexOf(ImageGallery.First(x => x.BitmapSource == (sender as Image).Source)), ref LocalCache, this);
+
+            preview.HiResLoaded += Preview_HiResLoaded;
+            preview.Close += Preview_Close;
+
+            Grid.SetRowSpan(preview, 4);
+            MainGrid.Children.Add(preview);
+
+            this.Focusable = true;
+            this.Focus();
+        }
+
+        private void MainWrapPanel_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            foreach (var item in (sender as ItemsControl).Items)
+            {
+                var container = (sender as ItemsControl).ItemContainerGenerator.ContainerFromItem(item) as FrameworkElement;
+
+                if (container.DataContext is ClassDir.AutoSizeImage)
+                {
+                    (container.DataContext as ClassDir.AutoSizeImage).Position = container.TransformToAncestor(sender as ItemsControl).Transform(new Point(0, 0));
+                }
+            }
+        }
+
+        private void Image_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            DoubleAnimation showAnimation = new DoubleAnimation();
+            showAnimation.From = 0;
+            showAnimation.To = 1;
+            showAnimation.Duration = TimeSpan.FromMilliseconds(1000);
+            (sender as Image).BeginAnimation(Image.OpacityProperty, showAnimation);
+        }
+
+        private void Image_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            //(((sender) as Image).Tag as ClassDir.AutoSizeImage).WidthAdded += 50;
+        }
+
+        private void Image_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            //(((sender) as Image).Tag as ClassDir.AutoSizeImage).WidthAdded -= 50;
         }
     }
 }

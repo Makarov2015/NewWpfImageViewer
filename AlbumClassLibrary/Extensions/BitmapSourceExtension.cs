@@ -10,29 +10,26 @@ namespace AlbumClassLibrary.Extensions
     /// <see cref="https://stackoverflow.com/questions/1546091/wpf-createbitmapsourcefromhbitmap-memory-leak"/>
     public static class BitmapSourceExtension
     {
-        public static BitmapSource GetSource(System.Drawing.Bitmap bitmap)
+        public static BitmapSource GetSource(System.Drawing.Bitmap bitmap, object sender)
         {
-            lock (bitmap)
+            BitmapSource source;
+
+            using (System.Drawing.Bitmap bmp = new System.Drawing.Bitmap(bitmap))
             {
-                BitmapSource source;
+                IntPtr hBitmap = bmp.GetHbitmap();
 
-                using (System.Drawing.Bitmap bmp = new System.Drawing.Bitmap(bitmap))
+                try
                 {
-                    IntPtr hBitmap = bmp.GetHbitmap();
-
-                    try
-                    {
-                        source = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(hBitmap, IntPtr.Zero, Int32Rect.Empty, System.Windows.Media.Imaging.BitmapSizeOptions.FromEmptyOptions());
-                    }
-                    finally
-                    {
-                        DeleteObject(hBitmap);
-                    }
+                    source = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(hBitmap, IntPtr.Zero, Int32Rect.Empty, System.Windows.Media.Imaging.BitmapSizeOptions.FromEmptyOptions());
                 }
-
-                source.Freeze();
-                return source; 
+                finally
+                {
+                    DeleteObject(hBitmap);
+                }
             }
+
+            source.Freeze();
+            return source;
         }
 
         public static BitmapSource GetSource(string path, int squareSide)
