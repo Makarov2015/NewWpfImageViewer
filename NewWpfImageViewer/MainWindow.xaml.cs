@@ -26,7 +26,7 @@ namespace NewWpfImageViewer
         /// <summary>
         /// Таймер для зарежки пересчета размеров изображений 
         /// </summary>
-        DispatcherTimer _resizeTimer = new DispatcherTimer { Interval = new TimeSpan(0, 0, 0, 0, 50), IsEnabled = false };
+        DispatcherTimer _resizeTimer = new DispatcherTimer { Interval = new TimeSpan(0, 0, 0, 0, 5), IsEnabled = false };
 
         /// <summary>
         /// Таймер для задержки отрисовкы скрытых элементов
@@ -263,18 +263,35 @@ namespace NewWpfImageViewer
             if (ImageGallery.Count == 0)
                 return;
 
+            //AnimationFromToProp(this, Window.OpacityProperty, 0, 1, 1000);
+
+            //System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+            //sw.Start();
+
             Parallel.ForEach(ImageGallery, (x) =>
             {
                 x.CurrentSize = currentSize;
                 Scrolled += x.VisabilityChanged;
             });
 
+            //System.Diagnostics.Debug.WriteLine("ресайз " + sw.Elapsed.ToString());
+            //sw.Restart();
+
             ClassDir.DynamicRowFormatter.FormatPlate(ImageGallery, MainWrapPanel.ActualWidth);
 
-            MainWrapPanel.ItemsSource = null;
-            MainWrapPanel.ItemsSource = ImageGallery;
+            //System.Diagnostics.Debug.WriteLine("плитка " + sw.Elapsed.ToString());
+            //sw.Restart();
+
+            //MainWrapPanel.ItemsSource = null;
+            //MainWrapPanel.ItemsSource = ImageGallery;
+
+            //System.Diagnostics.Debug.WriteLine("перепревязка " + sw.Elapsed.ToString());
+            //sw.Restart();
 
             MainScrollViewer.ScrollToTop();
+
+            //System.Diagnostics.Debug.WriteLine("скролл " + sw.Elapsed.ToString());
+            //sw.Restart();
         }
 
         private void SmallSizeButton_Click(object sender, RoutedEventArgs e)
@@ -348,20 +365,23 @@ namespace NewWpfImageViewer
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            MainWrapPanel.ItemsSource = ImageGallery;
             LoadImagesOnBoard();
         }
 
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            _resizeTimer.IsEnabled = true;
-            _resizeTimer.Stop();
-            _resizeTimer.Start();
+            LoadImagesOnBoard();
+
+            //_resizeTimer.IsEnabled = true;
+            //_resizeTimer.Stop();
+            //_resizeTimer.Start();
         }
 
         void _resizeTimer_Tick(object sender, EventArgs e)
         {
-            _resizeTimer.IsEnabled = false;
-            LoadImagesOnBoard();
+            //_resizeTimer.IsEnabled = false;
+            //LoadImagesOnBoard();
         }
 
         private void HomeButton_Click(object sender, RoutedEventArgs e)
@@ -475,11 +495,16 @@ namespace NewWpfImageViewer
 
         private void Image_SizeChanged(object sender, SizeChangedEventArgs e)
         {
+            AnimationFromToProp(sender as Image, Image.OpacityProperty, 0, 1, 1000);
+        }
+
+        private void AnimationFromToProp(UIElement element, DependencyProperty property, double? from, double? to, int milliseconds)
+        {
             DoubleAnimation showAnimation = new DoubleAnimation();
-            showAnimation.From = 0;
-            showAnimation.To = 1;
-            showAnimation.Duration = TimeSpan.FromMilliseconds(1000);
-            (sender as Image).BeginAnimation(Image.OpacityProperty, showAnimation);
+            showAnimation.From = from;
+            showAnimation.To = to;
+            showAnimation.Duration = TimeSpan.FromMilliseconds(milliseconds);
+            element.BeginAnimation(property, showAnimation);
         }
 
         private void Image_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)

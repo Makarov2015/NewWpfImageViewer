@@ -91,7 +91,7 @@
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Image Tag="{Binding}" Source="{Binding Path=BitmapSource, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="{Binding Width}" Height="{Binding Height}" Margin="5" Stretch="UniformToFill" MouseUp="Image_MouseUp" SizeChanged="Image_SizeChanged" MouseEnter="Image_MouseEnter" MouseLeave="Image_MouseLeave" />
+                            <Image Tag="{Binding}" Source="{Binding Path=BitmapSource, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="{Binding Width, UpdateSourceTrigger=PropertyChanged}" Height="{Binding Height, UpdateSourceTrigger=PropertyChanged}" Margin="5" Stretch="UniformToFill" MouseUp="Image_MouseUp" SizeChanged="Image_SizeChanged" MouseEnter="Image_MouseEnter" MouseLeave="Image_MouseLeave" />
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>

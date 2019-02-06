@@ -66,7 +66,7 @@ namespace NewWpfImageViewer.ClassDir
                 lock (this)
                 {
                     var r = ((this.Height * MaxSizedImage.Width) / MaxSizedImage.Height) + WidthAdded;
-                    return r < 0 ? ((this.Height * MaxSizedImage.Width) / MaxSizedImage.Height) / 3 : r; 
+                    return r < 0 ? ((this.Height * MaxSizedImage.Width) / MaxSizedImage.Height) / 3 : r;
                 }
             }
         }
@@ -102,7 +102,7 @@ namespace NewWpfImageViewer.ClassDir
 
         public async void LoadSourceAsync()
         {
-            if(BitmapSource is null)
+            if (BitmapSource is null)
             {
                 BitmapSource = await GetBitmapSource;
                 OnPropertyChanged("BitmapSource");
@@ -123,7 +123,7 @@ namespace NewWpfImageViewer.ClassDir
             if (BitmapSource != null)
             {
                 BitmapSource = null;
-                OnPropertyChanged("BitmapSource"); 
+                OnPropertyChanged("BitmapSource");
             }
         }
 
@@ -135,14 +135,26 @@ namespace NewWpfImageViewer.ClassDir
                     if (this._isForDispose)
                         return null;
 
-                    return BitmapSourceExtension.GetSource(this.MaxSizedImage as Drawing.Bitmap, this); 
+                    return BitmapSourceExtension.GetSource(this.MaxSizedImage as Drawing.Bitmap, this);
                 }
             });
 
         /// <summary>
         ///  Добавочная величина для динамического изменения ширины контролов
         /// </summary>
-        public double WidthAdded { get; set; }
+        private double _widthAdded;
+        public double WidthAdded
+        {
+            get
+            {
+                return _widthAdded;
+            }
+            set
+            {
+                _widthAdded = value;
+                OnPropertyChanged("Width");
+            }
+        }
 
 
         // Create the OnPropertyChanged method to raise the event
@@ -164,10 +176,9 @@ namespace NewWpfImageViewer.ClassDir
             set
             {
                 _curSize = value;
+                OnPropertyChanged("Height");
             }
         }
-
-        public void ChangeTest() => OnPropertyChanged("Size");
 
         public string OriginalFilepath { get; }
 

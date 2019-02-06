@@ -121,6 +121,8 @@ namespace NewWpfImageViewer.Forms.ImagePreview
 
             this.MainImage.Source = await AutoStackImages[CurrentIndex].GetBitmapSource;
 
+            ChangeSize();
+
             if (AutoStackImages[CurrentIndex].IsAnimation)
             {
                 CurrentImage = await GetAnimationSource(AutoStackImages[CurrentIndex].OriginalFilepath);
@@ -131,7 +133,6 @@ namespace NewWpfImageViewer.Forms.ImagePreview
             }
 
             this.Cursor = Cursors.Arrow;
-            ChangeSize();
 
             if (!AutoStackImages[CurrentIndex].IsAnimation)
                 HiResLoaded(new Tuple<ClassDir.AutoSizeImage, object>(AutoStackImages[CurrentIndex], _curImage), new EventArgs());
@@ -165,7 +166,7 @@ namespace NewWpfImageViewer.Forms.ImagePreview
 
         private void Controller_CurrentFrameChanged(object sender, EventArgs e)
         {
-            AnimationProgressBar.Value = (sender as WpfAnimatedGif.ImageAnimationController).CurrentFrame;
+            AnimationProgressBar.Value = (sender as WpfAnimatedGif.ImageAnimationController).CurrentFrame + 1;
         }
 
         private void ForwardButton_Click(object sender, RoutedEventArgs e)
