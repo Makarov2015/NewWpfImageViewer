@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NewWpfImageViewer.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,7 +14,7 @@ namespace NewWpfImageViewer.ClassDir
         /// C учетом внешних отступов картинок (считаем что они у всех одинаковые) и наличия скролбара
         /// </summary>
         /// <returns>Возвращает измененный список AutoStackImage с заполненным полем WidthAdded</returns>
-        public static void FormatPlate(List<ClassDir.AutoSizeImage> images, double wrapPanel)
+        public static void FormatPlate(List<IImageStructure> images, double wrapPanel)
         {
             if (wrapPanel == 0)
                 return;
@@ -25,9 +26,9 @@ namespace NewWpfImageViewer.ClassDir
             }
 
             // Наполняем этот список, пока не забьем ряд
-            List<ClassDir.AutoSizeImage> currentRow = new List<ClassDir.AutoSizeImage>();
+            List<IImageStructure> currentRow = new List<IImageStructure>();
             // Наполняем этот список заполненными рядами
-            List<ClassDir.AutoSizeImage> finalRow = new List<ClassDir.AutoSizeImage>();
+            List<IImageStructure> finalRow = new List<IImageStructure>();
 
             // Сумма внешних отступов для картинок
             var marginSum = 10;

@@ -45,7 +45,7 @@
             <TextBox Focusable="False" x:Name="SearchTextBox" BorderBrush="Transparent" Padding="5,0,15,0" HorizontalContentAlignment="Left" VerticalContentAlignment="Center" HorizontalAlignment="Left" Height="30" Margin="75,10,0,0" TextWrapping="Wrap" Text="Search" VerticalAlignment="Top" Width="342"/>
             <Button x:Name="SettingsButton" Content="⚙" FontSize="14"  Style="{StaticResource BlackAndWhite}" Click="SettingsButton_Click"/>
             <Button x:Name="tst" IsEnabled="True" Content="⌂" FontSize="16" Margin="0,0,50,0"  Style="{StaticResource BlackAndWhite}"/>
-            <Button IsEnabled="False" x:Name="HomeButton" Content="🕮" FontSize="16" Margin="0,0,100,0" Style="{StaticResource BlackAndWhite}" Click="HomeButton_Click"/>
+            <Button IsEnabled="False" x:Name="HomeButton" Content="🕮" FontSize="16" Margin="0,0,100,0" Style="{StaticResource BlackAndWhite}" />
         </Grid>
         <Grid Grid.Row="1" Background="Transparent">
             <Grid.ColumnDefinitions>
@@ -81,7 +81,7 @@
         </Grid>
         <Grid Grid.Row="3" Background="SlateGray" >
             <ScrollViewer
-                x:Name="MainScrollViewer" CanContentScroll="True" Grid.RowSpan="2" VerticalScrollBarVisibility="Visible" HorizontalAlignment="Stretch" Height="Auto" VerticalAlignment="Stretch" Width="Auto"  Margin="0" Grid.ColumnSpan="2" Padding="82, 0, 68, 0" SizeChanged="MainScrollViewer_SizeChanged" ScrollChanged="MainScrollViewer_ScrollChanged" >
+                x:Name="MainScrollViewer" CanContentScroll="True" Grid.RowSpan="2" VerticalScrollBarVisibility="Visible" HorizontalAlignment="Stretch" Height="Auto" VerticalAlignment="Stretch" Width="Auto"  Margin="0" Grid.ColumnSpan="2" Padding="82, 0, 68, 0" ScrollChanged="MainScrollViewer_ScrollChanged" >
                 <!--<WrapPanel x:Name="MainWrapPanel" HorizontalAlignment="Stretch" Height="Auto" VerticalAlignment="Stretch" Width="Auto">-->
                 <ItemsControl x:Name="MainWrapPanel" SizeChanged="MainWrapPanel_SizeChanged">
                     <ItemsControl.ItemsPanel>
@@ -91,7 +91,7 @@
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Image Tag="{Binding}" Source="{Binding Path=BitmapSource, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="{Binding Width, UpdateSourceTrigger=PropertyChanged}" Height="{Binding Height, UpdateSourceTrigger=PropertyChanged}" Margin="5" Stretch="UniformToFill" MouseUp="Image_MouseUp" SizeChanged="Image_SizeChanged" MouseEnter="Image_MouseEnter" MouseLeave="Image_MouseLeave" />
+                            <Image Tag="{Binding}" Source="{Binding Path=BitmapSource, UpdateSourceTrigger=PropertyChanged}" Width="{Binding Width, UpdateSourceTrigger=PropertyChanged}" Height="{Binding Height, UpdateSourceTrigger=PropertyChanged}" Margin="5" Stretch="UniformToFill" MouseUp="Image_MouseUp" SizeChanged="Image_SizeChanged" MouseEnter="Image_MouseEnter" MouseLeave="Image_MouseLeave" />
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>

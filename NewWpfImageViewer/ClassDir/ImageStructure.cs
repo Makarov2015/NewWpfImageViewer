@@ -9,31 +9,35 @@ using AlbumClassLibrary.Extensions;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Windows;
+using NewWpfImageViewer.Interfaces;
+using Size = NewWpfImageViewer.Interfaces.Size;
 
 namespace NewWpfImageViewer.ClassDir
 {
+    public class asc1
+    {
+        void Main()
+        {
+            //ImageStructure autoSize = new ImageStructure(null, null);
+            //autoSize.
+        }
+    }
+
     /// <summary>
     /// Класс для представления изображения
     /// Ресайзит изображение, хранит сжатый исходник и помогает сделать красивое отображение картинок на форме
     /// (Динамически меняет ширину картинок, подгоняет их так, чтобы ряд был заполнен до конца), а так же помогает менять размер
     /// </summary>
-    public class AutoSizeImage : IDisposable, INotifyPropertyChanged
+    public class ImageStructure : IImageStructure
     {
         /// <summary>
         /// Исходное изображение вписанное в максимальный размер отображаемых строк
         /// </summary>
-        public Drawing.Image MaxSizedImage { get; set; }
+        private Drawing.Image MaxSizedImage { get; set; }
 
         public Point Position { get; set; }
 
         public bool IsAnimation => OriginalFilepath.EndsWith(".gif");
-
-        public enum Size
-        {
-            MEDIUM,
-            SMALL,
-            BIG
-        }
 
         /// <summary>
         /// Доступные варианты высоты
@@ -42,7 +46,7 @@ namespace NewWpfImageViewer.ClassDir
         {
             get
             {
-                switch (CurrentSize)
+                switch (Size)
                 {
                     case Size.MEDIUM:
                         return 250;
@@ -73,34 +77,23 @@ namespace NewWpfImageViewer.ClassDir
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private System.Windows.Media.ImageSource _source;
+        public System.Windows.Media.ImageSource BitmapSource { get; private set; }
 
-        public System.Windows.Media.ImageSource BitmapSource
-        {
-            get
-            {
-                return _source;
-            }
-            set
-            {
-                _source = value;
-            }
-        }
         public void VisabilityChanged(object sender, EventArgs e)
         {
             Control.ScrollViewer viewer = sender as Control.ScrollViewer;
 
             if (Position.Y >= viewer.VerticalOffset - Height * 5 && Position.Y <= viewer.VerticalOffset + viewer.ActualHeight + Height * 3)
             {
-                this.LoadSourceAsync();
+                this.BitmapSourceEnable();
             }
             else
             {
-                this.DisableSource();
+                this.BitmapSourceDisable();
             }
         }
 
-        public async void LoadSourceAsync()
+        public async void BitmapSourceEnableAsync()
         {
             if (BitmapSource is null)
             {
@@ -109,7 +102,7 @@ namespace NewWpfImageViewer.ClassDir
             }
         }
 
-        public void LoadSource()
+        public void BitmapSourceEnable()
         {
             if (BitmapSource is null)
             {
@@ -118,7 +111,7 @@ namespace NewWpfImageViewer.ClassDir
             }
         }
 
-        public void DisableSource()
+        public void BitmapSourceDisable()
         {
             if (BitmapSource != null)
             {
@@ -127,7 +120,7 @@ namespace NewWpfImageViewer.ClassDir
             }
         }
 
-        public Task<BitmapSource> GetBitmapSource =>
+        private Task<BitmapSource> GetBitmapSource =>
             Task.Run(() =>
             {
                 lock (this)
@@ -167,7 +160,7 @@ namespace NewWpfImageViewer.ClassDir
         /// Хранилка текущего размера
         /// </summary>
         private Size _curSize;
-        public Size CurrentSize
+        public Size Size
         {
             get
             {
@@ -186,7 +179,7 @@ namespace NewWpfImageViewer.ClassDir
         /// Констуктор через кеш
         /// </summary>
         /// <param name="cachedImage">Ресайзнутое изображение</param>
-        public AutoSizeImage(Drawing.Image cachedImage, string Original)
+        public ImageStructure(Drawing.Image cachedImage, string Original)
         {
             // Без этого юзинга память не чистится
             using (cachedImage)

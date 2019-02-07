@@ -36,8 +36,8 @@ namespace NewWpfImageViewer.Forms.ImagePreview
                 IndexChanged(_currentIndex);
             }
         }
-        private List<ClassDir.AutoSizeImage> AutoStackImages;
-        private Dictionary<ClassDir.AutoSizeImage, object> cached = null;
+        private List<Interfaces.IImageStructure> AutoStackImages;
+        private Dictionary<Interfaces.IImageStructure, object> cached = null;
 
         private object _curImage;
         private BitmapSource CurrentImage
@@ -76,16 +76,16 @@ namespace NewWpfImageViewer.Forms.ImagePreview
 
         private readonly Window _parent;
 
-        public ImegePreview(List<ClassDir.AutoSizeImage> gallery, int curIndex, ref Dictionary<ClassDir.AutoSizeImage, object> localCacheList, Window parent)
+        public ImegePreview(IEnumerable<Interfaces.IImageStructure> gallery, int curIndex, ref Dictionary<Interfaces.IImageStructure, object> localCacheList, Window parent)
         {
             _parent = parent;
 
             InitializeComponent();
             AnimationProgressBar.Loaded += AnimationProgressBar_Loaded;
 
-            cached = localCacheList as Dictionary<ClassDir.AutoSizeImage, object>;
+            cached = localCacheList as Dictionary<Interfaces.IImageStructure, object>;
 
-            AutoStackImages = gallery;
+            AutoStackImages = gallery.ToList();
             CurrentIndex = curIndex;
 
             LoadMainImageAsync();
@@ -119,7 +119,7 @@ namespace NewWpfImageViewer.Forms.ImagePreview
                     return;
                 }
 
-            this.MainImage.Source = await AutoStackImages[CurrentIndex].GetBitmapSource;
+            this.MainImage.Source = AutoStackImages[CurrentIndex].BitmapSource;
 
             ChangeSize();
 
@@ -135,7 +135,7 @@ namespace NewWpfImageViewer.Forms.ImagePreview
             this.Cursor = Cursors.Arrow;
 
             if (!AutoStackImages[CurrentIndex].IsAnimation)
-                HiResLoaded(new Tuple<ClassDir.AutoSizeImage, object>(AutoStackImages[CurrentIndex], _curImage), new EventArgs());
+                HiResLoaded(new Tuple<Interfaces.IImageStructure, object>(AutoStackImages[CurrentIndex], _curImage), new EventArgs());
 
             Task<BitmapImage> GetAnimationSource(string path)
             {

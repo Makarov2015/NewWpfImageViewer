@@ -99,10 +99,11 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ClassDir\AutoSizeImage.cs" />
+    <Compile Include="ClassDir\ImageStructure.cs" />
     <Compile Include="ClassDir\DynamicRowFormatter.cs" />
     <Compile Include="ClassDir\SettingsManager.cs" />
     <Compile Include="ClassDir\WinColor.cs" />
+    <Compile Include="Classes\ImageCollection.cs" />
     <Compile Include="Forms\Albums\NewAlbumButton.xaml.cs">
       <DependentUpon>NewAlbumButton.xaml</DependentUpon>
     </Compile>
@@ -124,6 +125,8 @@
     <Compile Include="Forms\Settings\SettingsLayout.xaml.cs">
       <DependentUpon>SettingsLayout.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Interfaces\IImageCollection.cs" />
+    <Compile Include="Interfaces\IImageStructure.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -162,8 +165,6 @@
       <Name>AlbumClassLibrary</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Conntrols\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
