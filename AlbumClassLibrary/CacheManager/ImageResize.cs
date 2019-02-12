@@ -32,7 +32,7 @@ namespace AlbumClassLibrary.CacheManager
 
                 double c = 0;
 
-                if(MaxImageSizeToResize > (double)image.Height)
+                if (MaxImageSizeToResize > (double)image.Height)
                 {
                     c = ((double)image.Height / (double)MaxImageSizeToResize);
                     rW = image.Width;
@@ -67,6 +67,29 @@ namespace AlbumClassLibrary.CacheManager
 
                 return destImage;
             }
+        }
+
+        public static System.Windows.Size Resize(double width, double height, int MaxImageSizeToResize)
+        {
+            double rW = 0;
+            double rH = 0;
+
+            double c = 0;
+
+            if (MaxImageSizeToResize > (double)height)
+            {
+                c = ((double)height / (double)MaxImageSizeToResize);
+                rW = width;
+                rH = height;
+            }
+            else
+            {
+                c = ((double)height / (double)MaxImageSizeToResize);
+                rW = (int)(width / c);
+                rH = MaxImageSizeToResize;
+            }
+
+            return new System.Windows.Size(rW, rH);
         }
     }
 }

@@ -25,9 +25,11 @@ namespace AlbumClassLibrary.ControllerBase
             string createCache = @"CREATE TABLE `cache` (
 							`id`	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
 							`filePath`	TEXT NOT NULL UNIQUE,
-							`imageBinary`	BLOB NOT NULL,
+							`imageBinary`	BLOB,
 							`addedDate`	INTEGER NOT NULL,
-							`lastTaken`	INTEGER
+							`lastTaken`	INTEGER,
+	                        `width`	REAL,
+	                        `height` REAL
 							);";
 
             createCache += @"CREATE TABLE `albums` (
@@ -48,7 +50,7 @@ namespace AlbumClassLibrary.ControllerBase
             createCache += $@"INSERT INTO albums (album, albumtype, displayname) VALUES ('{gd}','804C01FD-772B-48E0-916C-1C24FC99968E', 'Библиотека'); ";
 
             var imgPath = System.IO.Path.Combine(Environment.ExpandEnvironmentVariables("%userprofile%"), "Pictures\\");
-            
+
             ExecuteNonQuery(createCache);
 
             if (System.IO.Directory.Exists(imgPath))
@@ -75,9 +77,9 @@ namespace AlbumClassLibrary.ControllerBase
 
                 command.ExecuteNonQuery();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                //throw;
             }
             finally
             {

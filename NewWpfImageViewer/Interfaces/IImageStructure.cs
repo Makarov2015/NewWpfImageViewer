@@ -61,6 +61,9 @@ namespace NewWpfImageViewer.Interfaces
         /// Источник изображения
         /// </summary>
         ImageSource BitmapSource { get; }
+        
+        void LoadMaxSizedImage(System.Drawing.Bitmap cachedImage);
+        bool MaxSizeIsLoaded();
 
         /// <summary>
         /// Обработчик события смены видимости
@@ -72,12 +75,12 @@ namespace NewWpfImageViewer.Interfaces
         /// <summary>
         /// Загрузить данные в <see cref="BitmapSource"/> для отображения изображения
         /// </summary>
-        void BitmapSourceEnable();
+        void BitmapSourceEnableAsync();
 
         /// <summary>
         /// Обнулить <see cref="BitmapSource"/> и спрятать изображение
         /// </summary>
-        void BitmapSourceDisable();
+        void BitmapSourceDisableAsync();
 
         string OriginalFilepath { get; }
     }

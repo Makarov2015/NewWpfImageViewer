@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
-using System.Linq;
 
 namespace AlbumClassLibrary.CacheManager
 {
@@ -31,7 +28,7 @@ namespace AlbumClassLibrary.CacheManager
         {
             get
             {
-                long a = new FileInfo(_cacheFilePath).Length;
+                long a = new System.IO.FileInfo(_cacheFilePath).Length;
                 return (a / 1024) / 1024;
             }
         }
@@ -52,6 +49,7 @@ namespace AlbumClassLibrary.CacheManager
         /// Получение кешированной(и уменьшиной) копии картинки
         /// </summary>
         /// <param name="pathToFile">Путь к оригиналу картинки</param>
+        /// <param name="forCalculate">Для расчета - пустая картинка, иначе - изображение</param>
         /// <returns>Кешированная версия</returns>
         public Bitmap GetImage(string pathToFile)
         {
@@ -61,7 +59,7 @@ namespace AlbumClassLibrary.CacheManager
             {
                 if (controller.CacheSeach(pathToFile, out byte[] bytes))
                 {
-                    using (MemoryStream ms = new MemoryStream(bytes))
+                    using (System.IO.MemoryStream ms = new System.IO.MemoryStream(bytes))
                     using (WrappingStream wrapper = new WrappingStream(ms))
                     {
                         gettedBitmap = new Bitmap(wrapper);
@@ -78,9 +76,42 @@ namespace AlbumClassLibrary.CacheManager
 
             byte[] ImageToByteArray(Image imageIn, System.Drawing.Imaging.ImageFormat format)
             {
-                MemoryStream ms = new MemoryStream();
+                System.IO.MemoryStream ms = new System.IO.MemoryStream();
                 imageIn.Save(ms, format);
                 return ms.ToArray();
+            }
+        }
+
+        public System.Windows.Size GetSize(string pathToFile)
+        {
+            using (DataBaseController controller = new DataBaseController(_cacheFilePath))
+            {
+                if (controller.CacheSeach(pathToFile, out System.Windows.Size _size))
+                {
+                    return _size;
+                }
+                else
+                {
+                    using (System.IO.FileStream file = new System.IO.FileStream(pathToFile, System.IO.FileMode.Open, System.IO.FileAccess.Read))
+                    {
+                        using (Image tif = Image.FromStream(stream: file,
+                                                            useEmbeddedColorManagement: false,
+                                                            validateImageData: false))
+                        {
+                            float width = tif.PhysicalDimension.Width;
+                            float height = tif.PhysicalDimension.Height;
+                            float hresolution = tif.HorizontalResolution;
+                            float vresolution = tif.VerticalResolution;
+
+                            _size = new System.Windows.Size(width, height);
+                        }
+
+                        var _final = ImageResize.Resize(_size.Width, _size.Height, MaxResizedSize);
+                        controller.SizeAdd(pathToFile, _final);
+
+                        return _final;
+                    }
+                }
             }
         }
 

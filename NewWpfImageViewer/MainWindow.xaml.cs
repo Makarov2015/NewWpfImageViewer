@@ -24,9 +24,9 @@ namespace NewWpfImageViewer
     {
         #region Properties
 
-        AlbumManager AlbumsManager;
-        IImageCollection ImageCollection;
-        
+        AlbumManager AlbumsManager = null;
+        IImageCollection ImageCollection = null;
+
         public static Brush WinColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#" + ClassDir.WinColor.GetColor()));
         public string CacheFile => Properties.Settings.Default.CacheFilePath + Properties.Settings.Default.CacheFileName;
 
@@ -76,7 +76,7 @@ namespace NewWpfImageViewer
 
             ImageCollection = new ImageCollection(CacheFile, Interfaces.Size.SMALL);
             AlbumsManager = new AlbumManager(CacheFile);
-            
+
             Scrolled += ImageCollection.ScrolledEventHandler;
             Resized += ImageCollection.ResizedEventHandler;
 
@@ -199,7 +199,9 @@ namespace NewWpfImageViewer
             LocalCache.Clear();
 
             if (FavoriteStackPanel.Children.Count > 1)
+            {
                 (FavoriteStackPanel.Children[0] as Forms.Favorites.FolderButton).MainButton_Click(this, new RoutedEventArgs());
+            }
         }
 
         private void Folder_Mouse_Click(object sender, RoutedEventArgs e)
@@ -358,6 +360,8 @@ namespace NewWpfImageViewer
                 _scrollDelayTimer.Stop();
 
             _scrollDelayTimer.Start();
+
+            SearchTextBox.Text = $"Total {ImageCollection.Images.Count()} Loaded source {ImageCollection.Images.Count(x => x.BitmapSource != null)} Loaded MaxSized  {ImageCollection.Images.Count(x => x.MaxSizeIsLoaded() == true)}";
         }
 
         void _resizeTimer_Tick(object sender, EventArgs e)
@@ -406,5 +410,10 @@ namespace NewWpfImageViewer
         }
 
         #endregion
+
+        private void Tst_Click()
+        {
+
+        }
     }
 }

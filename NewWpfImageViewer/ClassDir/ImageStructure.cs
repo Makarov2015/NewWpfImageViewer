@@ -35,6 +35,22 @@ namespace NewWpfImageViewer.ClassDir
         /// </summary>
         private Drawing.Image MaxSizedImage { get; set; }
 
+        public event EventHandler ImageNeeded;
+
+        private System.Windows.Size _imageSize;
+        private System.Windows.Size ImageSize
+        {
+            get
+            {
+                return _imageSize;
+            }
+            set
+            {
+                _imageSize = value;
+            }
+        }
+
+
         public Point Position { get; set; }
 
         public bool IsAnimation => OriginalFilepath.EndsWith(".gif");
@@ -69,8 +85,16 @@ namespace NewWpfImageViewer.ClassDir
             {
                 lock (this)
                 {
-                    var r = ((this.Height * MaxSizedImage.Width) / MaxSizedImage.Height) + WidthAdded;
-                    return r < 0 ? ((this.Height * MaxSizedImage.Width) / MaxSizedImage.Height) / 3 : r;
+                    if (MaxSizedImage is null)
+                    {
+                        var r = ((this.Height * ImageSize.Width) / ImageSize.Height) + WidthAdded;
+                        return r < 0 ? ((this.Height * ImageSize.Width) / ImageSize.Height) / 3 : r;
+                    }
+                    else
+                    {
+                        var r = ((this.Height * MaxSizedImage.Width) / MaxSizedImage.Height) + WidthAdded;
+                        return r < 0 ? ((this.Height * MaxSizedImage.Width) / MaxSizedImage.Height) / 3 : r;
+                    }
                 }
             }
         }
@@ -85,37 +109,48 @@ namespace NewWpfImageViewer.ClassDir
 
             if (Position.Y >= viewer.VerticalOffset - Height * 5 && Position.Y <= viewer.VerticalOffset + viewer.ActualHeight + Height * 3)
             {
-                this.BitmapSourceEnable();
+                this.BitmapSourceEnableAsync();
+            }
+            else if (Position.Y >= viewer.VerticalOffset - Height * 15 && Position.Y <= viewer.VerticalOffset + viewer.ActualHeight + Height * 20)
+            {
+                return;
             }
             else
             {
-                this.BitmapSourceDisable();
+                this.BitmapSourceDisableAsync();
             }
         }
+
+        public void LoadMaxSizedImage(System.Drawing.Bitmap cachedImage)
+        {
+            this.MaxSizedImage = new Drawing.Bitmap(cachedImage);
+        }
+
+        public bool MaxSizeIsLoaded() => MaxSizedImage != null;
 
         public async void BitmapSourceEnableAsync()
         {
             if (BitmapSource is null)
             {
+                ImageNeeded(this, new EventArgs());
                 BitmapSource = await GetBitmapSource;
                 OnPropertyChanged("BitmapSource");
             }
         }
 
-        public void BitmapSourceEnable()
-        {
-            if (BitmapSource is null)
-            {
-                BitmapSource = GetBitmapSource.Result;
-                OnPropertyChanged("BitmapSource");
-            }
-        }
-
-        public void BitmapSourceDisable()
+        public async void BitmapSourceDisableAsync()
         {
             if (BitmapSource != null)
             {
-                BitmapSource = null;
+                await Task.Run(() =>
+                {
+                    if (MaxSizedImage != null)
+                        MaxSizedImage.Dispose();
+
+                    MaxSizedImage = null;
+                    BitmapSource = null;
+                });
+
                 OnPropertyChanged("BitmapSource");
             }
         }
@@ -128,7 +163,10 @@ namespace NewWpfImageViewer.ClassDir
                     if (this._isForDispose)
                         return null;
 
-                    return BitmapSourceExtension.GetSource(this.MaxSizedImage as Drawing.Bitmap, this);
+                    if (MaxSizedImage is null)
+                        return null;
+                    else
+                        return BitmapSourceExtension.GetSource(this.MaxSizedImage as Drawing.Bitmap, this);
                 }
             });
 
@@ -185,6 +223,13 @@ namespace NewWpfImageViewer.ClassDir
             using (cachedImage)
                 MaxSizedImage = new Drawing.Bitmap(cachedImage);
 
+            OriginalFilepath = Original;
+        }
+
+        public ImageStructure(System.Windows.Size size, string Original)
+        {
+            MaxSizedImage = null;
+            this.ImageSize = size;
             OriginalFilepath = Original;
         }
 

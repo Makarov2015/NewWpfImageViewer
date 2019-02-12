@@ -81,15 +81,29 @@ namespace NewWpfImageViewer.Classes
             {
                 foreach (var item in folderPath)
                 {
-                    var n = new ClassDir.ImageStructure(manager.GetImage(item), item);
+                    var n = new ClassDir.ImageStructure(manager.GetSize(item), item);
                     n.Size = this.CurrentSize;
-                    this.Scrolled += n.VisabilityChanged;
 
+                    this.Scrolled += n.VisabilityChanged;
+                    n.ImageNeeded += N_ImageNeeded;
                     _tmp.Add(n);
                 }
             }
 
             this.Images = _tmp;
+        }
+
+        private async void N_ImageNeeded(object sender, EventArgs e)
+        {
+            await Task.Run(() =>
+            {
+                ClassDir.ImageStructure image = sender as ClassDir.ImageStructure;
+
+                using (AlbumClassLibrary.CacheManager.CacheManager manager = new AlbumClassLibrary.CacheManager.CacheManager(this.cacheFilePath))
+                {
+                    image.LoadMaxSizedImage(manager.GetImage(image.OriginalFilepath));
+                }
+            });
         }
 
         // Нужно подумать, странное решение
@@ -111,7 +125,7 @@ namespace NewWpfImageViewer.Classes
         #endregion
 
         #region Events
-
+        
         // При скроле меняем видимость
         public void ScrolledEventHandler(object sender, EventArgs e)
         {
