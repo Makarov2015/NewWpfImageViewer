@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // Общие сведения об этой сборке предоставляются следующим набором
 // набора атрибутов. Измените значения этих атрибутов, чтобы изменить сведения,
 // связанные со сборкой.
-[assembly: AssemblyTitle("CacheLibrary")]
+[assembly: AssemblyTitle("CacheClassLibrary")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("CacheLibrary")]
+[assembly: AssemblyProduct("CacheClassLibrary")]
 [assembly: AssemblyCopyright("Copyright ©  2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // Следующий GUID служит для идентификации библиотеки типов, если этот проект будет видимым для COM
-[assembly: Guid("b9a3ee81-faab-4d85-950c-36e3a7c608fb")]
+[assembly: Guid("e0bf5431-50c1-4e97-8bab-2ce60ae3dc6d")]
 
 // Сведения о версии сборки состоят из следующих четырех значений:
 //

@@ -104,6 +104,7 @@
     <Compile Include="ClassDir\SettingsManager.cs" />
     <Compile Include="ClassDir\WinColor.cs" />
     <Compile Include="Classes\ImageCollection.cs" />
+    <Compile Include="Classes\NewImageCollection.cs" />
     <Compile Include="Forms\Albums\NewAlbumButton.xaml.cs">
       <DependentUpon>NewAlbumButton.xaml</DependentUpon>
     </Compile>
