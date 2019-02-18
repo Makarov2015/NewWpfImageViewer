@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CacheClassLibrary
+namespace CacheClassLibrary.DataBaseController
 {
     public class DataBaseController
     {
@@ -42,7 +42,7 @@ namespace CacheClassLibrary
 							`id`	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
 							`filePath`	TEXT NOT NULL UNIQUE,
 							`imageBinary`	BLOB,
-							`addedDate`	INTEGER NOT NULL,
+							`addedDate`	INTEGER,
 							`lastTaken`	INTEGER,
 	                        `width`	REAL,
 	                        `height` REAL

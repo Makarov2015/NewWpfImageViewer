@@ -10,34 +10,12 @@ namespace XUnitTestProject
         string _testPath = @"C:\Users\makarov\_cacheTest";
 
         [Fact]
-        public void DataBaseCreationTest()
+        public void DataBaseReadTest()
         {
-            System.IO.File.Delete(_testPath);
-
             using (CacheManager manager = new CacheManager(_testPath))
             {
-                Assert.True(System.IO.File.Exists(_testPath));
+                Assert.True(manager.Registries != null);
             }
-        }
-
-        [Fact]
-        public void DataBaseLockTest()
-        {
-            bool _result = false;
-
-            using (CacheManager manager = new CacheManager(_testPath))
-            {
-                try
-                {
-                    System.IO.File.Delete(_testPath);
-                }
-                catch (System.IO.IOException)
-                {
-                    _result = true;
-                }
-            }
-
-            Assert.True(_result);
         }
 
         [Fact]
@@ -53,16 +31,14 @@ namespace XUnitTestProject
 
             using (CacheManager manager = new CacheManager(_testPath))
             {
-                Assert.True(registry.Save(manager));
-            }
-        }
-
-        [Fact]
-        public void DataBaseReadTest()
-        {
-            using (CacheManager manager = new CacheManager(_testPath))
-            {
-                Assert.True(manager.Registries.Count > 0);
+                if(manager.Registries.Count > 0)
+                {
+                    Assert.False(registry.Save(manager));
+                }
+                else
+                {
+                    Assert.True(registry.Save(manager));
+                }
             }
         }
     }
