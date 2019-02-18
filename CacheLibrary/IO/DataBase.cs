@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 
-namespace CacheClassLibrary.IO.DataBase
+namespace CacheClassLibrary.IO
 {
-    static internal class Operations
+    static internal class DataBase
     {
         static bool Create(string path)
         {

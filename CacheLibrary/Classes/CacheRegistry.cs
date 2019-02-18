@@ -35,7 +35,7 @@ namespace CacheClassLibrary.Classes
             }
             else
             {
-                manager.DataBaseController.ExecuteNonQuery($"INSERT INTO cache (filePath, width, height) VALUES('{filePath}', {width}, {height}); ");
+                manager.DataBaseController.ExecuteNonQuery($"INSERT INTO cache (filePath, width, height, addedDate) VALUES('{filePath}', {width}, {height}, '{DateTime.Now.ToOADate()}'); ");
                 return true;
             }
         }

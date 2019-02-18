@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CacheClassLibrary.Classes;
-using CacheClassLibrary.DataBaseController;
-using System.Windows;
+using System.Drawing;
 
 namespace CacheClassLibrary
 {
@@ -22,37 +19,45 @@ namespace CacheClassLibrary
 
         public List<CacheRegistry> Registries = null;
 
-        private System.Collections.Concurrent.ConcurrentQueue<Task> _sizeQueue = new System.Collections.Concurrent.ConcurrentQueue<Task>();
+       private int MaxSizeToSerize { get; }
 
-        public CacheManager(string dataBaseFilePath)
+        public CacheManager(string dataBaseFilePath, int maxSizeToResize)
         {
             // создали датабейз сонтроллер и поместили в свойство, через него общаемся с бд
             DataBaseController = new DataBaseController.DataBaseController(dataBaseFilePath);
+
+            MaxSizeToSerize = maxSizeToResize;
+
             // коннекшн уже открыт - получаем список текущего состава кеша
             Registries = DataBaseController.ExecuteQuery<CacheRegistry>(CacheRegistry._sqlSelector);
         }
 
-        public (double, double) GetSize(string pathToFile)
+        public System.Drawing.Size GetSize(string pathToFile)
         {
             // Путь известен, возвращаем
             if(Registries.Any(x => x.filePath == pathToFile))
             {
                 var _registry = Registries.Single(x => x.filePath == pathToFile);
-                return (_registry.width, _registry.height);
+                return new System.Drawing.Size((int)_registry.width, (int)_registry.height);
             }
-            // Путь неизвестен, кидаем таск на просчет в очередь
+            // Путь неизвестен, открываем, считаем, пишем, возвращаем
             else
             {
-                _sizeQueue.Enqueue(NewSizeRequest());
-            }
-        }
+                var _size = IO.Image.GetImageSize(pathToFile);
+                _size = Utility.Image.VirtualResize(_size.Width, _size.Height, this.MaxSizeToSerize);
 
-        private Task<(double, double)> NewSizeRequest()
-        {
-            return new Task<(double, double)>(() =>
-            {
-                return (10, 10);
-            });
+                CacheRegistry newRegistry = new CacheRegistry()
+                {
+                    filePath = pathToFile,
+                    width = _size.Width,
+                    height = _size.Height
+                };
+
+                newRegistry.Save(this);
+                Registries.Add(newRegistry);
+
+                return _size;
+            }
         }
 
         public void GetImage()

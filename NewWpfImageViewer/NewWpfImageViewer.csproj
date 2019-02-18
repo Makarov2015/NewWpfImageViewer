@@ -165,6 +165,10 @@
       <Project>{0eb1ddc1-8256-48d1-803e-6c29a0fc6a21}</Project>
       <Name>AlbumClassLibrary</Name>
     </ProjectReference>
+    <ProjectReference Include="..\CacheLibrary\CacheLibrary.csproj">
+      <Project>{6f004b91-f44e-4405-a034-a3884c400541}</Project>
+      <Name>CacheLibrary</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

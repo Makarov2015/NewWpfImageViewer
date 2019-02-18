@@ -25,7 +25,8 @@ namespace CacheClassLibrary.DataBaseController
 
         public void OpenConnection()
         {
-            this.m_dbConnection.Open();
+            if(this.m_dbConnection.State != ConnectionState.Open)
+                this.m_dbConnection.Open();
         }
 
         public void CloseConnection()

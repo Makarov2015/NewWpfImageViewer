@@ -3,34 +3,34 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // Общие сведения об этой сборке предоставляются следующим набором
-// набора атрибутов. Измените значения этих атрибутов, чтобы изменить сведения,
+// набор атрибутов. Измените значения этих атрибутов, чтобы изменить сведения,
 // связанные со сборкой.
-[assembly: AssemblyTitle("CacheClassLibrary")]
+[assembly: AssemblyTitle("CacheLibrary")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("CacheClassLibrary")]
+[assembly: AssemblyProduct("CacheLibrary")]
 [assembly: AssemblyCopyright("Copyright ©  2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
 // Установка значения False для параметра ComVisible делает типы в этой сборке невидимыми
 // для компонентов COM. Если необходимо обратиться к типу в этой сборке через
-// COM, задайте атрибуту ComVisible значение TRUE для этого типа.
+// из модели COM, установите атрибут ComVisible для этого типа в значение true.
 [assembly: ComVisible(false)]
 
-// Следующий GUID служит для идентификации библиотеки типов, если этот проект будет видимым для COM
-[assembly: Guid("e0bf5431-50c1-4e97-8bab-2ce60ae3dc6d")]
+// Указанный ниже идентификатор GUID предназначен для идентификации библиотеки типов, если этот проект будет видимым для COM-объектов
+[assembly: Guid("6f004b91-f44e-4405-a034-a3884c400541")]
 
-// Сведения о версии сборки состоят из следующих четырех значений:
+// Сведения о версии для сборки включают четыре следующих значения:
 //
 //      Основной номер версии
 //      Дополнительный номер версии
-//   Номер сборки
-//      Редакция
+//      Номер сборки
+//      Номер редакции
 //
 // Можно задать все значения или принять номер сборки и номер редакции по умолчанию.
-// используя "*", как показано ниже:
+// Используйте для этого символ "*", следующим образом.
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
