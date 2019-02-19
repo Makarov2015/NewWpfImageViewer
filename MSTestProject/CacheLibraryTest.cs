@@ -10,10 +10,40 @@ namespace MSTestProject
         public CacheClassLibrary.CacheManager manager = null;
         public int _height = 350;
 
+        //[Theory]
+        //[InlineData("0,0,0", 0)]
+        //[InlineData("0,1,2", 3)]
+        //[InlineData("1,2,3", 6)]
+        //public void Add_MultipleNumbers_ReturnsSumOfNumbers(string input, int expected)
+        //{
+        //    var stringCalculator = new StringCalculator();
+
+        //    var actual = stringCalculator.Add(input);
+
+        //    Assert.Equal(expected, actual);
+        //}
+
+        // Имя метода - Сценарий выполнения - Ожидаемое поведение
+        // public void Initialization_ExistingWithRightsPath_RegistriesNotTull()
+        //{
+        //// Arrange - Упорядочивание
+        //var stringCalculator = new StringCalculator();
+
+        //// Act - Действие         
+        //var actual = stringCalculator.Add("");
+
+        //// Assert - Проверка
+        //Assert.Equal(0, actual);
+        //}
+
+        // Initialization_NotExistingOrNoRightsPath_ThrowException
+
         public CacheLibraryTest()
         {
             manager = new CacheClassLibrary.CacheManager(_cahceFile, _height);
         }
+
+
 
         [TestMethod]
         public void CacheGetSizeTest1()
